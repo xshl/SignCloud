@@ -14,9 +14,9 @@ const routes = [
         redirect: "/login"
     },
     {
-        path: "/home",
-        name: "Home",
-        component: () => AsyncLoad(import("@/views/home"))
+        path: '/admin',
+        name: 'Admin',
+        component: () => AsyncLoad(import("@/views/home.vue")),
     },
     login,
 ];

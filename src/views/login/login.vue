@@ -129,10 +129,10 @@ export default {
   },
   methods: {
     LoginByAccount() {
-      this.$router.push("/home");
+      this.$router.push("/admin");
     },
     LoginByPhone() {
-      this.$router.push("/home");
+      this.$router.push("/admin");
     },
   },
 };
