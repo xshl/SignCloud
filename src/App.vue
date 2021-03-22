@@ -15,5 +15,15 @@ export default {
 </script>
 
 <style>
+* {
+  margin: 0;
+  padding: 0;
+}
 
+#app {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
 </style>
