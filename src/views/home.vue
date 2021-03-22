@@ -5,7 +5,7 @@
       @open="handleOpen"
       @close="handleClose"
       :collapse="isCollapse"
-      background-color="#001529"
+      background-color="#304156"
       text-color="#ffffff"
     >
       <div class="logoSide">
