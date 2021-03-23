@@ -1,8 +1,8 @@
 {
-  "name": "vue-admin-template",
-  "version": "4.4.0",
-  "description": "A vue admin template with Element UI & axios & iconfont & permission control & lint",
-  "author": "Pan <panfree23@gmail.com>",
+  "name": "signcloud",
+  "version": "1.0.1",
+  "description": "工程实践前端",
+  "author": "工程实践2班06小组",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
