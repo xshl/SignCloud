@@ -1,21 +1,19 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue'
+import Vuex from 'vuex'
+import getters from './getters'
+import app from './modules/app'
+import settings from './modules/settings'
+import user from './modules/user'
 
-import User from "./user";
+Vue.use(Vuex)
 
-Vue.use(Vuex);
+const store = new Vuex.Store({
+  modules: {
+    app,
+    settings,
+    user
+  },
+  getters
+})
 
-export default new Vuex.Store({
-    state: {
-        netWorkStatus: true
-    },
-    mutations: {
-        setNetwork(state, val) {
-            state.netWorkStatus = val;
-        }
-    },
-    actions: {},
-    modules: {
-        User
-    }
-});
+export default store
