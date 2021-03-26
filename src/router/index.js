@@ -34,138 +34,159 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
-    hidden: true
-  },
-
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
+    hidden: true,
+    children: [
+      {
+        path: "",
+        name: "Login",
+        component: () => import("@/views/login/login.vue")
+      },
+      {
+        path: "register",
+        name: "Register",
+        component: () => import("@/views/login/register.vue")
+      },
+      {
+        path: "forgetPassword",
+        name: "ForgetPassword",
+        component: () => import("@/views/login/forgetPassword.vue")
+      },
+    ]
   },
 
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/home',
     children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      path: 'home',
+      name: 'Home',
+      component: () => import('@/views/home'),
+      meta: { title: '首页', icon: 'dashboard' }
     }]
   },
 
   {
-    path: '/example',
+    path: '/userConfig',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+    redirect: '/userConfig/user',
+    name: 'UserConfig',
+    meta: { title: '用户配置', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/userConfig/user'),
+        meta: { title: '用户管理', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/userConfig/role'),
+        meta: { title: '角色管理', icon: 'tree' }
       }
     ]
   },
 
   {
-    path: '/form',
+    path: '/content',
     component: Layout,
+    redirect: '/content/course',
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: 'course',
+        name: 'Course',
+        component: () => import('@/views/content/course'),
+        meta: { title: '课程管理', icon: 'table' }
       }
     ]
   },
-
   {
-    path: '/nested',
+    path: '/system',
     component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
+    redirect: '/system/user',
+    name: 'System',
+    meta: { title: '系统管理', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/system/menu'),
+        meta: { title: '菜单管理', icon: 'table' }
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
+        path: 'permission',
+        name: 'Permission',
+        component: () => import('@/views/system/permission'),
+        meta: { title: '权限管理', icon: 'tree' }
+      },
+      {
+        path: 'dictionary',
+        name: 'Dictionary',
+        component: () => import('@/views/system/dictionary'),
+        meta: { title: '数据字典', icon: 'tree' }
+      },
+      {
+        path: 'parameter',
+        name: 'Parameter',
+        component: () => import('@/views/system/parameter'),
+        meta: { title: '系统参数', icon: 'tree' }
+      },
+      {
+        path: 'school',
+        name: 'School',
+        component: () => import('@/views/system/school'),
+        meta: { title: '学校机构', icon: 'tree' }
       }
     ]
   },
 
   {
-    path: 'external-link',
+    path: '/error',
     component: Layout,
+    // component: () => import('@/views/error'),
+    name: 'error',
+    // hidden: true,
+    meta: { title: '异常页', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: '404',
+        name: '404',
+        component: () => import('@/views/error/404.vue'),
+        meta: { title: '找不到页面', icon: 'table' }
+      },
+      {
+        path: '403',
+        name: '403',
+        component: () => import('@/views/error/403.vue'),
+        meta: { title: '无权访问', icon: 'tree' }
+      },
+      {
+        path: '500',
+        name: '500',
+        component: () => import('@/views/error/500.vue'),
+        meta: { title: '服务器出错', icon: 'tree' }
       }
     ]
+  },
+  {
+    path: '/aboutMe',
+    component: Layout,
+    redirect: '/aboutMe',
+    children: [{
+      path: 'aboutMe',
+      name: 'AboutMe',
+      component: () => import('@/views/aboutMe'),
+      meta: { title: '关于', icon: 'dashboard' }
+    }]
   },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: 'error/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
