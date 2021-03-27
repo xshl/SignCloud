@@ -7,6 +7,7 @@
     <div class="login">
       <router-view></router-view>
     </div>
+    <footer class="a-footer">copyright @ 2021 福州大学 SignCloud 工程实践2班06组</footer>
   </div>
 </template>
 
@@ -16,8 +17,6 @@ export default {};
 
 
 <style lang="scss" scoped>
-
-$light_gray:#eee;
 
 .container {
   min-height: 100%;
@@ -42,11 +41,17 @@ $light_gray:#eee;
 
     .title {
       font-size: 26px;
-      color: $light_gray;
+      color: #eee;
       margin: 0px auto 20px auto;
       text-align: center;
       font-weight: bold;
     }
   }
+}
+
+.a-footer {
+  bottom: 20px;
+  color: #ffffff;
+  position: absolute;
 }
 </style>

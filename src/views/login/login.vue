@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-      <el-tabs
+    <el-tabs
       v-model="activeName"
       class="login-tabs"
       type="card"
@@ -12,14 +12,15 @@
           :model="loginByAccountForm"
           class="login-form"
           :rules="loginByAccountRules"
-          auto-complete="on"
-          label-position="left"
         >
           <el-form-item prop="username">
             <el-input
+              ref="username"
               v-model="loginByAccountForm.username"
               type="text"
               placeholder="账号"
+              auto-complete="on"
+              clearable
             >
               <i
                 slot="prefix"
@@ -29,9 +30,13 @@
           </el-form-item>
           <el-form-item prop="password">
             <el-input
+              :key="passwordType"
+              ref="password"
               v-model="loginByAccountForm.password"
-              type="password"
-              placeholder="密码：6-16位数字、字母、符号至少两种"
+              :type="passwordType"
+              placeholder="密码"
+              auto-complete="on"
+              show-password
               @keyup.enter.native="LoginByAccount"
             >
               <i
@@ -47,8 +52,12 @@
             >
               自动登录
             </el-checkbox>
-            <a style="font-size: 14px" href="login/register">注册账号 </a>
-            <a style="font-size: 14px" href="login/forgetPassword"
+            <a style="font-size: 14px; color: #409eff" href="login/register"
+              >注册账号
+            </a>
+            <a
+              style="font-size: 14px; color: #409eff"
+              href="login/forgetPassword"
               >忘记密码？</a
             >
           </div>
@@ -72,12 +81,16 @@
           ref="loginByPhoneForm"
           :model="loginByPhoneForm"
           class="login-form"
+          :rules="loginByPhoneRules"
+          auto-complete="on"
         >
           <el-form-item prop="phone">
             <el-input
               v-model="loginByPhoneForm.phone"
-              type="number"
               placeholder="手机号码"
+              clearable
+              ref="phone"
+              autocomplete="on"
             >
               <i
                 slot="prefix"
@@ -91,9 +104,16 @@
               type="text"
               placeholder="验证码"
               style="width: 50%; margin-right: 10%"
+              ref="code"
             >
             </el-input>
-            <el-button type="primary" style="width: 40%">发送验证码</el-button>
+            <el-button
+              type="primary"
+              style="width: 40%"
+              :disabled="disabled"
+              @click.native.prevent="getCode"
+              >{{ btntxt }}</el-button
+            >
           </el-form-item>
           <el-form-item style="width: 100%">
             <el-button
@@ -114,15 +134,17 @@
 </template>
 
 <script>
+import { vaildPhone } from "@/utils/validate";
+
 export default {
-data() {
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('密码格式错误，长度6-16位，数字、字母、符号至少两种'))
+  data() {
+    const validatePhone = (rule, value, callback) => {
+      if (!vaildPhone(value)) {
+        callback(new Error("您输入的手机号格式不正确"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       activeName: "loginByAccount",
       loginByAccountForm: {
@@ -131,25 +153,114 @@ data() {
         autoLogin: false,
       },
       loginByAccountRules: {
-        username: [{ required: true, trigger: 'blur'}],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        username: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
       },
       loginByPhoneForm: {
         phone: "",
         code: "",
       },
+      loginByPhoneRules: {
+        phone: [
+          { required: true, message: "请输入手机号", trigger: "blur" },
+          { validator: validatePhone, trigger: "blur" },
+        ],
+        code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+      },
       loading: false,
+      passwordType: "password",
+      time: 0, // 验证码倒计时
+      disabled: false, // 验证码按钮可用
+      btntxt: "获取验证码", //验证码按钮文字
     };
+  },
+  watch: {
+    $route: {
+      handler: function (route) {
+        this.redirect = route.query && route.query.redirect;
+      },
+      immediate: true,
+    },
   },
   methods: {
     LoginByAccount() {
-      this.$router.push("/home");
+      this.$refs.loginByAccountForm.validate((valid) => {
+        if (valid) {
+          this.loading = true;
+          this.$store
+            .dispatch("user/login", this.loginByAccountForm)
+            .then(() => {
+              this.$router.push({ path: this.redirect || "/" });
+              this.loading = false;
+            })
+            .catch(() => {
+              this.loading = false;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+      // this.$router.push("/home");
     },
     LoginByPhone() {
-      this.$router.push("/home");
+      this.$refs.loginByPhoneForm.validate((valid) => {
+        if (valid) {
+          this.loading = true;
+          this.$store
+            .dispatch("user/login", this.loginByPhoneForm)  
+            .then(() => {
+              this.$router.push({ path: this.redirect || "/" });
+              this.loading = false;
+            })
+            .catch(() => {
+              this.loading = false;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+      // this.$router.push("/home");
+    },
+    timer() {
+      if (this.time > 0) {
+        this.time--;
+        this.btntxt = this.time + "s后重新获取";
+        setTimeout(this.timer, 1000);
+      } else {
+        this.time = 0;
+        this.btntxt = "获取验证码";
+        this.disabled = false;
+      }
+    },
+    GetVCode() {
+      if (this.PhoneloginForm.phone) {
+        var data = {
+          phone: this.PhoneloginForm.phone,
+          count: 4,
+        };
+        // var url = "/index/common/getVerificationCode";
+        // this.$http
+        //   .get(url, { params: data })
+        //   .then((res) => {
+        //     if (res.data.code == 200) {
+        //       // console.log("验证码");
+        //       // console.log(res.data);
+        //       this.$message.success("发送成功");
+        //       this.time = 60;
+        //       this.disabled = true;
+        //       this.timer();
+        //     }
+        //   })
+        //   .catch((err) => {
+        //     // console.log(err);
+        //     this.$message.error("发送失败");
+        //   });
+      }
     },
   },
-}
+};
 </script>
 
 <style>

@@ -15,16 +15,16 @@ export default {
   },
 
   created() {
-    this.fetchData();
+    // this.fetchData();
   },
 
   methods: {
-    fetchData() {
-      api.test().then(response => {
-        console.log(response)
-        this.name = response.message;
-      })
-    }
+    // fetchData() {
+    //   api.test().then(response => {
+    //     console.log(response)
+    //     this.name = response.message;
+    //   })
+    // }
   },
 }
 </script>
