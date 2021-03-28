@@ -3,7 +3,7 @@ import request from "@/utils/request"
 export default {
     test() {
         return request({
-            url: '/test',
+            url: '/hello',
             method: 'get'
         })
     }

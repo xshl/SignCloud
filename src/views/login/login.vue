@@ -135,6 +135,8 @@
 
 <script>
 import { vaildPhone } from "@/utils/validate";
+import { login } from "@/api/user";
+import Qs from 'qs'
 
 export default {
   data() {
@@ -147,6 +149,10 @@ export default {
     };
     return {
       activeName: "loginByAccount",
+      logindata: {
+        username: 'kai',
+        password: '123456'
+      },
       loginByAccountForm: {
         username: "",
         password: "",
@@ -187,8 +193,12 @@ export default {
       this.$refs.loginByAccountForm.validate((valid) => {
         if (valid) {
           this.loading = true;
+          // login(Qs.stringify(this.logindata)).then((response) => {
+          //   console.log(response);
+          //   this.name = response.message;
+          // });
           this.$store
-            .dispatch("user/login", this.loginByAccountForm)
+            .dispatch("user/login", Qs.stringify(this.logindata))
             .then(() => {
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;
@@ -208,7 +218,7 @@ export default {
         if (valid) {
           this.loading = true;
           this.$store
-            .dispatch("user/login", this.loginByPhoneForm)  
+            .dispatch("user/login", this.loginByPhoneForm)
             .then(() => {
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;
@@ -226,6 +236,7 @@ export default {
     timer() {
       if (this.time > 0) {
         this.time--;
+        console.log(this.time);
         this.btntxt = this.time + "s后重新获取";
         setTimeout(this.timer, 1000);
       } else {
@@ -234,12 +245,14 @@ export default {
         this.disabled = false;
       }
     },
-    GetVCode() {
-      if (this.PhoneloginForm.phone) {
+    getCode() {
+      if (this.loginByPhoneForm.phone) {
         var data = {
-          phone: this.PhoneloginForm.phone,
+          phone: this.loginByPhoneForm.phone,
           count: 4,
         };
+        this.time = 60;
+        this.timer();
         // var url = "/index/common/getVerificationCode";
         // this.$http
         //   .get(url, { params: data })
@@ -293,5 +306,8 @@ export default {
 }
 .el-tabs__content {
   width: 100%;
+}
+.el-button {
+  padding: 12px 12px;
 }
 </style>

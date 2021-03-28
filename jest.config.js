@@ -20,5 +20,5 @@ module.exports = {
     'lcov',
     'text-summary'
   ],
-  testURL: 'http://localhost/'
+  testURL: 'http://mock.mengxuegu.com/mock/6059ee9b0d58b864da03d6b5/admin/'
 }
