@@ -1,7 +1,5 @@
 <template>
-  <div class="dashboard-container">
-    <div class="dashboard-text">{{name}}</div>
-  </div>
+  <div></div>
 </template>
 
 <script>
@@ -15,16 +13,16 @@ export default {
   },
 
   created() {
-    this.fetchData();
+    // this.fetchData();
   },
 
   methods: {
-    fetchData() {
-      api.test().then(response => {
-        console.log(response)
-        this.name = response.message;
-      })
-    }
+    // fetchData() {
+    //   api.test().then(response => {
+    //     console.log(response)
+    //     this.name = response.message;
+    //   })
+    // }
   },
 }
 </script>
