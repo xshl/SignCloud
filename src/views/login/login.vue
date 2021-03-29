@@ -136,14 +136,15 @@
 <script>
 import { validPhone } from "@/utils/validate";
 import Qs from 'qs'
+import { login } from "@/api/user"
 
 export default {
   data() {
     return {
       activeName: "loginByAccount",
       logindata: {
-        username: 'kai',
-        password: '123456'
+        username: 'sfs',
+        password: '1'
       },
       loginByAccountForm: {
         username: "",
@@ -185,19 +186,19 @@ export default {
       this.$refs.loginByAccountForm.validate((valid) => {
         if (valid) {
           this.loading = true;
-          // login(Qs.stringify(this.logindata)).then((response) => {
-          //   console.log(response);
-          //   this.name = response.message;
-          // });
-          this.$store
-            .dispatch("user/login", Qs.stringify(this.logindata))
-            .then(() => {
-              this.$router.push({ path: this.redirect || "/" });
-              this.loading = false;
-            })
-            .catch(() => {
-              this.loading = false;
-            });
+          login(JSON.stringify(this.logindata)).then((response) => {
+            console.log(response);
+            this.name = response.message;
+          });
+          // this.$store
+          //   .dispatch("user/login", Qs.stringify(this.logindata))
+          //   .then(() => {
+          //     this.$router.push({ path: this.redirect || "/" });
+          //     this.loading = false;
+          //   })
+          //   .catch(() => {
+          //     this.loading = false;
+          //   });
         } else {
           console.log("error submit!!");
           return false;
