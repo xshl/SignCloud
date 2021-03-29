@@ -62,7 +62,7 @@ export const constantRoutes = [
       path: 'home',
       name: 'Home',
       component: () => import('@/views/home'),
-      meta: { title: '首页', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'el-icon-stopwatch' }
     }]
   },
 
@@ -77,13 +77,13 @@ export const constantRoutes = [
         path: 'user',
         name: 'User',
         component: () => import('@/views/userConfig/user'),
-        meta: { title: '用户管理', icon: 'table' }
+        meta: { title: '用户管理', icon: 'el-icon-user' }
       },
       {
         path: 'role',
         name: 'Role',
         component: () => import('@/views/userConfig/role'),
-        meta: { title: '角色管理', icon: 'tree' }
+        meta: { title: '角色管理', icon: 'el-icon-user' }
       }
     ]
   },
@@ -97,7 +97,7 @@ export const constantRoutes = [
         path: 'course',
         name: 'Course',
         component: () => import('@/views/content/course'),
-        meta: { title: '课程管理', icon: 'table' }
+        meta: { title: '课程管理', icon: 'el-icon-s-order' }
       }
     ]
   },
@@ -106,37 +106,37 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/system/user',
     name: 'System',
-    meta: { title: '系统管理', icon: 'el-icon-s-help' },
+    meta: { title: '系统管理', icon: 'el-icon-setting' },
     children: [
       {
         path: 'menu',
         name: 'Menu',
         component: () => import('@/views/system/menu'),
-        meta: { title: '菜单管理', icon: 'table' }
+        meta: { title: '菜单管理', icon: 'el-icon-coin' }
       },
       {
         path: 'permission',
         name: 'Permission',
         component: () => import('@/views/system/permission'),
-        meta: { title: '权限管理', icon: 'tree' }
+        meta: { title: '权限管理', icon: 'el-icon-key' }
       },
       {
         path: 'dictionary',
         name: 'Dictionary',
         component: () => import('@/views/system/dictionary'),
-        meta: { title: '数据字典', icon: 'tree' }
+        meta: { title: '数据字典', icon: 'el-icon-copy-document' }
       },
       {
         path: 'parameter',
         name: 'Parameter',
         component: () => import('@/views/system/parameter'),
-        meta: { title: '系统参数', icon: 'tree' }
+        meta: { title: '系统参数', icon: 'el-icon-s-operation' }
       },
       {
         path: 'school',
         name: 'School',
         component: () => import('@/views/system/school'),
-        meta: { title: '学校机构', icon: 'tree' }
+        meta: { title: '学校机构', icon: 'el-icon-s-home' }
       }
     ]
   },
@@ -147,25 +147,25 @@ export const constantRoutes = [
     // component: () => import('@/views/error'),
     name: 'error',
     // hidden: true,
-    meta: { title: '异常页', icon: 'el-icon-s-help' },
+    meta: { title: '异常页', icon: 'el-icon-monitor' },
     children: [
       {
         path: '404',
         name: '404',
         component: () => import('@/views/error/404.vue'),
-        meta: { title: '找不到页面', icon: 'table' }
+        meta: { title: '找不到页面', icon: 'el-icon-news' }
       },
       {
         path: '403',
         name: '403',
         component: () => import('@/views/error/403.vue'),
-        meta: { title: '无权访问', icon: 'tree' }
+        meta: { title: '无权访问', icon: 'el-icon-news' }
       },
       {
         path: '500',
         name: '500',
         component: () => import('@/views/error/500.vue'),
-        meta: { title: '服务器出错', icon: 'tree' }
+        meta: { title: '服务器出错', icon: 'el-icon-news' }
       }
     ]
   },
@@ -177,7 +177,7 @@ export const constantRoutes = [
       path: 'aboutMe',
       name: 'AboutMe',
       component: () => import('@/views/aboutMe'),
-      meta: { title: '关于', icon: 'dashboard' }
+      meta: { title: '关于', icon: 'el-icon-warning-outline' }
     }]
   },
 
