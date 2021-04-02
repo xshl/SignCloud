@@ -53,7 +53,7 @@ export default {
   .bullshit {
     position: relative;
     float: left;
-    width: 330px;
+    width: 350px;
     padding: 30px 0;
     overflow: hidden;
     margin-left: 50px;

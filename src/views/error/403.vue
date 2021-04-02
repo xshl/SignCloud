@@ -52,7 +52,7 @@ export default {
   .bullshit {
     position: relative;
     float: left;
-    width: 300px;
+    width: 350px;
     padding: 30px 0;
     overflow: hidden;
     margin-left: 50px;
@@ -77,7 +77,7 @@ export default {
       color: #222;
       font-weight: bold;
       opacity: 0;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       animation-name: slideUp;
       animation-duration: 0.5s;
       animation-delay: 0.1s;
