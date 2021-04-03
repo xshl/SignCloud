@@ -39,8 +39,8 @@
           <el-input
             prefix-icon="iconfont icon-name"
             ref="name"
-            v-model="registerForm.name"
-            placeholder="正式姓名"
+            v-model="registerForm.realname"
+            placeholder="真实姓名"
             type="text"
             auto-complete="on"
             clearable
@@ -99,15 +99,15 @@
           </el-input>
         </el-form-item>
         <el-form-item style="width: 100%">
-            <el-button
-              size="medium"
-              type="primary"
-              style="width: 100%"
-              @click.native.prevent="register"
-            >
-              <span>注册</span>
-            </el-button>
-          </el-form-item>
+          <el-button
+            size="medium"
+            type="primary"
+            style="width: 100%"
+            @click.native.prevent="register"
+          >
+            <span>注册</span>
+          </el-button>
+        </el-form-item>
       </el-form>
     </div>
   </div>
@@ -115,6 +115,7 @@
 
 <script>
 import { validPhone, validPassword, validEmail } from "@/utils/validate";
+import { register } from "@/api/user";
 export default {
   data() {
     var validConfirmps = (rule, value, callback) => {
@@ -130,11 +131,18 @@ export default {
       registerForm: {
         username: "",
         password: "",
-        name: "",
+        realname: "",
         phone: "",
         email: "",
         confirmPassword: "",
         code: "",
+      },
+      registerData: {
+        username: "",
+        password: "",
+        realname: "",
+        phone: "",
+        email: "",
       },
       registerRules: {
         phone: [
@@ -156,7 +164,9 @@ export default {
           { required: true, message: "请再次输入密码", trigger: "blur" },
           { validator: validConfirmps, trigger: "blur" },
         ],
-        name: [{ required: true, message: "请输入真实名字", trigger: "blur" }],
+        realname: [
+          { required: true, message: "请输入真实名字", trigger: "blur" },
+        ],
         code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
       passwordType: "password",
@@ -208,9 +218,17 @@ export default {
         //   });
       }
     },
-    register(){
-
-    }
+    register() {
+      this.registerData.password = this.registerForm.password;
+      this.registerData.realname = this.registerForm.realname;
+      this.registerData.email = this.registerForm.email;
+      this.registerData.phone = this.registerForm.phone;
+      this.registerData.username = this.registerForm.username;
+      console.log(this.registerData);
+      register(JSON.stringify(this.registerData)).then((response) => {
+        console.log(response);
+      });
+    },
   },
 };
 </script>

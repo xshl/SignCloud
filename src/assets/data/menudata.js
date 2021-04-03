@@ -2,20 +2,13 @@ export default {
     menuData : [
         {
             id: 1,
-            name: "home",
-            nameZh: "首页",
-            path: "/home",
-            iconCls: "el-icon-stopwatch",
-            component: "",
+            type: 0,    //菜单类型  0：目录 1：菜单 2：按钮
+            icon: 'el-icon-setting',   //菜单图标
+            title: '系统设置',  // 菜单标题
+            path: 'system',    // 路由地址
+            menuSort: 0,    // 菜单排序
+            pid: 0,    // 上级类目
         },
-        {
-            id: 2,
-            name: "home",
-            nameZh: "首页",
-            path: "/home",
-            iconCls: "el-icon-stopwatch",
-            component: "",
-        }
     ],
     setMenu() {
         window.localStorage.setItem("Menu", JSON.stringify(this.menuData));

@@ -5,9 +5,7 @@ export function login(data) {
     url: '/api/login',
     method: 'post',
     data,
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    
   })
 }
 
@@ -23,5 +21,13 @@ export function logout() {
   return request({
     url: '/user/logout',
     method: 'post'
+  })
+}
+
+export function register(data) {
+  return request({
+    url: '/api/register',
+    method: 'post',
+    data,
   })
 }

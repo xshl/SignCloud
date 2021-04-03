@@ -10,6 +10,9 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+// 权限指令
+import checkPer from '@/utils/permission'
+import permission from './components/Permission'
 
 import './assets/icon/iconfont.css'
 
@@ -25,7 +28,10 @@ import 'e-icon-picker/dist/index.css'; // 基本样式，包含基本图标
 import 'font-awesome/css/font-awesome.min.css'; //font-awesome 图标库
 import 'element-ui/lib/theme-chalk/icon.css'; //element-ui 图标库
 
+
 Vue.use(iconPicker, {FontAwesome: true, ElementUI: true, eIcon: true, eIconSymbol: true});
+Vue.use(permission)
+Vue.use(checkPer)
 
 /**
  * If you don't want to use mock-server
