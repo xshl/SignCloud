@@ -1,30 +1,11 @@
-<template>
-  
-</template>
+<template></template>
 
 <script>
-import api from '@/api/test'
+import api from "@/api/test";
 
 export default {
-  data() {
-    return {
-      name: {}
-    }
-  },
-
-  created() {
-    // this.fetchData();
-  },
-
-  methods: {
-    // fetchData() {
-    //   api.test().then(response => {
-    //     console.log(response)
-    //     this.name = response.message;
-    //   })
-    // }
-  },
-}
+  
+};
 </script>
 
 <style lang="scss" scoped>

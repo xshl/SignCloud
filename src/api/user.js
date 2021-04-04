@@ -29,5 +29,6 @@ export function register(data) {
     url: '/api/register',
     method: 'post',
     data,
+    
   })
 }

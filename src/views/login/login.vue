@@ -144,7 +144,8 @@ export default {
       activeName: "loginByAccount",
       logindata: {
         username: 'sfs',
-        password: '1'
+        password: '1',
+        rememberMe: true
       },
       loginByAccountForm: {
         username: "",

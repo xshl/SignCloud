@@ -62,7 +62,7 @@ export const constantRoutes = [
       path: 'home',
       name: 'Home',
       component: () => import('@/views/home'),
-      meta: { title: '首页', icon: 'el-icon-stopwatch' }
+      meta: { title: '首页', icon: 'el-icon-stopwatch', affix: true }
     }]
   },
 

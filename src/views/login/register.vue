@@ -35,10 +35,10 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item prop="name">
+        <el-form-item prop="realname">
           <el-input
             prefix-icon="iconfont icon-name"
-            ref="name"
+            ref="realname"
             v-model="registerForm.realname"
             placeholder="真实姓名"
             type="text"
@@ -103,7 +103,7 @@
             size="medium"
             type="primary"
             style="width: 100%"
-            @click.native.prevent="register"
+            @click.native.prevent="register()"
           >
             <span>注册</span>
           </el-button>
@@ -116,6 +116,7 @@
 <script>
 import { validPhone, validPassword, validEmail } from "@/utils/validate";
 import { register } from "@/api/user";
+import { validPhoneNumber } from "./passport";
 export default {
   data() {
     var validConfirmps = (rule, value, callback) => {
@@ -172,7 +173,8 @@ export default {
       passwordType: "password",
       time: 0, // 验证码倒计时
       disabled: false, // 验证码按钮可用
-      btntxt: "获取验证码", //验证码按钮文字
+      btntxt: "获取验证码", // 验证码按钮文字
+      btnDisabled: true, // 注册按钮可用
     };
   },
   methods: {
@@ -192,7 +194,7 @@ export default {
       }
     },
     getCode() {
-      if (this.registerForm.phone) {
+      if (validPhoneNumber(this.registerForm.phone)) {
         var data = {
           phone: this.registerForm.phone,
           count: 4,
@@ -216,18 +218,31 @@ export default {
         //     // console.log(err);
         //     this.$message.error("发送失败");
         //   });
+      } else {
+        console.log('手机号码格式错误')
       }
     },
     register() {
-      this.registerData.password = this.registerForm.password;
-      this.registerData.realname = this.registerForm.realname;
-      this.registerData.email = this.registerForm.email;
-      this.registerData.phone = this.registerForm.phone;
-      this.registerData.username = this.registerForm.username;
-      console.log(this.registerData);
-      register(JSON.stringify(this.registerData)).then((response) => {
-        console.log(response);
+      this.$refs.registerForm.validate((valid) => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
+      console.log(this.registerForm.validate);
+      this.registerData.username = this.registerForm.username;
+      this.registerData.realname = this.registerForm.realname;
+      this.registerData.phone = this.registerForm.phone;
+      this.registerData.password = this.registerForm.password;
+      this.registerData.email = this.registerForm.email;
+      console.log(this.registerData);
+      // register(this.registerData).then((response) => {
+      //   console.log(response);
+      // }).catch(error => {
+      //   console.log(error)
+      // });
     },
   },
 };

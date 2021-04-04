@@ -38,15 +38,14 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: 'http://59.77.134.88:8080',
+        target: 'http://59.77.134.88:8080/api',
         changeOrigin: true,
-        ws: true,
         pathRewrite: {
           '^/api': ''
         }
       }
     },
-    after: require('./mock/mock-server.js'),
+    // after: require('./mock/mock-server.js'),
     // [process.env.VUE_APP_BASE_API]: {
     //   target: "http://59.77.134.88",
     //   changeOrigin: true,  //配置跨域
