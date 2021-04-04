@@ -138,13 +138,6 @@ export default {
         confirmPassword: "",
         code: "",
       },
-      registerData: {
-        username: "",
-        password: "",
-        realname: "",
-        phone: "",
-        email: "",
-      },
       registerRules: {
         phone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
@@ -219,30 +212,32 @@ export default {
         //     this.$message.error("发送失败");
         //   });
       } else {
-        console.log('手机号码格式错误')
+        console.log("手机号码格式错误");
       }
     },
     register() {
       this.$refs.registerForm.validate((valid) => {
+        const user = {
+          username: this.registerForm.username,
+          password: this.registerForm.password,
+          realname: this.registerForm.realname,
+          email: this.registerForm.email,
+          phone: this.registerForm.phone,
+        };
         if (valid) {
-          alert("submit!");
+          register(user)
+            .then((response) => {
+              console.log(response);
+              this.Back();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         } else {
           console.log("error submit!!");
           return false;
         }
       });
-      console.log(this.registerForm.validate);
-      this.registerData.username = this.registerForm.username;
-      this.registerData.realname = this.registerForm.realname;
-      this.registerData.phone = this.registerForm.phone;
-      this.registerData.password = this.registerForm.password;
-      this.registerData.email = this.registerForm.email;
-      console.log(this.registerData);
-      // register(this.registerData).then((response) => {
-      //   console.log(response);
-      // }).catch(error => {
-      //   console.log(error)
-      // });
     },
   },
 };
