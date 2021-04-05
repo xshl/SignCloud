@@ -115,7 +115,7 @@
 
 <script>
 import { validPhone, validPassword, validEmail } from "@/utils/validate";
-import { register } from "@/api/user";
+import { register, getCode } from "@/api/user";
 import { validPhoneNumber } from "./passport";
 export default {
   data() {
@@ -190,27 +190,27 @@ export default {
       if (validPhoneNumber(this.registerForm.phone)) {
         var data = {
           phone: this.registerForm.phone,
-          count: 4,
+          // count: 4,
         };
-        this.time = 60;
-        this.timer();
-        // var url = "/index/common/getVerificationCode";
-        // this.$http
-        //   .get(url, { params: data })
-        //   .then((res) => {
-        //     if (res.data.code == 200) {
-        //       // console.log("验证码");
-        //       // console.log(res.data);
-        //       this.$message.success("发送成功");
-        //       this.time = 60;
-        //       this.disabled = true;
-        //       this.timer();
-        //     }
-        //   })
-        //   .catch((err) => {
-        //     // console.log(err);
-        //     this.$message.error("发送失败");
-        //   });
+        // this.time = 60;
+        // this.timer();
+        var url = "/api/getCode";
+        
+          getCode(data)
+          .then((res) => {
+            if (res.data.code == 200) {
+              // console.log("验证码");
+              // console.log(res.data);
+              this.$message.success("发送成功");
+              this.time = 60;
+              this.disabled = true;
+              this.timer();
+            }
+          })
+          .catch((err) => {
+            // console.log(err);
+            this.$message.error("发送失败");
+          });
       } else {
         console.log("手机号码格式错误");
       }

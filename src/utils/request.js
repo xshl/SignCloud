@@ -31,16 +31,6 @@ service.interceptors.request.use(
 
 // response拦截器
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
   response => {
     const res = response.data
 
@@ -65,27 +55,70 @@ service.interceptors.response.use(
       //     })
       //   })
       // }
-
-      if (res.code === 500) {
-        router.push({
-          name: '500',
-          query: {
-            redirect: '/error/500'
-          }
-        })
-      }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
       return res
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    // console.log('err' + error) // for debug
+    // Message({
+    //   message: error.message,
+    //   type: 'error',
+    //   duration: 5 * 1000
+    // })
+    // return Promise.reject(error)
+    if (error.response.data instanceof Blob && error.response.data.type.toLowerCase().indexOf('json') !== -1) {
+      const reader = new FileReader()
+      reader.readAsText(error.response.data, 'utf-8')
+      reader.onload = function(e) {
+        const errorMsg = JSON.parse(reader.result).message
+        Notification.error({
+          title: errorMsg,
+          duration: 5000
+        })
+      }
+    } else {
+      let code = 0
+      try {
+        code = error.response.data.status
+      } catch (e) {
+        if (error.toString().indexOf('Error: timeout') !== -1) {
+          Notification.error({
+            title: '网络请求超时',
+            duration: 5000
+          })
+          return Promise.reject(error)
+        }
+      }
+      console.log(code)
+      if (code) {
+        if (code === 401) {
+          store.dispatch('LogOut').then(() => {
+            // 用户登录界面提示
+            Cookies.set('point', 401)
+            location.reload()
+          })
+        } else if (code === 403) {
+          router.push({ path: '/error/403' })
+        } else if (code === 500) {
+          router.push({ path: '/error/500' })
+        } {
+          const errorMsg = error.response.data.message
+          if (errorMsg !== undefined) {
+            Notification.error({
+              title: errorMsg,
+              duration: 5000
+            })
+          }
+        }
+      } else {
+        Notification.error({
+          title: '接口请求失败',
+          duration: 5000
+        })
+      }
+    }
     return Promise.reject(error)
   }
 )

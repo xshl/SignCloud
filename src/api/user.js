@@ -32,3 +32,10 @@ export function register(data) {
     
   })
 }
+
+export function getCode() {
+  return request({
+    url: '/api/getCode',
+    method: 'get'
+  })
+}
