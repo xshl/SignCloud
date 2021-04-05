@@ -47,7 +47,7 @@
           </el-form-item>
           <div class="login-checkbox">
             <el-checkbox
-              v-model="loginByAccountForm.autoLogin"
+              v-model="loginByAccountForm.rememberMe"
               style="margin: 0 0 25px 0"
             >
               自动登录
@@ -137,20 +137,16 @@
 import { validPhone } from "@/utils/validate";
 import Qs from 'qs'
 import { login } from "@/api/user"
+import { validPhoneNumber } from './passport'
 
 export default {
   data() {
     return {
       activeName: "loginByAccount",
-      logindata: {
-        username: 'sfs',
-        password: '1',
-        rememberMe: true
-      },
       loginByAccountForm: {
         username: "",
         password: "",
-        autoLogin: false,
+        rememberMe: false,
       },
       loginByAccountRules: {
         username: [{ required: true, message: "请输入账号", trigger: "blur" }],
@@ -187,19 +183,20 @@ export default {
       this.$refs.loginByAccountForm.validate((valid) => {
         if (valid) {
           this.loading = true;
-          login(JSON.stringify(this.logindata)).then((response) => {
-            console.log(response);
-            this.name = response.message;
-          });
-          // this.$store
-          //   .dispatch("user/login", Qs.stringify(this.logindata))
-          //   .then(() => {
-          //     this.$router.push({ path: this.redirect || "/" });
-          //     this.loading = false;
-          //   })
-          //   .catch(() => {
-          //     this.loading = false;
-          //   });
+          // console.log()
+          // login(this.loginByAccountForm).then((response) => {
+          //   console.log(response);
+          //   this.name = response.message;
+          // });
+          this.$store
+            .dispatch("user/login", this.loginByAccountForm)
+            .then(() => {
+              this.$router.push({ path: this.redirect || "/" });
+              this.loading = false;
+            })
+            .catch(() => {
+              this.loading = false;
+            });
         } else {
           console.log("error submit!!");
           return false;
@@ -240,7 +237,7 @@ export default {
       }
     },
     getCode() {
-      if (this.loginByPhoneForm.phone) {
+      if (validPhoneNumber(this.registerForm.phone)) {
         var data = {
           phone: this.loginByPhoneForm.phone,
           count: 4,

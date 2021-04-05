@@ -26,7 +26,7 @@ export function logout() {
 
 export function register(data) {
   return request({
-    url: '/api/register',
+    url: '/api/register?role=老师',
     method: 'post',
     data,
     
