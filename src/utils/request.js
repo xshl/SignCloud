@@ -23,7 +23,6 @@ service.interceptors.request.use(
     return config
   },
   error => {
-    // do something with request error
     console.log(error) // for debug
     return Promise.reject(error)
   }
@@ -34,7 +33,6 @@ service.interceptors.response.use(
   response => {
     const res = response.data
 
-    // if the custom code is not 200, it is judged as an error.
     if (res.code !== 200) {
       Message({
         message: res.message || 'Error',
@@ -61,13 +59,6 @@ service.interceptors.response.use(
     }
   },
   error => {
-    // console.log('err' + error) // for debug
-    // Message({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
-    // return Promise.reject(error)
     if (error.response.data instanceof Blob && error.response.data.type.toLowerCase().indexOf('json') !== -1) {
       const reader = new FileReader()
       reader.readAsText(error.response.data, 'utf-8')
