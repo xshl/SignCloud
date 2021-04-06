@@ -177,7 +177,7 @@ export default {
     timer() {
       if (this.time > 0) {
         this.time--;
-        console.log(this.time);
+        // console.log(this.time);
         this.btntxt = this.time + "s后重新获取";
         setTimeout(this.timer, 1000);
       } else {
@@ -201,8 +201,8 @@ export default {
             }
           })
           .catch((err) => {
-            // console.log(err);
-            this.$message.error("发送失败");
+            console.log(err);
+            this.$message.error(res.message);
           });
       } else {
         console.log("手机号码格式错误");
