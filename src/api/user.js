@@ -8,6 +8,14 @@ export function login(params) {
   })
 }
 
+export function loginByPhone(params) {
+  return request({
+    url: '/api/mobieLoginByVerificationCode',
+    method: 'post',
+    params
+  })
+}
+
 export function getInfo(token) {
   return request({
     url: '/user/info',
@@ -37,5 +45,13 @@ export function getCode(phone) {
     url: '/api/getCode',
     method: 'get',
     params: { phone }
+  })
+}
+
+export function forgetPassword(params) {
+  return request({
+    url: '/api/forgetPassword',
+    method: 'post',
+    params
   })
 }

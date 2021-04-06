@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, loginByPhone, register } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -43,6 +43,7 @@ const actions = {
       })
     })
   },
+
 
   // get user info
   getInfo({ commit, state }) {

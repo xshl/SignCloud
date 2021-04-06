@@ -126,7 +126,7 @@ export default {
     timer() {
       if (this.time > 0) {
         this.time--;
-        console.log(this.time);
+        // console.log(this.time);
         this.btntxt = this.time + "s后重新获取";
         setTimeout(this.timer, 1000);
       } else {

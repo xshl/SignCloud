@@ -98,13 +98,13 @@
               ></i>
             </el-input>
           </el-form-item>
-          <el-form-item prop="code">
+          <el-form-item prop="verificationCode">
             <el-input
-              v-model="loginByPhoneForm.code"
+              v-model="loginByPhoneForm.verificationCode"
               type="text"
               placeholder="验证码"
               style="width: 50%; margin-right: 10%"
-              ref="code"
+              ref="verificationCode"
             >
             </el-input>
             <el-button
@@ -136,7 +136,7 @@
 <script>
 import { validPhone } from "@/utils/validate";
 import Qs from 'qs'
-import { login } from "@/api/user"
+import { getCode, loginByPhone } from "@/api/user"
 import { validPhoneNumber } from './passport'
 
 export default {
@@ -154,14 +154,14 @@ export default {
       },
       loginByPhoneForm: {
         phone: "",
-        code: "",
+        verificationCode: "",
       },
       loginByPhoneRules: {
         phone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
           { validator: validPhone, trigger: "blur" },
         ],
-        code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+        verificationCode: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
       loading: false,
       passwordType: "password",
@@ -183,11 +183,6 @@ export default {
       this.$refs.loginByAccountForm.validate((valid) => {
         if (valid) {
           this.loading = true;
-          // console.log()
-          // login(this.loginByAccountForm).then((response) => {
-          //   console.log(response);
-          //   this.name = response.message;
-          // });
           this.$store
             .dispatch("user/login", this.loginByAccountForm)
             .then(() => {
@@ -208,13 +203,14 @@ export default {
       this.$refs.loginByPhoneForm.validate((valid) => {
         if (valid) {
           this.loading = true;
-          this.$store
-            .dispatch("user/login", this.loginByPhoneForm)
-            .then(() => {
+          loginByPhone(this.loginByPhoneForm)
+            .then((response) => {
+              console.log(response);
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;
             })
-            .catch(() => {
+            .catch((error) => {
+              console.log(error);
               this.loading = false;
             });
         } else {
@@ -227,7 +223,7 @@ export default {
     timer() {
       if (this.time > 0) {
         this.time--;
-        console.log(this.time);
+        // console.log(this.time);
         this.btntxt = this.time + "s后重新获取";
         setTimeout(this.timer, 1000);
       } else {
@@ -237,30 +233,25 @@ export default {
       }
     },
     getCode() {
-      if (validPhoneNumber(this.registerForm.phone)) {
-        var data = {
-          phone: this.loginByPhoneForm.phone,
-          count: 4,
-        };
-        this.time = 60;
-        this.timer();
-        // var url = "/index/common/getVerificationCode";
-        // this.$http
-        //   .get(url, { params: data })
-        //   .then((res) => {
-        //     if (res.data.code == 200) {
-        //       // console.log("验证码");
-        //       // console.log(res.data);
-        //       this.$message.success("发送成功");
-        //       this.time = 60;
-        //       this.disabled = true;
-        //       this.timer();
-        //     }
-        //   })
-        //   .catch((err) => {
-        //     // console.log(err);
-        //     this.$message.error("发送失败");
-        //   });
+      if (validPhoneNumber(this.loginByPhoneForm.phone)) {
+        getCode(this.loginByPhoneForm.phone)
+          .then((res) => {
+            console.log(res);
+            if (res.code == 200) {
+              console.log("验证码");
+              console.log(res.data);
+              this.$message.success("发送成功");
+              this.time = 60;
+              this.disabled = true;
+              this.timer();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.error(res.message);
+          });
+      } else {
+        console.log("手机号码格式错误");
       }
     },
   },
