@@ -24,18 +24,19 @@ export function logout() {
   })
 }
 
-export function register(data) {
+export function register(data, verificationCode) {
   return request({
     url: '/api/register?role=老师',
     method: 'post',
     data,
-    
+    params: { verificationCode }
   })
 }
 
-export function getCode() {
+export function getCode(phone) {
   return request({
     url: '/api/getCode',
-    method: 'get'
+    method: 'get',
+    params: { phone }
   })
 }

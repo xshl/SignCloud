@@ -117,6 +117,7 @@
 import { validPhone, validPassword, validEmail } from "@/utils/validate";
 import { register, getCode } from "@/api/user";
 import { validPhoneNumber } from "./passport";
+import Qs from 'qs'
 export default {
   data() {
     var validConfirmps = (rule, value, callback) => {
@@ -192,15 +193,12 @@ export default {
           phone: this.registerForm.phone,
           // count: 4,
         };
-        // this.time = 60;
-        // this.timer();
-        var url = "/api/getCode";
-        
-          getCode(data)
+          getCode(this.registerForm.phone)
           .then((res) => {
-            if (res.data.code == 200) {
-              // console.log("验证码");
-              // console.log(res.data);
+            console.log(res)
+            if (res.code == 200) {
+              console.log("验证码");
+              console.log(res.data);
               this.$message.success("发送成功");
               this.time = 60;
               this.disabled = true;
@@ -225,7 +223,7 @@ export default {
           phone: this.registerForm.phone,
         };
         if (valid) {
-          register(user)
+          register(user, this.registerForm.code)
             .then((response) => {
               console.log(response);
               this.Back();
