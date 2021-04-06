@@ -117,7 +117,6 @@
 import { validPhone, validPassword, validEmail } from "@/utils/validate";
 import { register, getCode } from "@/api/user";
 import { validPhoneNumber } from "./passport";
-import Qs from 'qs'
 export default {
   data() {
     var validConfirmps = (rule, value, callback) => {
@@ -189,13 +188,9 @@ export default {
     },
     getCode() {
       if (validPhoneNumber(this.registerForm.phone)) {
-        var data = {
-          phone: this.registerForm.phone,
-          // count: 4,
-        };
-          getCode(this.registerForm.phone)
+        getCode(this.registerForm.phone)
           .then((res) => {
-            console.log(res)
+            console.log(res);
             if (res.code == 200) {
               console.log("验证码");
               console.log(res.data);
