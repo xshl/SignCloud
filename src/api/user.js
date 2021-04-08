@@ -31,12 +31,11 @@ export function logout() {
   })
 }
 
-export function register(data, verificationCode) {
+export function register(params) {
   return request({
-    url: '/api/register?role=老师',
+    url: '/api/mobileRegister?role=老师',
     method: 'post',
-    data,
-    params: { verificationCode }
+    params,
   })
 }
 

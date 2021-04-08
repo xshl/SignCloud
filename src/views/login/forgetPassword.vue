@@ -12,7 +12,7 @@
         class="forgetPassword-form"
         :rules="forgetPasswordRules"
       >
-      <el-form-item prop="phone">
+        <el-form-item prop="phone">
           <el-input
             prefix-icon="iconfont icon-phone"
             v-model="forgetPasswordForm.phone"
@@ -23,13 +23,13 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item prop="code">
+        <el-form-item prop="verificationCode">
           <el-input
-            v-model="forgetPasswordForm.code"
+            v-model="forgetPasswordForm.verificationCode"
             type="text"
             placeholder="验证码"
             style="width: 50%; margin-right: 10%"
-            ref="code"
+            ref="verificationCode"
           >
           </el-input>
           <el-button
@@ -64,15 +64,15 @@
           </el-input>
         </el-form-item>
         <el-form-item style="width: 100%">
-            <el-button
-              size="medium"
-              type="primary"
-              style="width: 100%"
-              @click.native.prevent="forgetPassword"
-            >
-              <span>重置密码</span>
-            </el-button>
-          </el-form-item>
+          <el-button
+            size="medium"
+            type="primary"
+            style="width: 100%"
+            @click.native.prevent="forgetPassword"
+          >
+            <span>重置密码</span>
+          </el-button>
+        </el-form-item>
       </el-form>
     </div>
   </div>
@@ -80,6 +80,8 @@
 
 <script>
 import { validPhone, validPassword } from "@/utils/validate";
+import { getCode, forgetPassword } from '@/api/user'
+import { validPhoneNumber } from './passport'
 export default {
   data() {
     var validConfirmps = (rule, value, callback) => {
@@ -96,7 +98,7 @@ export default {
         password: "",
         phone: "",
         confirmPassword: "",
-        code: "",
+        verificationCode: "",
       },
       forgetPasswordRules: {
         phone: [
@@ -111,7 +113,7 @@ export default {
           { required: true, message: "请再次输入密码", trigger: "blur" },
           { validator: validConfirmps, trigger: "blur" },
         ],
-        code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+        verificationCode: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
       passwordType: "password",
       time: 0, // 验证码倒计时
@@ -136,35 +138,52 @@ export default {
       }
     },
     getCode() {
-      if (this.loginByPhoneForm.phone) {
-        var data = {
-          phone: this.loginByPhoneForm.phone,
-          count: 4,
-        };
-        this.time = 60;
-        this.timer();
-        // var url = "/index/common/getVerificationCode";
-        // this.$http
-        //   .get(url, { params: data })
-        //   .then((res) => {
-        //     if (res.data.code == 200) {
-        //       // console.log("验证码");
-        //       // console.log(res.data);
-        //       this.$message.success("发送成功");
-        //       this.time = 60;
-        //       this.disabled = true;
-        //       this.timer();
-        //     }
-        //   })
-        //   .catch((err) => {
-        //     // console.log(err);
-        //     this.$message.error("发送失败");
-        //   });
+      if (validPhoneNumber(this.forgetPasswordForm.phone)) {
+        getCode(this.forgetPasswordForm.phone)
+          .then((res) => {
+            console.log(res);
+            if (res.code == 200) {
+              console.log("验证码");
+              console.log(res.data);
+              this.$message.success("发送成功");
+              this.time = 60;
+              this.disabled = true;
+              this.timer();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.error(res.message);
+          });
+      } else {
+        console.log("手机号码格式错误");
       }
     },
     forgetPassword() {
-
-    }
+      this.$refs.forgetPasswordForm.validate((valid) => {
+        const user = {
+          phone: this.forgetPasswordForm.phone,
+          password: this.forgetPasswordForm.password,
+          verificationCode: this.forgetPasswordForm.verificationCode
+        };
+        if (valid) {
+          forgetPassword(user)
+            .then((response) => {
+              setTimeout(() => {
+                console.log(response);
+                this.$message.success(response.data);
+              }, 1000);
+              this.Back();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
   },
 };
 </script>
