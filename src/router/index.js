@@ -130,7 +130,16 @@ export const constantRoutes = [
         path: 'parameter',
         name: 'Parameter',
         component: () => import('@/views/system/parameter'),
-        meta: { title: '系统参数', icon: 'el-icon-s-operation' }
+        meta: { title: '系统参数', icon: 'el-icon-s-operation' },
+        children: [
+          {
+            path: 'course',
+            name: 'Course',
+            hidden: true,
+            component: () => import('@/views/content/course'),
+            meta: { title: '课程管理', icon: 'el-icon-s-order' }
+          }
+        ]
       },
       {
         path: 'school',
