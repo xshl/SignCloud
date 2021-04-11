@@ -16,6 +16,33 @@
         <rrOperation />
       </div>
     </div>
+    <!-- 表单组件 -->
+    <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
+    <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="crud.status.cu > 0" :title="crud.status.title" width="500px">
+      <el-form ref="form" :model="form" :rules="rules" size="small" label-width="156px">
+        <el-form-item label="业务名称" prop="name">
+             <el-select v-model="form.name" placeholder="请选择">
+            <el-option label="手势签到" value="1"></el-option>
+            <el-option label="一键签到" value="2"></el-option>
+            <el-option label="限时签到" value="3"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="签到允许距离范围(m)" prop="scope">
+          <el-input v-model="form.scope"/>
+        </el-form-item>
+        <el-form-item label="每次签到经验值" prop="score">
+          <el-input v-model="form.score"/>
+        </el-form-item>
+        <el-form-item label="一节课时间(min)" prop="classTime">
+          <el-input v-model="form.classTime"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="text" @click="crud.cancelCU">取消</el-button>
+        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+      </div>
+    </el-dialog>
+    <!-- 参数列表 -->
     <el-tabs v-model="activeName" @tab-click="handleClick" class="tabs">
       <el-tab-pane name="first" label="签到参数设置">
         <el-table
@@ -148,8 +175,10 @@ export default {
         del: ["admin", "menu:del"],
       },
       rules: {
-        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-        path: [{ required: true, message: "请输入地址", trigger: "blur" }],
+        name: [{ required: true, message: "请选择业务名称", trigger: "blur" }],
+        scope: [{ required: true, message: "请输入签到允许距离范围", trigger: "blur" }],
+        score: [{ required: true, message: "请选择每次签到经验值", trigger: "blur" }],
+        classTime: [{ required: true, message: "请输入一节课时间", trigger: "blur" }],
       },
       activeName: "first",
     };
