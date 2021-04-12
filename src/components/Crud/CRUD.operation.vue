@@ -1,5 +1,5 @@
 <template>
-  <div class="crud-opts">
+  <div class="crud-opts" v-if="visible == true">
     <span class="crud-opts-left">
       <!--左侧插槽-->
       <slot name="left" />
@@ -154,6 +154,10 @@ export default {
     ignoreColumns: {
       type: Array,
       default: () => { return [] }
+    },
+    visible: {
+      type: Boolean,
+      default: () => { return true }
     }
   },
   data() {

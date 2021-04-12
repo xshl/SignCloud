@@ -14,32 +14,99 @@
           @keyup.enter.native="crud.toQuery"
         />
         <rrOperation />
+        <crudOperation
+          :permission="permission"
+          :visible="activeName == 'second'"
+        />
       </div>
     </div>
-    <!-- 表单组件 -->
+    <!-- 签到参数设置表单组件 -->
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
-    <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="crud.status.cu > 0" :title="crud.status.title" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" size="small" label-width="156px">
+    <el-dialog
+      append-to-body
+      :close-on-click-modal="false"
+      :before-close="crud.cancelCU"
+      :visible="crud.status.cu > 0"
+      :title="crud.status.title"
+      width="500px"
+      v-if="activeName == 'first'"
+    >
+      <el-form
+        ref="form"
+        :model="form"
+        :rules="paramRules"
+        size="small"
+        label-width="156px"
+      >
         <el-form-item label="业务名称" prop="name">
-             <el-select v-model="form.name" placeholder="请选择">
+          <el-select v-model="form.name" placeholder="请选择">
             <el-option label="手势签到" value="1"></el-option>
             <el-option label="一键签到" value="2"></el-option>
             <el-option label="限时签到" value="3"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="签到允许距离范围(m)" prop="scope">
-          <el-input v-model="form.scope"/>
+          <el-input v-model="form.scope" />
         </el-form-item>
         <el-form-item label="每次签到经验值" prop="score">
-          <el-input v-model="form.score"/>
+          <el-input v-model="form.score" />
         </el-form-item>
         <el-form-item label="一节课时间(min)" prop="classTime">
-          <el-input v-model="form.classTime"/>
+          <el-input v-model="form.classTime" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
-        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+        <el-button
+          :loading="crud.status.cu === 2"
+          type="primary"
+          @click="crud.submitCU"
+          >确认</el-button
+        >
+      </div>
+    </el-dialog>
+    <!-- 出勤等级设置表单组件 -->
+    <el-dialog
+      append-to-body
+      :close-on-click-modal="false"
+      :before-close="crud.cancelCU"
+      :visible="crud.status.cu > 0"
+      :title="crud.status.title"
+      width="500px"
+      v-if="activeName == 'second'"
+    >
+      <el-form
+        ref="form"
+        :model="form"
+        :rules="gradeRules"
+        size="small"
+        label-width="156px"
+      >
+        <div v-for="(item, index) in grade">
+          <el-form-item label="等级名称" prop="name">
+            <el-input v-model="item.name" />
+          </el-form-item>
+          <el-form-item
+            label="出勤率范围(%)"
+            prop="scope"
+            style="width: 100%"
+            @input="scopeChange(index)"
+          >
+            <el-slider v-model="item.scope" range></el-slider>
+          </el-form-item>
+        </div>
+        <el-button type="primary" plain class="add" @click="addGrade"
+          >新增等级</el-button
+        >
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="text" @click="crud.cancelCU">取消</el-button>
+        <el-button
+          :loading="crud.status.cu === 2"
+          type="primary"
+          @click="crud.submitCU"
+          >确认</el-button
+        >
       </div>
     </el-dialog>
     <!-- 参数列表 -->
@@ -102,10 +169,7 @@
           row-key="id"
         >
           <el-table-column label="序号" prop="id" align="center" />
-          <el-table-column prop="grade" label="出勤等级名称" align="center">
-          </el-table-column>
-          <el-table-column prop="low" align="center" label="最低出勤率（>）%">
-          </el-table-column>
+          <el-table-column prop="grade" label="优秀(>=)" align="center" />
           <el-table-column prop="high" label="最高出勤率（<=）%" />
           <el-table-column prop="updateTime" label="更新时间" />
           <el-table-column prop="createTime" label="创建日期" />
@@ -174,12 +238,34 @@ export default {
         edit: ["admin", "menu:edit"],
         del: ["admin", "menu:del"],
       },
-      rules: {
+      paramRules: {
         name: [{ required: true, message: "请选择业务名称", trigger: "blur" }],
-        scope: [{ required: true, message: "请输入签到允许距离范围", trigger: "blur" }],
-        score: [{ required: true, message: "请选择每次签到经验值", trigger: "blur" }],
-        classTime: [{ required: true, message: "请输入一节课时间", trigger: "blur" }],
+        scope: [
+          {
+            required: true,
+            message: "请输入签到允许距离范围",
+            trigger: "blur",
+          },
+        ],
+        score: [
+          { required: true, message: "请选择每次签到经验值", trigger: "blur" },
+        ],
+        classTime: [
+          { required: true, message: "请输入一节课时间", trigger: "blur" },
+        ],
       },
+      gradeRules: {
+        name: [{ required: true, message: "请输入等级名称", trigger: "blur" }],
+        scope: [
+          { required: true, message: "请选择出勤率范围", trigger: "blur" },
+        ],
+      },
+      grade: [
+        {
+          name: "",
+          scope: [0, 100],
+        },
+      ],
       activeName: "first",
     };
   },
@@ -237,6 +323,26 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
+    addGrade() {
+      const gradechild = {
+        name: "",
+        scope: [0, 100],
+      };
+      gradechild.scope[0] = this.grade[this.grade.length - 1].scope[1];
+      console.log(gradechild);
+      this.grade.push(gradechild);
+    },
+    changeScope(index) {
+      // if (index != this.grade.length && index != 0) {
+      //   this.grade[index + 1].scope[0] = this.grade[index].scope[1];
+      //   this.grade[index - 1].scope[1] = this.grade[index].scope[0];
+      // } else if (index == 0 && index != this.grade.length) {
+      //   this.grade[index + 1].scope[0] = this.grade[index].scope[1];
+      // } else if (index == this.grade.length && index != 0) {
+      //   this.grade[index - 1].scope[1] = this.grade[index].scope[0];
+      // }
+      
+    },
   },
 };
 </script>
@@ -253,5 +359,13 @@ export default {
 }
 .tabs {
   width: 100%;
+}
+.el-slider__runway.show-input {
+  margin-left: 0;
+}
+.add {
+  width: 80%;
+  margin-left: 10%;
+  height: 40px;
 }
 </style>

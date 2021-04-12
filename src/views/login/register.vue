@@ -24,7 +24,7 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item prop="email">
+        <!-- <el-form-item prop="email">
           <el-input
             prefix-icon="iconfont icon-email"
             ref="email"
@@ -34,8 +34,8 @@
             clearable
           >
           </el-input>
-        </el-form-item>
-        <el-form-item prop="realname">
+        </el-form-item> -->
+        <!-- <el-form-item prop="realname">
           <el-input
             prefix-icon="iconfont icon-name"
             ref="realname"
@@ -46,7 +46,7 @@
             clearable
           >
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="phone">
           <el-input
             prefix-icon="iconfont icon-phone"
@@ -213,12 +213,15 @@ export default {
         const user = {
           username: this.registerForm.username,
           password: this.registerForm.password,
-          realname: this.registerForm.realname,
-          email: this.registerForm.email,
+          // realname: this.registerForm.realname,
+          // email: this.registerForm.email,
           phone: this.registerForm.phone,
+          verificationCode: this.registerForm.code,
+          role: "teacher"
         };
+        console.log(user)
         if (valid) {
-          register(user, this.registerForm.code)
+          register(user)
             .then((response) => {
               console.log(response);
               this.Back();
