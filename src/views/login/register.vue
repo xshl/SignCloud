@@ -34,8 +34,8 @@
             clearable
           >
           </el-input>
-        </el-form-item>
-        <el-form-item prop="realname">
+        </el-form-item> -->
+        <!-- <el-form-item prop="realname">
           <el-input
             prefix-icon="iconfont icon-name"
             ref="realname"
@@ -217,9 +217,11 @@ export default {
           // email: this.registerForm.email,
           phone: this.registerForm.phone,
           verificationCode: this.registerForm.code,
+          role: "teacher"
         };
+        console.log(user)
         if (valid) {
-          register(user, this.registerForm.code)
+          register(user)
             .then((response) => {
               setTimeout(() => {
                 console.log(response);

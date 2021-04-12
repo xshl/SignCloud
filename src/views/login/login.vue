@@ -13,12 +13,12 @@
           class="login-form"
           :rules="loginByAccountRules"
         >
-          <el-form-item prop="username">
+          <el-form-item prop="phone">
             <el-input
-              ref="username"
-              v-model="loginByAccountForm.username"
+              ref="phone"
+              v-model="loginByAccountForm.phone"
               type="text"
-              placeholder="账号"
+              placeholder="手机号码"
               auto-complete="on"
               clearable
             >
@@ -144,12 +144,12 @@ export default {
     return {
       activeName: "loginByAccount",
       loginByAccountForm: {
-        username: "",
+        phone: "",
         password: "",
         rememberMe: false,
       },
       loginByAccountRules: {
-        username: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        phone: [{ required: true, message: "请输入账号", trigger: "blur" }],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }],
       },
       loginByPhoneForm: {

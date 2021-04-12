@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function login(params) {
   return request({
-    url: '/api/login',
+    url: '/api/loginByPwd',
     method: 'post',
     params,
   })
@@ -10,7 +10,7 @@ export function login(params) {
 
 export function loginByPhone(params) {
   return request({
-    url: '/api/mobieLoginByVerificationCode',
+    url: '/api/LoginByVerificationCode',
     method: 'post',
     params
   })
@@ -31,11 +31,11 @@ export function logout() {
   })
 }
 
-export function register(params) {
+export function register(data) {
   return request({
-    url: '/api/mobileRegister?role=老师',
+    url: '/api/register',
     method: 'post',
-    params,
+    data,
   })
 }
 
