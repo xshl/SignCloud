@@ -1,6 +1,7 @@
 import { initData } from '@/api/data'
 import { parseTime } from '@/utils/index'
 import Vue from 'vue'
+import dictdata from '@/assets/data/dictdata'
 
 /**
  * CRUD配置
@@ -131,14 +132,19 @@ function CRUD(options) {
       return new Promise((resolve, reject) => {
         crud.loading = true
         // 请求数据
-        initData(crud.url, crud.getQueryParams()).then(data => {
+        if(crud.url == 'api/dict') {
+          dictdata.setDict();
+          const data = dictdata.getDict();
+          // console.log(data)
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
             table.store.states.lazyTreeNodeMap = {}
           }
-          crud.page.total = data.totalElements
-          crud.data = data.content
+          crud.page.total = data.length
+          console.log(crud.page.total)
+          crud.data = data
+          console.log(crud.data)
           crud.resetDataStatus()
           // time 毫秒后显示表格
           setTimeout(() => {
@@ -146,10 +152,27 @@ function CRUD(options) {
             callVmHook(crud, CRUD.HOOK.afterRefresh)
           }, crud.time)
           resolve(data)
-        }).catch(err => {
-          crud.loading = false
-          reject(err)
-        })
+        } else {
+          initData(crud.url, crud.getQueryParams()).then(data => {
+            const table = crud.getTable()
+            if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
+              table.store.states.treeData = {}
+              table.store.states.lazyTreeNodeMap = {}
+            }
+            crud.page.total = data.totalElements
+            crud.data = data.content
+            crud.resetDataStatus()
+            // time 毫秒后显示表格
+            setTimeout(() => {
+              crud.loading = false
+              callVmHook(crud, CRUD.HOOK.afterRefresh)
+            }, crud.time)
+            resolve(data)
+          }).catch(err => {
+            crud.loading = false
+            reject(err)
+          })
+        }
       })
     },
     /**
@@ -406,6 +429,9 @@ function CRUD(options) {
     resetDataStatus() {
       const dataStatus = {}
       function resetStatus(datas) {
+        if (!datas) {
+          return;
+        }
         datas.forEach(e => {
           dataStatus[crud.getDataId(e)] = {
             delete: 0,

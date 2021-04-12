@@ -82,22 +82,12 @@
         size="small"
         label-width="156px"
       >
-        <div v-for="(item, index) in grade">
-          <el-form-item label="等级名称" prop="name">
-            <el-input v-model="item.name" />
-          </el-form-item>
-          <el-form-item
-            label="出勤率范围(%)"
-            prop="scope"
-            style="width: 100%"
-            @input="scopeChange(index)"
-          >
-            <el-slider v-model="item.scope" range></el-slider>
-          </el-form-item>
-        </div>
-        <el-button type="primary" plain class="add" @click="addGrade"
-          >新增等级</el-button
-        >
+        <el-form-item label="等级名称" prop="name">
+          <el-input v-model="form.name" placeholder=""></el-input>
+        </el-form-item>
+        <el-form-item label="出勤率范围(%）" prop="scope">
+          <el-slider v-model="form.scope" range></el-slider>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -169,10 +159,10 @@
           row-key="id"
         >
           <el-table-column label="序号" prop="id" align="center" />
-          <el-table-column prop="grade" label="优秀(>=)" align="center" />
+          <el-table-column prop="grade" label="出勤等级名称" align="center" />
+          <el-table-column prop="low" label="最低出勤率（<=）%" />
           <el-table-column prop="high" label="最高出勤率（<=）%" />
           <el-table-column prop="updateTime" label="更新时间" />
-          <el-table-column prop="createTime" label="创建日期" />
           <el-table-column label="操作" align="center">
             <!-- <el-table-column v-if="checkPer(['admin','menu:edit','menu:del'])" label="操作" width="130px" align="center" fixed="right"> -->
           </el-table-column>
@@ -331,6 +321,8 @@ export default {
       gradechild.scope[0] = this.grade[this.grade.length - 1].scope[1];
       console.log(gradechild);
       this.grade.push(gradechild);
+      console.log(this.$refs.scope.data.secondValue)
+      
     },
     changeScope(index) {
       // if (index != this.grade.length && index != 0) {
@@ -341,7 +333,7 @@ export default {
       // } else if (index == this.grade.length && index != 0) {
       //   this.grade[index - 1].scope[1] = this.grade[index].scope[0];
       // }
-      
+      // console.log(this.grade);
     },
   },
 };
