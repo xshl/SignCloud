@@ -132,9 +132,9 @@ export default {
       registerForm: {
         username: "",
         password: "",
-        realname: "",
+        // realname: "",
         phone: "",
-        email: "",
+        // email: "",
         confirmPassword: "",
         code: "",
       },
@@ -150,17 +150,17 @@ export default {
         username: [
           { required: true, message: "请输入账户名", trigger: "blur" },
         ],
-        email: [
-          { required: true, message: "请输入邮箱", trigger: "blur" },
-          { validator: validEmail, trigger: "blur" },
-        ],
+        // email: [
+        //   { required: true, message: "请输入邮箱", trigger: "blur" },
+        //   { validator: validEmail, trigger: "blur" },
+        // ],
         confirmPassword: [
           { required: true, message: "请再次输入密码", trigger: "blur" },
           { validator: validConfirmps, trigger: "blur" },
         ],
-        realname: [
-          { required: true, message: "请输入真实名字", trigger: "blur" },
-        ],
+        // realname: [
+        //   { required: true, message: "请输入真实名字", trigger: "blur" },
+        // ],
         code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
       passwordType: "password",
@@ -223,7 +223,10 @@ export default {
         if (valid) {
           register(user)
             .then((response) => {
-              console.log(response);
+              setTimeout(() => {
+                console.log(response);
+                this.$message.success(response.data);
+              }, 1000);
               this.Back();
             })
             .catch((error) => {
