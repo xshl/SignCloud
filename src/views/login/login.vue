@@ -182,6 +182,7 @@ export default {
     LoginByAccount() {
       this.$refs.loginByAccountForm.validate((valid) => {
         if (valid) {
+          this.loginByAccountForm.rememberMe = true;
           this.loading = true;
           this.$store
             .dispatch("user/login", this.loginByAccountForm)
