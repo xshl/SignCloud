@@ -21,6 +21,9 @@
           <el-form-item label="字典值" prop="value">
             <el-input v-model="form.value" style="width: 370px;" />
           </el-form-item>
+          <el-form-item label="默认值" prop="default">
+            <el-switch v-model="form.default" active-value="1" inactive-color="0"></el-switch>
+          </el-form-item>
           <el-form-item label="排序" prop="dictSort">
             <el-input-number v-model.number="form.dictSort" :min="0" :max="999" controls-position="right" style="width: 370px;" />
           </el-form-item>
@@ -37,13 +40,18 @@
         </el-table-column>
         <el-table-column prop="label" label="字典标签" />
         <el-table-column prop="value" label="字典值" />
+        <el-table-column prop="default" label="默认值" />
         <el-table-column prop="dictSort" label="排序" />
-        <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right">
+        <el-table-column label="操作" width="130px" align="center" fixed="right">
+        <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
-              :permission="permission"
             />
+            <!-- <udOperation
+              :data="scope.row"
+              :permission="permission"
+            /> -->
           </template>
         </el-table-column>
       </el-table>

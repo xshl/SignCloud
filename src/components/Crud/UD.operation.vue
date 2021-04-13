@@ -22,10 +22,10 @@ export default {
       type: Object,
       required: true
     },
-    permission: {
-      type: Object,
-      required: true
-    },
+    // permission: {
+    //   type: Object,
+    //   required: true
+    // },
     disabledEdit: {
       type: Boolean,
       default: false
