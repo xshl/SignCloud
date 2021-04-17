@@ -8,7 +8,7 @@ import router from '@/router'
 //创建axios实例
 const service = axios.create({
   // baseURL: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_API : '/', // api 的 base_url
-  baseURL: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_API : '/', // url = base url + request url
+  baseURL: '', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
@@ -32,13 +32,15 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-
-    if (res.code !== 200) {
+    if (res.code == 406) {
+      return res;
+    }else if (res.code !== 200) {
       Message({
         message: res.message || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
+      
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       // if (res.code === 50008 || res.code === 50012 || res.code === 50014) {

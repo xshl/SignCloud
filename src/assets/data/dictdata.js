@@ -1,25 +1,25 @@
 export default {
     dictData : [
         {
-            id: 1,
+            id: 0,
             name: '性别', // 中文标识
             englishName: 'sex',  // 英文标识
             description: '',  // 具体描述
             sort: 999,  // 排序
             dictDetails: [{
-                id: 1,
+                id: 0,
                 label: '男', // 文本
                 value: 0, // 值
                 dictSort: 999,   // 排序
                 default: 0,
             },{
-                id: 2,
+                id: 1,
                 label: '女',
                 value: 1,
                 dictSort: 999, 
                 default: 0,
             },{
-                id: 3,
+                id: 2,
                 label: '未知', 
                 value: 2,
                 dictSort: 999, 
@@ -86,6 +86,7 @@ export default {
         window.localStorage.setItem("Dict", JSON.stringify(data));
     },
     deleteDict(ids) {
+        console.log('ids', ids)
         const data = JSON.parse(window.localStorage.getItem("Dict"));
         for (let j = 0; j < ids.length; j++) {
             for (let i = 0; i < data.length; i++) {

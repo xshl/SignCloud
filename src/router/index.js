@@ -53,7 +53,28 @@ export const constantRoutes = [
       },
     ]
   },
-
+  {
+    path: '/user',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'center',
+        component: (resolve) => require(['@/views/userConfig/center'], resolve),
+        name: '个人中心',
+        meta: { title: '个人中心' }
+      }
+    ]
+  },
+  {
+    path: '/additional',
+    component: () => import('@/views/additional.vue')
+  },
+  {
+    path: '/callback',
+    component: () => import('@/views/callback.vue')
+  },
   {
     path: '/',
     component: Layout,
@@ -65,7 +86,6 @@ export const constantRoutes = [
       meta: { title: '首页', icon: 'el-icon-stopwatch', affix: true }
     }]
   },
-
   {
     path: '/userConfig',
     component: Layout,
@@ -131,15 +151,6 @@ export const constantRoutes = [
         name: 'Parameter',
         component: () => import('@/views/system/parameter'),
         meta: { title: '系统参数', icon: 'el-icon-s-operation' },
-        children: [
-          {
-            path: 'course',
-            name: 'Course',
-            hidden: true,
-            component: () => import('@/views/content/course'),
-            meta: { title: '课程管理', icon: 'el-icon-s-order' }
-          }
-        ]
       },
       {
         path: 'school',
@@ -152,10 +163,10 @@ export const constantRoutes = [
 
   {
     path: '/error',
-    component: Layout,
-    // component: () => import('@/views/error'),
+    // component: Layout,
+    component: () => import('@/views/error'),
     name: 'error',
-    // hidden: true,
+    hidden: true,
     meta: { title: '异常页', icon: 'el-icon-monitor' },
     children: [
       {
@@ -186,7 +197,7 @@ export const constantRoutes = [
       path: 'aboutMe',
       name: 'AboutMe',
       component: () => import('@/views/aboutMe'),
-      meta: { title: '关于', icon: 'el-icon-warning-outline' }
+      meta: { title: '关于我们', icon: 'el-icon-warning-outline' }
     }]
   },
 

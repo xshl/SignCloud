@@ -205,6 +205,7 @@ export default {
             this.$message.error(res.message);
           });
       } else {
+        this.$message.error("手机号码格式错误")
         console.log("手机号码格式错误");
       }
     },

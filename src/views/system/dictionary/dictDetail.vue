@@ -22,7 +22,7 @@
             <el-input v-model="form.value" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="默认值" prop="default">
-            <el-switch v-model="form.default" active-value="1" inactive-color="0"></el-switch>
+            <el-switch v-model="form.default" active-value="1" inactive-value="0"></el-switch>
           </el-form-item>
           <el-form-item label="排序" prop="dictSort">
             <el-input-number v-model.number="form.dictSort" :min="0" :max="999" controls-position="right" style="width: 370px;" />
@@ -68,7 +68,7 @@ import pagination from '@/components/Crud/Pagination'
 import rrOperation from '@/components/Crud/RR.operation'
 import udOperation from '@/components/Crud/UD.operation'
 
-const defaultForm = { id: null, label: null, value: null, dictSort: 999 }
+const defaultForm = { id: null, label: null, value: null, dictSort: 999, default: 0 }
 
 export default {
   components: { pagination, rrOperation, udOperation },

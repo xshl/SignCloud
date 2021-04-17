@@ -1,7 +1,6 @@
 import { initData } from '@/api/data'
 import { parseTime } from '@/utils/index'
 import Vue from 'vue'
-import dictdata from '@/assets/data/dictdata'
 
 /**
  * CRUD配置
@@ -31,17 +30,17 @@ function CRUD(options) {
     // Form 表单
     form: {},
     // 重置表单
-    defaultForm: () => { },
+    defaultForm: () => {},
     // 排序规则，默认 id 降序， 支持多字段排序 ['id,desc', 'createTime,asc']
     sort: ['id,desc'],
     // 等待时间
     time: 50,
     // CRUD Method
     crudMethod: {
-      add: (form) => { },
-      del: (id) => { },
-      edit: (form) => { },
-      get: (id) => { }
+      add: (form) => {},
+      del: (id) => {},
+      edit: (form) => {},
+      get: (id) => {}
     },
     // 主页操作栏显示哪些按钮
     optShow: {
@@ -98,8 +97,6 @@ function CRUD(options) {
     },
     // 整体loading
     loading: false,
-    // 导出的 Loading
-    downloadLoading: false,
     // 删除的 Loading
     delAllLoading: false
   }
@@ -132,19 +129,14 @@ function CRUD(options) {
       return new Promise((resolve, reject) => {
         crud.loading = true
         // 请求数据
-        if (crud.url == 'api/dict') {
-          // dictdata.setDict();
-          const data = dictdata.getDict();
-          // console.log(data)
+        initData(crud.url, crud.getQueryParams()).then(data => {
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
             table.store.states.lazyTreeNodeMap = {}
           }
-          crud.page.total = data.length
-          // console.log(crud.page.total)
-          crud.data = data
-          // console.log(crud.data)
+          crud.page.total = data.totalElements
+          crud.data = data.content
           crud.resetDataStatus()
           // time 毫秒后显示表格
           setTimeout(() => {
@@ -152,47 +144,10 @@ function CRUD(options) {
             callVmHook(crud, CRUD.HOOK.afterRefresh)
           }, crud.time)
           resolve(data)
-        } else if (crud.url == 'api/dictDetail') {
-          const table = crud.getTable()
-          if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
-            table.store.states.treeData = {}
-            table.store.states.lazyTreeNodeMap = {}
-          }
-          // console.log('name', crud.getQueryParams().dictName)
-          const data = dictdata.getDictDetail(crud.getQueryParams().dictName)
-          // console.log('data', data)
-          crud.page.total = data.length
-          crud.data = data
-          crud.resetDataStatus()
-          // time 毫秒后显示表格
-          setTimeout(() => {
-            crud.loading = false
-            callVmHook(crud, CRUD.HOOK.afterRefresh)
-          }, crud.time)
-          resolve(data)
-        } else {
-          initData(crud.url, crud.getQueryParams()).then(data => {
-            console.log('detial')
-            console.log('Query', crud.getQueryParams())
-            const table = crud.getTable()
-            if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
-              table.store.states.treeData = {}
-              table.store.states.lazyTreeNodeMap = {}
-            }
-            crud.page.total = data.totalElements
-            crud.data = data.content
-            crud.resetDataStatus()
-            // time 毫秒后显示表格
-            setTimeout(() => {
-              crud.loading = false
-              callVmHook(crud, CRUD.HOOK.afterRefresh)
-            }, crud.time)
-            resolve(data)
-          }).catch(err => {
-            crud.loading = false
-            reject(err)
-          })
-        }
+        }).catch(err => {
+          crud.loading = false
+          reject(err)
+        })
       })
     },
     /**
@@ -298,52 +253,18 @@ function CRUD(options) {
       if (!callVmHook(crud, CRUD.HOOK.beforeSubmit)) {
         return
       }
-      console.log('url', crud.url)
-      if (crud.url == 'api/dict') {
-        crud.status.add = CRUD.STATUS.PROCESSING
-        const dictForm = {
-          id: dictdata.getDict().length,
-          name: this.form.name,
-          englishName: this.form.englishName,
-          describe: this.form.describe,
-          dictDetails: [],
-          sort: this.form.sort
-        }
-        dictdata.addDict(dictForm);
+      crud.status.add = CRUD.STATUS.PROCESSING
+      console.log('form', crud.form)
+      crud.crudMethod.add(crud.form).then(() => {
         crud.status.add = CRUD.STATUS.NORMAL
         crud.resetForm()
         crud.addSuccessNotify()
         callVmHook(crud, CRUD.HOOK.afterSubmit)
         crud.toQuery()
-      }
-      if (crud.url == 'api/dictDetail') {
-        crud.status.add = CRUD.STATUS.PROCESSING
-        const dictDetailForm = {
-          id: dictdata.getDictDetail(crud.getQueryParams().dictName).length,
-          label: this.form.label,
-          value: this.form.value,
-          dictSort: this.form.dictSort,
-          default:　this.form.defalut
-        }
-        console.log('dictDetail', dictDetailForm)
-        dictdata.addDictDetail(crud.getQueryParams().dictName, dictDetailForm);
-        crud.status.add = CRUD.STATUS.NORMAL
-        crud.resetForm()
-        crud.addSuccessNotify()
-        callVmHook(crud, CRUD.HOOK.afterSubmit)
-        crud.toQuery()
-      }
-
-      // crud.crudMethod.add(crud.form).then(() => {
-      //   crud.status.add = CRUD.STATUS.NORMAL
-      //   crud.resetForm()
-      //   crud.addSuccessNotify()
-      //   callVmHook(crud, CRUD.HOOK.afterSubmit)
-      //   crud.toQuery()
-      // }).catch(() => {
-      //   crud.status.add = CRUD.STATUS.PREPARED
-      //   callVmHook(crud, CRUD.HOOK.afterAddError)
-      // })
+      }).catch(() => {
+        crud.status.add = CRUD.STATUS.PREPARED
+        callVmHook(crud, CRUD.HOOK.afterAddError)
+      })
     },
     /**
      * 执行编辑
@@ -352,54 +273,18 @@ function CRUD(options) {
       if (!callVmHook(crud, CRUD.HOOK.beforeSubmit)) {
         return
       }
-      if (crud.url == 'api/dict') {
-        crud.status.edit = CRUD.STATUS.PROCESSING
-        const dictForm = {
-          id: dictdata.getDict().length-1,
-          name: this.form.name,
-          englishName: this.form.englishName,
-          describe: this.form.describe,
-          dictDetails: dictdata.getDictDetail(this.form.name),
-          sort: this.form.sort
-        }
-        console.log('dictForm', dictForm)
-        dictdata.editDict(dictForm);
+      crud.status.edit = CRUD.STATUS.PROCESSING
+      crud.crudMethod.edit(crud.form).then(() => {
         crud.status.edit = CRUD.STATUS.NORMAL
         crud.getDataStatus(crud.getDataId(crud.form)).edit = CRUD.STATUS.NORMAL
         crud.editSuccessNotify()
         crud.resetForm()
         callVmHook(crud, CRUD.HOOK.afterSubmit)
         crud.refresh()
-      } else if (crud.url == 'api/dictDetail') {
-        crud.status.edit = CRUD.STATUS.PROCESSING
-        const dictForm = {
-          id: dictdata.getDictDetail(crud.getQueryParams().dictName).length-1,
-          label: this.form.label,
-          value: this.form.value,
-          dictSort: this.form.dictSort,
-          default:　this.form.defalut
-        }
-        console.log('editDetail')
-        dictdata.editDictDetail(crud.getQueryParams().dictName, dictForm);
-        crud.status.edit = CRUD.STATUS.NORMAL
-        crud.getDataStatus(crud.getDataId(crud.form)).edit = CRUD.STATUS.NORMAL
-        crud.editSuccessNotify()
-        crud.resetForm()
-        callVmHook(crud, CRUD.HOOK.afterSubmit)
-        crud.refresh()
-      }
-      // crud.status.edit = CRUD.STATUS.PROCESSING
-      // crud.crudMethod.edit(crud.form).then(() => {
-      //   crud.status.edit = CRUD.STATUS.NORMAL
-      //   crud.getDataStatus(crud.getDataId(crud.form)).edit = CRUD.STATUS.NORMAL
-      //   crud.editSuccessNotify()
-      //   crud.resetForm()
-      //   callVmHook(crud, CRUD.HOOK.afterSubmit)
-      //   crud.refresh()
-      // }).catch(() => {
-      //   crud.status.edit = CRUD.STATUS.PREPARED
-      //   callVmHook(crud, CRUD.HOOK.afterEditError)
-      // })
+      }).catch(() => {
+        crud.status.edit = CRUD.STATUS.PREPARED
+        callVmHook(crud, CRUD.HOOK.afterEditError)
+      })
     },
     /**
      * 执行删除
@@ -424,8 +309,7 @@ function CRUD(options) {
       if (!delAll) {
         dataStatus.delete = CRUD.STATUS.PROCESSING
       }
-      if (crud.url == 'api/dict') {
-        dictdata.deleteDict(ids);
+      return crud.crudMethod.del(ids).then(() => {
         if (delAll) {
           crud.delAllLoading = false
         } else dataStatus.delete = CRUD.STATUS.PREPARED
@@ -433,35 +317,16 @@ function CRUD(options) {
         crud.delSuccessNotify()
         callVmHook(crud, CRUD.HOOK.afterDelete, data)
         crud.refresh()
-      } else if (crud.url == 'api/dictDetail') {
-        dictdata.deleteDictDetail(crud.getQueryParams().dictName, ids);
+      }).catch(() => {
         if (delAll) {
           crud.delAllLoading = false
         } else dataStatus.delete = CRUD.STATUS.PREPARED
-        crud.dleChangePage(1)
-        crud.delSuccessNotify()
-        callVmHook(crud, CRUD.HOOK.afterDelete, data)
-        crud.refresh()
-      }
-      // return crud.crudMethod.del(ids).then(() => {
-      //   if (delAll) {
-      //     crud.delAllLoading = false
-      //   } else dataStatus.delete = CRUD.STATUS.PREPARED
-      //   crud.dleChangePage(1)
-      //   crud.delSuccessNotify()
-      //   callVmHook(crud, CRUD.HOOK.afterDelete, data)
-      //   crud.refresh()
-      // }).catch(() => {
-      //   if (delAll) {
-      //     crud.delAllLoading = false
-      //   } else dataStatus.delete = CRUD.STATUS.PREPARED
-      // })
+      })
     },
-
     /**
      * 获取查询参数
      */
-    getQueryParams: function () {
+    getQueryParams: function() {
       // 清除参数无值的情况
       Object.keys(crud.query).length !== 0 && Object.keys(crud.query).forEach(item => {
         if (crud.query[item] === null || crud.query[item] === '') crud.query[item] = undefined
@@ -539,9 +404,6 @@ function CRUD(options) {
     resetDataStatus() {
       const dataStatus = {}
       function resetStatus(datas) {
-        if (!datas) {
-          return;
-        }
         datas.forEach(e => {
           dataStatus[crud.getDataId(e)] = {
             delete: 0,

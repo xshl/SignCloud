@@ -1,5 +1,5 @@
 <template>
-  <div class="crud-opts" v-if="visible == true">
+  <div class="crud-opts">
     <span class="crud-opts-left">
       <!--左侧插槽-->
       <slot name="left" />
@@ -13,8 +13,18 @@
         @click="crud.toAdd"
       >
         新增
-      </el-button>
+      </el-button> -->
       <el-button
+        v-if="crud.optShow.add"
+        class="filter-item"
+        size="mini"
+        type="primary"
+        icon="el-icon-plus"
+        @click="crud.toAdd"
+      >
+        新增
+      </el-button>
+      <!-- <el-button
         v-if="crud.optShow.edit"
         v-permission="permission.edit"
         class="filter-item"
@@ -25,8 +35,19 @@
         @click="crud.toEdit(crud.selections[0])"
       >
         修改
+      </el-button> -->
+       <el-button
+        v-if="crud.optShow.edit"
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-edit"
+        :disabled="crud.selections.length !== 1"
+        @click="crud.toEdit(crud.selections[0])"
+      >
+        修改
       </el-button>
-      <el-button
+      <!-- <el-button
         v-if="crud.optShow.del"
         slot="reference"
         v-permission="permission.del"
@@ -41,27 +62,6 @@
         删除
       </el-button> -->
       <el-button
-        v-if="crud.optShow.add"
-        class="filter-item"
-        size="mini"
-        type="primary"
-        icon="el-icon-plus"
-        @click="crud.toAdd"
-      >
-        新增
-      </el-button>
-      <el-button
-        v-if="crud.optShow.edit"
-        class="filter-item"
-        size="mini"
-        type="success"
-        icon="el-icon-edit"
-        :disabled="crud.selections.length !== 1"
-        @click="crud.toEdit(crud.selections[0])"
-      >
-        修改
-      </el-button>
-      <el-button
         v-if="crud.optShow.del"
         slot="reference"
         class="filter-item"
@@ -74,6 +74,7 @@
       >
         删除
       </el-button>
+      <slot name="right" />
     </span>
     <el-button-group class="crud-opts-right">
       <el-button
@@ -154,10 +155,6 @@ export default {
     ignoreColumns: {
       type: Array,
       default: () => { return [] }
-    },
-    visible: {
-      type: Boolean,
-      default: () => { return true }
     }
   },
   data() {

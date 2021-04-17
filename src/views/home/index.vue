@@ -1,4 +1,8 @@
-<template></template>
+<template>
+  <div class="dashboard-container">
+
+  </div>
+</template>
 
 <script>
 import api from "@/api/test";

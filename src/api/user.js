@@ -31,11 +31,11 @@ export function logout() {
   })
 }
 
-export function register(data) {
+export function register(params) {
   return request({
     url: '/api/register',
     method: 'post',
-    data,
+    params,
   })
 }
 
@@ -51,6 +51,22 @@ export function forgetPassword(params) {
   return request({
     url: '/api/forgetPassword',
     method: 'post',
+    params
+  })
+}
+
+export function loginByGithub(params) {
+  return request({
+    url: '/api/callback',
+    method: 'get',
+    params
+  })
+}
+
+export function additional(params) {
+  return request({
+    url: '/api/password-phone',
+    method: 'put',
     params
   })
 }

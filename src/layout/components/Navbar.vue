@@ -7,11 +7,11 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="../..//assets/image/avatar.png" class="user-avatar">
+          <img src="../../assets/image/avatar.png" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
+          <router-link to="/user/center">
             <el-dropdown-item>
               个人中心
             </el-dropdown-item>

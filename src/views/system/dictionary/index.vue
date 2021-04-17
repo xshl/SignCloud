@@ -22,7 +22,7 @@
         <el-form-item label="英文标识" prop="englishName">
           <el-input v-model="form.englishName" style="width: 370px" />
         </el-form-item>
-        <el-form-item label="描述">
+        <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" style="width: 370px" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">

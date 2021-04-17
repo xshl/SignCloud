@@ -47,7 +47,7 @@
           </el-form-item>
           <div class="login-checkbox">
             <el-checkbox
-              v-model="loginByAccountForm.rememberMe"
+              v-model="rememberMe"
               style="margin: 0 0 25px 0"
             >
               自动登录
@@ -61,7 +61,6 @@
               >忘记密码？</a
             >
           </div>
-
           <el-form-item style="width: 100%">
             <el-button
               :loading="loading"
@@ -130,14 +129,20 @@
         </el-form>
       </el-tab-pane>
     </el-tabs>
+    <el-divider content-position="center">第三方登录</el-divider>
+    <div class="third" @click="loginByGithub">
+      <div class="third-icon">
+        <img src="../../assets/image/github.png" width="50px"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { validPhone } from "@/utils/validate";
-import Qs from 'qs'
-import { getCode, loginByPhone } from "@/api/user"
-import { validPhoneNumber } from './passport'
+import Qs from "qs";
+import { getCode, loginByPhone, loginByGithub } from "@/api/user";
+import { validPhoneNumber } from "./passport";
 
 export default {
   data() {
@@ -146,8 +151,8 @@ export default {
       loginByAccountForm: {
         phone: "",
         password: "",
-        rememberMe: false,
       },
+      rememberMe: false,
       loginByAccountRules: {
         phone: [{ required: true, message: "请输入账号", trigger: "blur" }],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }],
@@ -161,7 +166,9 @@ export default {
           { required: true, message: "请输入手机号", trigger: "blur" },
           { validator: validPhone, trigger: "blur" },
         ],
-        verificationCode: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+        verificationCode: [
+          { required: true, message: "请输入验证码", trigger: "blur" },
+        ],
       },
       loading: false,
       passwordType: "password",
@@ -252,9 +259,13 @@ export default {
             this.$message.error(res.message);
           });
       } else {
+        this.$message.error("手机号码格式错误")
         console.log("手机号码格式错误");
       }
     },
+    loginByGithub() {
+      window.location.href = 'https://github.com/login/oauth/authorize?client_id=f733d49acafb50cac307&state=STATE&redirect_uri=http://localhost:8080/callback'
+    }
   },
 };
 </script>
@@ -262,9 +273,6 @@ export default {
 <style>
 .login-container {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 .login-tabs {
   display: flex;
@@ -283,7 +291,23 @@ export default {
 .login-checkbox label {
   margin: 0px 0px 15px;
 }
-
+.third {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.third-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  border: #ccc 1px solid;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
 .el-tabs--card > .el-tabs__header {
   width: 100%;
 }
@@ -292,5 +316,8 @@ export default {
 }
 .el-button {
   padding: 12px 12px;
+}
+.el-divider__text {
+  color: #aaa;
 }
 </style>
