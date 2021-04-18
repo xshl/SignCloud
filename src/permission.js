@@ -8,7 +8,7 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/login/register', '/login/forgetPassword'] // no redirect whitelist
+const whiteList = ['/login', '/login/register', '/login/forgetPassword', '/additional', '/callback', '/404', '/403', '/500'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -21,8 +21,8 @@ router.beforeEach(async(to, from, next) => {
   const hasToken = getToken()
 
   if (hasToken) {
-    if(0){
-    // if (to.path === '/login' || to.path == '/login/register' || to.path == '/login/forgetPassword') {
+    // if(0){
+    if (to.path === '/login' || to.path == '/login/register' || to.path == '/login/forgetPassword') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
@@ -48,8 +48,8 @@ router.beforeEach(async(to, from, next) => {
   } else {
     /* has no token*/
 
-    if(1) {
-    // if (whiteList.indexOf(to.path) !== -1) {
+    // if(1) {
+    if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()
     } else {

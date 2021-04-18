@@ -130,6 +130,7 @@ function CRUD(options) {
         crud.loading = true
         // 请求数据
         initData(crud.url, crud.getQueryParams()).then(data => {
+          console.log('data', data)
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
@@ -335,9 +336,8 @@ function CRUD(options) {
         if (crud.params[item] === null || crud.params[item] === '') crud.params[item] = undefined
       })
       return {
-        page: crud.page.page - 1,
-        size: crud.page.size,
-        sort: crud.sort,
+        pageNum: crud.page.page - 1,
+        pageSize: crud.page.size,
         ...crud.query,
         ...crud.params
       }
@@ -404,6 +404,7 @@ function CRUD(options) {
     resetDataStatus() {
       const dataStatus = {}
       function resetStatus(datas) {
+        // console.log(datas)
         datas.forEach(e => {
           dataStatus[crud.getDataId(e)] = {
             delete: 0,

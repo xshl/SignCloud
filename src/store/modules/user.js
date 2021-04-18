@@ -1,5 +1,5 @@
 import { login, logout, getInfo, loginByPhone, register } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setSessionToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -32,17 +32,29 @@ const mutations = {
 }
 
 const actions = {
-  // user login
-  login({ commit }, userInfo) {
+
+  /**
+   * 账号密码登录
+   * @param {*} param0 
+   * @param {*} userInfo 
+   * @returns 
+   */
+  loginByPwd({ commit }, userInfo) {
     console.log(userInfo)
     return new Promise((resolve, reject) => {
       login(userInfo).then(response => {
         console.log(response)
-        commit('SET_TOKEN', response.data[0])
-        // commit('SET_NAME', name)
+        const data = response.data
+        commit('SET_TOKEN', data.token)
+        // console.log('name', data.userInfo.username)
+        commit('SET_NAME', data.userInfo.username)
         // commit('SET_AVATAR', avatar)
-        console.log(response.data.token)
-        setToken(response.data.token)
+        console.log(data.token)
+        if (userInfo.rememberMe == true) {
+          setToken(data.token)
+        } else {
+          setSessionToken(data.token)
+        }
         resolve()
       }).catch(error => {
         reject(error)
@@ -50,29 +62,36 @@ const actions = {
     })
   },
 
-
-  // get user info
-  getInfo({ commit, state }) {
+  /**
+   * 手机号码登录
+   * @param {*} param0 
+   * @param {*} userInfo 
+   * @returns 
+   */
+  loginByPhone({ commit }, userInfo) {
+    console.log(userInfo)
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          return reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
+      loginByPhone(userInfo).then(response => {
+        console.log(response)
+        const data = response.data
+        commit('SET_TOKEN', data.token)
+        // console.log('name', data.userInfo.username)
+        commit('SET_NAME', data.userInfo.username)
+        // commit('SET_AVATAR', avatar)
+        console.log(data.token)
+        setSessionToken(data.token)
+        resolve()
       }).catch(error => {
         reject(error)
       })
     })
   },
 
-  // user logout
+  /**
+   * 用户退出登录
+   * @param {*} param0 
+   * @returns 
+   */
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
@@ -86,15 +105,39 @@ const actions = {
     })
   },
 
-  // remove token
+  /**
+   * 移除token
+   * @param {*} param0 
+   * @returns 
+   */
   resetToken({ commit }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
       resolve()
     })
+  },
+
+  /**
+   * GitHub登录
+   * @param {*} param0 
+   * @returns 
+   */
+  loginByGithub({ commit }, data) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', data.token)
+      // console.log('name', data.userInfo.username)
+      commit('SET_NAME', data.userInfo.username)
+      // commit('SET_AVATAR', avatar)
+      console.log(data.token)
+      setSessionToken(data.token)                                                                                                                 
+      resolve()
+    })
   }
+
 }
+
+
 
 export default {
   namespaced: true,

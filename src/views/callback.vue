@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-      <img src="../assets/image/success.png" width="300px" />
-      <h1>授权成功，正在跳转...</h1>
-      </div>
+    <img src="../assets/image/success.png" width="300px" />
+    <h1>授权成功，正在跳转...</h1>
+  </div>
 </template>
 
 <script>
@@ -21,6 +21,15 @@ export default {
         });
       } else {
         console.log("跳转到首页");
+        this.$store
+          .dispatch("user/loginByGithub", res.data)
+          .then(() => {
+            this.$router.push({ path: this.redirect || "/" });
+            this.loading = false;
+          })
+          .catch(() => {
+            this.loading = false;
+          });
       }
     });
   },

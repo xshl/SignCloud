@@ -7,7 +7,7 @@
         simple
         process-status="finish"
         align-center
-        style="padding-left: 86px"
+        style="padding-left: 86px; width: 100%"
       >
         <el-step title="绑定手机号" icon="el-icon-mobile-phone"></el-step>
         <el-step title="设置密码" icon="el-icon-lock"></el-step>
@@ -93,7 +93,7 @@
           </el-input>
         </el-form-item>
         <el-form-item style="width: 100%">
-        <el-button
+          <el-button
             size="medium"
             type="primary"
             style="width: 100%"
@@ -119,11 +119,11 @@
 
 <script>
 import { validPhone, validPassword } from "@/utils/validate";
-import { validPhoneNumber } from './login/passport'
-import { getCode, additional } from "@/api/user"
+import { validPhoneNumber } from "./login/passport";
+import { getCode, additional } from "@/api/user";
 export default {
   data() {
-      var validConfirmps = (rule, value, callback) => {
+    var validConfirmps = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请再次输入密码"));
       } else if (value !== this.form.password) {
@@ -194,12 +194,12 @@ export default {
             this.$message.error(res.message);
           });
       } else {
-        this.$message.error("手机号码格式错误")
+        this.$message.error("手机号码格式错误");
         console.log("手机号码格式错误");
       }
     },
     before() {
-        this.active = 0;
+      this.active = 0;
     },
     next() {
       this.active = 1;
@@ -209,13 +209,22 @@ export default {
         phone: this.form.phone,
         githubId: this.$route.query.githubId,
         verificationCode: this.form.verificationCode,
-        password: this.form.password
-      }
-        console.log('完善信息完成')
-        additional(params).then((res) => {
-          console.log('res', res)
-        })
-    }
+        password: this.form.password,
+      };
+      console.log("完善信息完成");
+      additional(params).then((res) => {
+        console.log("res", res);
+        this.$store
+          .dispatch("user/loginByGithub", res.data)
+          .then(() => {
+            this.$router.push({ path: this.redirect || "/" });
+            this.loading = false;
+          })
+          .catch(() => {
+            this.loading = false;
+          });
+      });
+    },
   },
 };
 </script>
@@ -235,7 +244,6 @@ export default {
   border-radius: 10px;
 }
 .form {
-  padding: 20px 0px 5px 0px;
   margin: auto;
   width: 70%;
 }

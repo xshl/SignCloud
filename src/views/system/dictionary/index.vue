@@ -183,7 +183,7 @@ export default {
   },
   cruds() {
     return [
-      CRUD({ title: "字典", url: "api/dict", crudMethod: { ...crudDict } }),
+      CRUD({ title: "字典", url: "/api/dictionary-types", crudMethod: { ...crudDict } }),
     ];
   },
   mixins: [presenter(), header(), form(defaultForm)],

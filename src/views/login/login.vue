@@ -47,7 +47,7 @@
           </el-form-item>
           <div class="login-checkbox">
             <el-checkbox
-              v-model="rememberMe"
+              v-model="loginByAccountForm.rememberMe"
               style="margin: 0 0 25px 0"
             >
               自动登录
@@ -151,8 +151,8 @@ export default {
       loginByAccountForm: {
         phone: "",
         password: "",
+        rememberMe: false,
       },
-      rememberMe: false,
       loginByAccountRules: {
         phone: [{ required: true, message: "请输入账号", trigger: "blur" }],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }],
@@ -189,10 +189,9 @@ export default {
     LoginByAccount() {
       this.$refs.loginByAccountForm.validate((valid) => {
         if (valid) {
-          this.loginByAccountForm.rememberMe = true;
           this.loading = true;
           this.$store
-            .dispatch("user/login", this.loginByAccountForm)
+            .dispatch("user/loginByPwd", this.loginByAccountForm)
             .then(() => {
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;
@@ -211,14 +210,13 @@ export default {
       this.$refs.loginByPhoneForm.validate((valid) => {
         if (valid) {
           this.loading = true;
-          loginByPhone(this.loginByPhoneForm)
-            .then((response) => {
-              console.log(response);
+          this.$store
+            .dispatch("user/loginByPhone", this.loginByPhoneForm)
+            .then(() => {
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;
             })
-            .catch((error) => {
-              console.log(error);
+            .catch(() => {
               this.loading = false;
             });
         } else {

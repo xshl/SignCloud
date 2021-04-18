@@ -1,6 +1,8 @@
 <template>
-  <div>
-      个人中心
+  <div class="conatiner">
+    <el-card class="content">
+      <img src="../../assets/image/avatar.png" width="80px"/>
+    </el-card>
   </div>
 </template>
 

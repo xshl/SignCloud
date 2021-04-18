@@ -10,7 +10,7 @@ export function login(params) {
 
 export function loginByPhone(params) {
   return request({
-    url: '/api/LoginByVerificationCode',
+    url: '/api/loginByVerificationCode',
     method: 'post',
     params
   })
