@@ -19,20 +19,11 @@
         <el-form-item label="中文标识" prop="name">
           <el-input v-model="form.name" style="width: 370px" />
         </el-form-item>
-        <el-form-item label="英文标识" prop="englishName">
-          <el-input v-model="form.englishName" style="width: 370px" />
+        <el-form-item label="英文标识" prop="code">
+          <el-input v-model="form.code" style="width: 370px" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" style="width: 370px" />
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number
-            v-model.number="form.sort"
-            :min="0"
-            :max="999"
-            controls-position="right"
-            style="width: 370px"
-          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -91,18 +82,13 @@
             />
             <el-table-column
               :show-overflow-tooltip="true"
-              prop="englishName"
+              prop="code"
               label="英文标识"
             />
             <el-table-column
               :show-overflow-tooltip="true"
               prop="description"
               label="描述"
-            />
-            <el-table-column
-              :show-overflow-tooltip="true"
-              prop="sort"
-              label="排序"
             />
             <el-table-column
               label="操作"
@@ -127,7 +113,7 @@
             <span>字典详情</span>
             <el-button
               v-if="
-                this.$refs.dictDetail && this.$refs.dictDetail.query.dictName
+                this.$refs.dictDetail && this.$refs.dictDetail.query.dicTypeId
               "
               class="filter-item"
               size="mini"
@@ -167,8 +153,7 @@ const defaultForm = {
   id: null,
   name: null,
   description: null,
-  englishName: null,
-  sort: 999,
+  code: null,
   dictDetails: [],
 };
 
@@ -191,17 +176,14 @@ export default {
     return {
       queryTypeOptions: [
         { key: "name", display_name: "中文标识" },
-        { key: "englishName", display_name: "英文标识" },
+        { key: "code", display_name: "英文标识" },
         { key: "description", display_name: "描述" },
       ],
       rules: {
         name: [{ required: true, message: "请输入中文标识", trigger: "blur" }],
-        englishName: [
+        code: [
           { required: true, message: "请输入英文标识", trigger: "blur" },
-        ],
-        sort: [
-          { required: true, message: "请输入英文标识", trigger: "blur" },
-        ],
+        ]
       },
       permission: {
         add: ["admin", "dict:add"],
@@ -221,7 +203,7 @@ export default {
     // 选中字典后，设置字典详情数据
     handleCurrentChange(val) {
       if (val) {
-        this.$refs.dictDetail.query.dictName = val.name;
+        this.$refs.dictDetail.query.dicTypeId = val.id;
         this.$refs.dictDetail.dictId = val.id;
         this.$refs.dictDetail.crud.toQuery();
       }

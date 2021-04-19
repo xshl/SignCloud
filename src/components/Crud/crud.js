@@ -129,8 +129,9 @@ function CRUD(options) {
       return new Promise((resolve, reject) => {
         crud.loading = true
         // 请求数据
-        initData(crud.url, crud.getQueryParams()).then(data => {
-          console.log('data', data)
+        initData(crud.url, crud.getQueryParams()).then(res => {
+          console.log('data', res.data)
+          const data = res.data
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
@@ -138,6 +139,7 @@ function CRUD(options) {
           }
           crud.page.total = data.totalElements
           crud.data = data.content
+          console.log('content', crud.data)
           crud.resetDataStatus()
           // time 毫秒后显示表格
           setTimeout(() => {
@@ -256,6 +258,7 @@ function CRUD(options) {
       }
       crud.status.add = CRUD.STATUS.PROCESSING
       console.log('form', crud.form)
+      console.log('method', crud.crudMethod)
       crud.crudMethod.add(crud.form).then(() => {
         crud.status.add = CRUD.STATUS.NORMAL
         crud.resetForm()
@@ -277,7 +280,7 @@ function CRUD(options) {
       crud.status.edit = CRUD.STATUS.PROCESSING
       crud.crudMethod.edit(crud.form).then(() => {
         crud.status.edit = CRUD.STATUS.NORMAL
-        crud.getDataStatus(crud.getDataId(crud.form)).edit = CRUD.STATUS.NORMAL
+             crud.getDataStatus(crud.getDataId(crud.form)).edit = CRUD.STATUS.NORMAL
         crud.editSuccessNotify()
         crud.resetForm()
         callVmHook(crud, CRUD.HOOK.afterSubmit)

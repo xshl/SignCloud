@@ -7,7 +7,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="../../assets/image/avatar.png" class="user-avatar">
+          <img :src="avatar ? avatar: defaultAvatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -32,11 +32,17 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import defaultAvatar from '@/assets/image/avatar.png'
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+  },
+  data() {
+    return {
+      defaultAvatar: defaultAvatar
+    }
   },
   computed: {
     ...mapGetters([
