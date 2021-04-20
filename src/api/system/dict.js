@@ -7,11 +7,11 @@ export function getDicts() {
   })
 }
 
-export function edit(params) {
+export function edit(data) {
   return request({
     url: '/api/dictionary-types',
     method: 'put',
-    params
+    data
   })
 }
 
@@ -23,13 +23,11 @@ export function add(params) {
   })
 }
 
-export function del(id) {
+export function del(ids) {
+  console.log('ids', ids)
   return request({
-    url: '/api/dictionary-types',
+    url: '/api/dictionary-types/batch?dicTypeIds=' + ids ,
     method: 'delete',
-    params: {
-      dicTypeId: 9
-    }
   })
 }
 

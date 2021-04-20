@@ -2,15 +2,15 @@ import request from '@/utils/request'
 
 export function getParams(params) {
   return request({
-    url: 'api/params',
+    url: '/api/params',
     method: 'get',
     params
   })
 }
 
-export function editParams(data) {
+export function edit(data) {
   return request({
-    url: 'api/params',
+    url: '/api/params',
     method: 'put',
     data
   })
@@ -18,4 +18,4 @@ export function editParams(data) {
 
 
 
-export default { getParams, editParams }
+export default { getParams, edit }

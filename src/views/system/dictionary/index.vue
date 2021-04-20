@@ -22,8 +22,8 @@
         <el-form-item label="英文标识" prop="code">
           <el-input v-model="form.code" style="width: 370px" />
         </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" style="width: 370px" />
+        <el-form-item label="状态" prop="status">
+          <el-switch v-model="form.status" :active-value="1" :inactive-value="0"></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -55,7 +55,7 @@
                 v-model="query.blurry"
                 clearable
                 size="small"
-                placeholder="输入名称或者描述搜索"
+                placeholder="输入中英文标识搜索"
                 style="width: 200px"
                 class="filter-item"
                 @keyup.enter.native="crud.toQuery"
@@ -86,10 +86,18 @@
               label="英文标识"
             />
             <el-table-column
-              :show-overflow-tooltip="true"
-              prop="description"
-              label="描述"
-            />
+              prop="status"
+              label="状态"
+            >
+             <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.status"
+              :active-value="1"
+              :inactive-value="0"
+              @change="dicStatusChange(scope.row, scope.row.status)"
+            ></el-switch>
+          </template>
+            </el-table-column>
             <el-table-column
               label="操作"
               width="130px"
@@ -204,10 +212,18 @@ export default {
     handleCurrentChange(val) {
       if (val) {
         this.$refs.dictDetail.query.dicTypeId = val.id;
-        this.$refs.dictDetail.dictId = val.id;
+        this.$refs.dictDetail.dictionaryType = val;
         this.$refs.dictDetail.crud.toQuery();
       }
     },
+    dicStatusChange(data, val) {
+      crudDict.edit(data).then((res) => {
+        this.$notify({
+          title: res.data,
+          type: 'success'
+        });
+      })
+    }
   },
 };
 </script>

@@ -26,21 +26,19 @@ export function getDictMap(dictName) {
   })
 }
 
-export function add(params) {
+export function add(data) {
+  console.log('data', data)
   return request({
     url: '/api/dictionary-details',
     method: 'post',
-    params
+    data
   })
 }
 
 export function del(id) {
   return request({
-    url: '/api/dictDetail/',
+    url: '/api/dictionary-details/batch?dicDetailIds=' + id,
     method: 'delete',
-    params: {
-      dicTypeId: id
-    }
   })
 }
 
