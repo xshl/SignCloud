@@ -2,10 +2,18 @@
   <div class="app-container">
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
-        <el-input v-model="query.blurry" clearable size="samll" placeholder="模糊搜索" style="width: 200px" class="filter-item" @keyup.enter.native="crud.toQuery"></el-input>
+        <el-input
+          v-model="query.blurry"
+          clearable
+          size="samll"
+          placeholder="模糊搜索"
+          style="width: 200px"
+          class="filter-item"
+          @keyup.enter.native="crud.toQuery"
+        ></el-input>
         <rrOperation />
       </div>
-      <crudOperation :permission="permission"/>
+      <crudOperation :permission="permission" />
     </div>
     <!-- 签到参数设置表单组件 -->
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
@@ -89,51 +97,74 @@
     <!-- 参数列表 -->
     <el-tabs v-model="activeName" class="tabs">
       <el-tab-pane name="first" label="签到参数设置">
-        <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;">
-        <el-table-column prop="value2" label="签到允许距离范围(m)" align="center"/>
-        <el-table-column prop="value1" label="每次签到经验值" align="center"/>
-        <el-table-column prop="value3" label="一节课时间" align="center"/>
-        <el-table-column prop="updateTime" label="更新时间" align="center"/>
-        <el-table-column prop="user.username" label="操作者" align="center"/>
-        <!-- <el-table-column prop="status" label="状态" align="center"/> -->
-        <el-table-column label="操作" width="130px" align="center" fixed="right">
-        <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
-          <template slot-scope="scope">
-            <udOperation
-              :data="scope.row"
-              :permission="permission"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
-      <!--分页组件-->
-      <pagination />
+        <el-table
+          ref="table"
+          v-loading="crud.loading"
+          :data="crud.data"
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="value2"
+            label="签到允许距离范围(m)"
+            align="center"
+          />
+          <el-table-column
+            prop="value1"
+            label="每次签到经验值"
+            align="center"
+          />
+          <el-table-column prop="value3" label="一节课时间" align="center" />
+          <el-table-column prop="updateTime" label="更新时间" align="center" />
+          <el-table-column prop="user.username" label="操作者" align="center" />
+          <!-- <el-table-column prop="status" label="状态" align="center"/> -->
+          <el-table-column
+            label="操作"
+            width="130px"
+            align="center"
+            fixed="right"
+          >
+            <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
+            <template slot-scope="scope">
+              <udOperation :data="scope.row" :permission="permission" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <!--分页组件-->
+        <pagination />
       </el-tab-pane>
       <el-tab-pane name="second" label="出勤等级设置">
-        <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;">
-        <el-table-column prop="name" label="字典标签" />
-        <el-table-column prop="value" label="字典值" />
-        <el-table-column prop="defaultValue" label="默认值" />
-        <el-table-column prop="sort" label="排序" />
-        <el-table-column prop="status" label="状态" />
-        <el-table-column label="操作" width="130px" align="center" fixed="right">
-        <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
-          <template slot-scope="scope">
-            <udOperation
-              :data="scope.row"
-              :permission="permission"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
-      <!--分页组件-->
-      <pagination />
+        <el-table
+          ref="table"
+          v-loading="crud.loading"
+          :data="crud.data"
+          style="width: 100%"
+        >
+          <el-table-column prop="name" label="字典标签" />
+          <el-table-column prop="value" label="字典值" />
+          <el-table-column prop="defaultValue" label="默认值" />
+          <el-table-column prop="sort" label="排序" />
+          <el-table-column prop="status" label="状态" />
+          <el-table-column
+            label="操作"
+            width="130px"
+            align="center"
+            fixed="right"
+          >
+            <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
+            <template slot-scope="scope">
+              <udOperation :data="scope.row" :permission="permission" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <!--分页组件-->
+        <pagination />
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import crudParams from "@/api/system/param";
 import CRUD, { presenter, header, form } from "@/components/Crud/crud";
 import crudOperation from "@/components/Crud/CRUD.operation";
@@ -167,7 +198,22 @@ export default {
       ];
     }
   },
-  mixins: [presenter(), header(), form(defaultForm)],
+  computed: {
+    ...mapGetters([
+          'phone'
+        ])
+  },
+  mixins: [presenter(), header(), 
+  form(function () {
+      return Object.assign(
+        { 
+          user: {
+            phone
+          }
+        },
+        defaultForm
+      );
+    }),],
   data() {
     return {
       queryTypeOptions: [
@@ -224,5 +270,4 @@ export default {
 </script>
 
 <style>
-
 </style>
