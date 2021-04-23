@@ -2,6 +2,8 @@ import { initData } from '@/api/data'
 import { parseTime } from '@/utils/index'
 import Vue from 'vue'
 
+let Base64 = require("js-base64").Base64
+
 /**
  * CRUD配置
  * @author moxun
@@ -30,17 +32,17 @@ function CRUD(options) {
     // Form 表单
     form: {},
     // 重置表单
-    defaultForm: () => {},
+    defaultForm: () => { },
     // 排序规则，默认 id 降序， 支持多字段排序 ['id,desc', 'createTime,asc']
     sort: ['id,desc'],
     // 等待时间
     time: 50,
     // CRUD Method
     crudMethod: {
-      add: (form) => {},
-      del: (id) => {},
-      edit: (form) => {},
-      get: (id) => {}
+      add: (form) => { },
+      del: (id) => { },
+      edit: (form) => { },
+      get: (id) => { }
     },
     // 主页操作栏显示哪些按钮
     optShow: {
@@ -138,7 +140,7 @@ function CRUD(options) {
             table.store.states.lazyTreeNodeMap = {}
           }
           crud.page.total = data.totalElements
-          crud.data = data.content
+          crud.data = data
           console.log('content', crud.data)
           crud.resetDataStatus()
           // time 毫秒后显示表格
@@ -257,8 +259,7 @@ function CRUD(options) {
         return
       }
       crud.status.add = CRUD.STATUS.PROCESSING
-      console.log('form', crud.form)
-      console.log('method', crud.crudMethod)
+      console.log('addform', crud.form)
       crud.crudMethod.add(crud.form).then(() => {
         crud.status.add = CRUD.STATUS.NORMAL
         crud.resetForm()
@@ -330,7 +331,7 @@ function CRUD(options) {
     /**
      * 获取查询参数
      */
-    getQueryParams: function() {
+    getQueryParams: function () {
       // 清除参数无值的情况
       Object.keys(crud.query).length !== 0 && Object.keys(crud.query).forEach(item => {
         if (crud.query[item] === null || crud.query[item] === '') crud.query[item] = undefined

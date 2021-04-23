@@ -115,7 +115,7 @@
           />
           <el-table-column prop="value3" label="一节课时间" align="center" />
           <el-table-column prop="updateTime" label="更新时间" align="center" />
-          <el-table-column prop="user.username" label="操作者" align="center" />
+          <!-- <el-table-column prop="user.username" label="操作者" align="center" /> -->
           <!-- <el-table-column prop="status" label="状态" align="center"/> -->
           <el-table-column
             label="操作"
@@ -164,7 +164,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 import crudParams from "@/api/system/param";
 import CRUD, { presenter, header, form } from "@/components/Crud/crud";
 import crudOperation from "@/components/Crud/CRUD.operation";
@@ -190,30 +190,26 @@ export default {
   cruds() {
     if (this.activeName == "first") {
       return [
-        CRUD({ title: "签到参数", url: "/api/params", crudMethod: { ...crudParams } }),
+        CRUD({
+          title: "签到参数",
+          url: "/api/params",
+          crudMethod: { ...crudParams },
+        }),
       ];
     } else {
       return [
-        CRUD({ title: "签到参数", url: "/api/params", crudMethod: { ...crudParams } }),
+        CRUD({
+          title: "签到参数",
+          url: "/api/params",
+          crudMethod: { ...crudParams },
+        }),
       ];
     }
   },
   computed: {
-    ...mapGetters([
-          'phone'
-        ])
+    ...mapGetters(["phone"]),
   },
-  mixins: [presenter(), header(), 
-  form(function () {
-      return Object.assign(
-        { 
-          user: {
-            phone
-          }
-        },
-        defaultForm
-      );
-    }),],
+  mixins: [presenter(), header(), form(defaultForm)],
   data() {
     return {
       queryTypeOptions: [
@@ -223,9 +219,7 @@ export default {
       ],
       rules: {
         name: [{ required: true, message: "请输入中文标识", trigger: "blur" }],
-        code: [
-          { required: true, message: "请输入英文标识", trigger: "blur" },
-        ]
+        code: [{ required: true, message: "请输入英文标识", trigger: "blur" }],
       },
       permission: {
         add: ["admin", "dict:add"],
@@ -263,9 +257,7 @@ export default {
       activeName: "first",
     };
   },
-  methods: {
-    
-  },
+  methods: {},
 };
 </script>
 

@@ -93,7 +93,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="sort" label="排序" />
+        <el-table-column prop="sort" label="排序"  sortable/>
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <el-switch
