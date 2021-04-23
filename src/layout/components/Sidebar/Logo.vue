@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: 'SignClound后台管理系统',
+      title: 'SignCloud后台管理系统',
       logo: require("@/assets/image/logo.png")
     }
   }

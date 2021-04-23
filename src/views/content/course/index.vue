@@ -33,20 +33,19 @@
         size="small"
         label-width="80px"
       >
-        <el-form-item label="头像" prop="avatar">
+        <el-form-item label="课程封面" prop="cover">
           <el-upload
             class="avatar-uploader"
             action="#"
             :http-request="upload"
             :before-upload="beforeUp"
+            :on-success="handleSuccess"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <img v-else-if="this.form.cover" :src="this.form.cover" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <img v-if="imageUrl && crud.status.add > 0" :src="imageUrl" class="avatar" />
+            <i v-else-if="crud.status.add > 0" class="el-icon-plus avatar-uploader-icon"></i>
+            <img v-else-if="crud.status.edit > 0 && this.form.cover" :src="this.form.cover" class="avatar"/>
+            <img v-else-if="crud.status.edit > 0" src="/assets/image/cloud.png" class="avatar"/>
           </el-upload>
-        </el-form-item>
-        <el-form-item label="课程编号" prop="id">
-          <el-input v-model="form.id" />
         </el-form-item>
         <el-form-item label="课程名称" prop="name">
           <el-input v-model="form.name" />
@@ -54,23 +53,23 @@
         <el-form-item label="年级" prop="grade">
           <el-input v-model="form.grade" />
         </el-form-item>
-        <el-form-item label="所属学期" prop="">
+        <el-form-item label="所属学期" prop="semester">
           <el-input v-model="form.semester" />
         </el-form-item>
-        <el-form-item label="院系" prop="school">
-          <el-input v-model="form.school" />
+        <el-form-item label="院系" prop="college">
+          <el-input v-model="form.college" />
         </el-form-item>
         <el-form-item label="任课老师" prop="teacher">
           <el-input v-model="form.teacher" />
         </el-form-item>
-        <el-form-item label="学习要求" prop="requirements">
-          <el-input v-model="form.requirements" />
+        <el-form-item label="学习要求" prop="learnRequire">
+          <el-input v-model="form.learnRequire" />
         </el-form-item>
-        <el-form-item label="教学进度" prop="requirements">
-          <el-input v-model="form.requirements" />
+        <el-form-item label="教学进度" prop="teachProgress">
+          <el-input v-model="form.teachProgress" />
         </el-form-item>
-        <el-form-item label="考试安排" prop="requirements">
-          <el-input v-model="form.requirements" />
+        <el-form-item label="考试安排" prop="examArrange">
+          <el-input v-model="form.examArrange" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -86,19 +85,56 @@
     <!-- 参数列表 -->
     <el-table
       ref="table"
+      :max-height="windowHeight * 0.69"
       v-loading="crud.loading"
       :data="crud.data"
       style="width: 100%"
     >
+    <el-table-column type="expand">
+      <template slot-scope="scope">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="课程封面">
+            <img :src="scope.row.cover" class="avatar"/>
+          </el-form-item>
+          <el-form-item label="课程名称">
+            <span>{{ scope.row.name }}</span>
+          </el-form-item>
+          <el-form-item label="课程编号">
+            <span>{{ scope.row.id }}</span>
+          </el-form-item>
+          <el-form-item label="年级">
+            <span>{{ scope.row.grade }}</span>
+          </el-form-item>
+          <el-form-item label="所属学期">
+            <span>{{ scope.row.semester }}</span>
+          </el-form-item>
+          <el-form-item label="院系">
+            <span>{{ scope.row.college }}</span>
+          </el-form-item>
+          <el-form-item label="学习要求">
+            <span>{{ scope.row.learnRequire }}</span>
+          </el-form-item>
+          <el-form-item label="教学进度">
+            <span>{{ scope.row.teachProgress }}</span>
+          </el-form-item>
+          <el-form-item label="考试安排">
+            <span>{{ scope.row.examArrange }}</span>
+          </el-form-item>
+          <!-- <el-form-item label="课程二维码">
+            <img v-if="scope.raw.qrcode" :src="scope.raw.qrcode" class="avatar"/>
+          </el-form-item> -->
+        </el-form>
+      </template>
+      </el-table-column>
       <el-table-column
-        prop="value2"
-        label="签到允许距离范围(m)"
+        prop="id"
+        label="课程编号"
         align="center"
       />
-      <el-table-column prop="value1" label="每次签到经验值" align="center" />
-      <el-table-column prop="value3" label="一节课时间" align="center" />
-      <el-table-column prop="updateTime" label="更新时间" align="center" />
-      <el-table-column prop="user.username" label="操作者" align="center" />
+      <el-table-column prop="name" label="课程名称" align="center" />
+      <el-table-column prop="grade" label="年级" align="center" />
+      <el-table-column prop="semester" label="所属学期" align="center" />
+      <el-table-column prop="teacher" label="任课教师" align="center" />
       <!-- <el-table-column prop="status" label="状态" align="center"/> -->
       <el-table-column label="操作" width="130px" align="center" fixed="right">
         <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
@@ -121,7 +157,7 @@ import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
 
-let Base64 = require("js-base64").Base64
+let Base64 = require("js-base64").Base64;
 
 const defaultForm = {
   id: 0,
@@ -163,6 +199,7 @@ export default {
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
     return {
+      windowHeight: document.documentElement.clientHeight,   //实时屏幕高度
       imageUrl: "",
       queryTypeOptions: [
         { key: "name", display_name: "中文标识" },
@@ -212,25 +249,33 @@ export default {
   methods: {
     beforeUp(file) {
       console.log(file);
-      var reader = new FileReader()
-      reader.readAsDataURL(file)
-      var that = this
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      var that = this;
       reader.onload = function (e) {
-        that.imageUrl = e.target.result
+        that.imageUrl = e.target.result;
         // that.form.cover = imgcode
         // console.log('form', that.form.cover)
-      }
+      };
+    },
+    handleSuccess(response, file, fileList) {
+      this.$refs.upload.clearFiles()
+      this.crud.resetForm()
+      this.crud.toQuery()
     },
     upload(file) {
-      console.log("file", file);
-      var that = this
-      var reader = new FileReader()
-      reader.readAsDataURL(file.file)
-      reader.onload = function (e) {
-        var imgcode = e.target.result
-        that.form.cover = imgcode
-        console.log('form', that.form.cover)
-      }
+      console.log("file", file.file);
+      // this.form.cover = file.file
+      var formData = new FormData(this.form)
+      formData.append("data", file.file)
+      // var that = this;
+      // var reader = new FileReader();
+      // reader.readAsDataURL(file.file);
+      // reader.onload = function (e) {
+      //   var imgcode = e.target.result;
+      //   that.form.cover = imgcode;
+      //   console.log("form", that.form.cover);
+      // };
       // this.imageUrl = URL.createObjectURL(file.raw);
       // // this.form.cover = "1111";
       // var image = base64ImgtoFile(this.form.cover)
@@ -259,14 +304,26 @@ export default {
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
   text-align: center;
 }
 .avatar {
-  width: 178px;
-  height: 178px;
+  width: 40px;
+  height: 40px;
   display: block;
+}
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
 }
 </style>
