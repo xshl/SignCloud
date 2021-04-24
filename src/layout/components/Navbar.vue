@@ -33,6 +33,7 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import defaultAvatar from '@/assets/image/avatar.png'
+import user from '@/utils/userStore'
 
 export default {
   components: {
@@ -41,13 +42,13 @@ export default {
   },
   data() {
     return {
-      defaultAvatar: defaultAvatar
+      defaultAvatar: defaultAvatar,
+      avatar: user.getAvatar()
     }
   },
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
     ])
   },
   methods: {

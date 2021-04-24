@@ -15,7 +15,6 @@
       </div>
       <crudOperation :permission="permission" />
     </div>
-    <!-- 签到参数设置表单组件 -->
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
     <el-dialog
       append-to-body
@@ -24,27 +23,38 @@
       :visible="crud.status.cu > 0"
       :title="crud.status.title"
       width="500px"
-      v-if="activeName == 'first'"
     >
       <el-form
         ref="form"
         :model="form"
-        :rules="paramRules"
+        :rules="rules"
         size="small"
         label-width="80px"
       >
         <el-form-item label="课程封面" prop="cover">
           <el-upload
             class="avatar-uploader"
+            ref="upload"
+            :show-file-list="false"
             action="#"
-            :http-request="upload"
             :before-upload="beforeUp"
             :on-success="handleSuccess"
+            :on-change="handleChange"
           >
-            <img v-if="imageUrl && crud.status.add > 0" :src="imageUrl" class="avatar" />
-            <i v-else-if="crud.status.add > 0" class="el-icon-plus avatar-uploader-icon"></i>
-            <img v-else-if="crud.status.edit > 0 && this.form.cover" :src="this.form.cover" class="avatar"/>
-            <img v-else-if="crud.status.edit > 0" src="/assets/image/cloud.png" class="avatar"/>
+            <img
+              v-if="imageUrl && crud.status.add > 0"
+              :src="imageUrl"
+              class="avatar"
+            />
+            <i
+              v-else-if="crud.status.add > 0"
+              class="el-icon-plus avatar-uploader-icon"
+            ></i>
+            <img
+              v-else-if="crud.status.edit > 0 && this.form.cover"
+              :src="this.form.cover"
+              class="avatar"
+            />
           </el-upload>
         </el-form-item>
         <el-form-item label="课程名称" prop="name">
@@ -77,60 +87,57 @@
         <el-button
           :loading="crud.status.cu === 2"
           type="primary"
-          @click="crud.submitCU"
+          @click="submit"
           >确认</el-button
         >
       </div>
     </el-dialog>
-    <!-- 参数列表 -->
     <el-table
       ref="table"
       :max-height="windowHeight * 0.69"
       v-loading="crud.loading"
       :data="crud.data"
+      @selection-change="crud.selectionChangeHandler"
       style="width: 100%"
     >
-    <el-table-column type="expand">
-      <template slot-scope="scope">
-        <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="课程封面">
-            <img :src="scope.row.cover" class="avatar"/>
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="课程封面">
+              <el-image :src="scope.row.cover" class="avatar" :preview-src-list="[scope.row.cover]"></el-image> 
+            </el-form-item>
+            <el-form-item label="课程名称">
+              <span>{{ scope.row.name }}</span>
+            </el-form-item>
+            <el-form-item label="课程编号">
+              <span>{{ scope.row.id }}</span>
+            </el-form-item>
+            <el-form-item label="年级">
+              <span>{{ scope.row.grade }}</span>
+            </el-form-item>
+            <el-form-item label="所属学期">
+              <span>{{ scope.row.semester }}</span>
+            </el-form-item>
+            <el-form-item label="院系">
+              <span>{{ scope.row.college }}</span>
+            </el-form-item>
+            <el-form-item label="学习要求">
+              <span>{{ scope.row.learnRequire }}</span>
+            </el-form-item>
+            <el-form-item label="教学进度">
+              <span>{{ scope.row.teachProgress }}</span>
+            </el-form-item>
+            <el-form-item label="考试安排">
+              <span>{{ scope.row.examArrange }}</span>
+            </el-form-item>
+            <el-form-item label="课程二维码">
+            <el-image :src="scope.row.qrcode" class="avatar" :preview-src-list="[scope.row.qrcode]"></el-image>
           </el-form-item>
-          <el-form-item label="课程名称">
-            <span>{{ scope.row.name }}</span>
-          </el-form-item>
-          <el-form-item label="课程编号">
-            <span>{{ scope.row.id }}</span>
-          </el-form-item>
-          <el-form-item label="年级">
-            <span>{{ scope.row.grade }}</span>
-          </el-form-item>
-          <el-form-item label="所属学期">
-            <span>{{ scope.row.semester }}</span>
-          </el-form-item>
-          <el-form-item label="院系">
-            <span>{{ scope.row.college }}</span>
-          </el-form-item>
-          <el-form-item label="学习要求">
-            <span>{{ scope.row.learnRequire }}</span>
-          </el-form-item>
-          <el-form-item label="教学进度">
-            <span>{{ scope.row.teachProgress }}</span>
-          </el-form-item>
-          <el-form-item label="考试安排">
-            <span>{{ scope.row.examArrange }}</span>
-          </el-form-item>
-          <!-- <el-form-item label="课程二维码">
-            <img v-if="scope.raw.qrcode" :src="scope.raw.qrcode" class="avatar"/>
-          </el-form-item> -->
-        </el-form>
-      </template>
+          </el-form>
+        </template>
       </el-table-column>
-      <el-table-column
-        prop="id"
-        label="课程编号"
-        align="center"
-      />
+      <el-table-column type="selection" width="25px" />
+      <el-table-column prop="id" label="课程编号" align="center" />
       <el-table-column prop="name" label="课程名称" align="center" />
       <el-table-column prop="grade" label="年级" align="center" />
       <el-table-column prop="semester" label="所属学期" align="center" />
@@ -156,27 +163,28 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
+import user from '@/utils/userStore'
 
 let Base64 = require("js-base64").Base64;
 
 const defaultForm = {
   id: 0,
-  name: "null",
-  college: "null",
-  qrcode: "null",
-  cover: "null",
+  name: null,
+  college: null,
+  qrcode: null,
+  cover: null,
   creationDate: null,
   creator: 0,
-  examArrange: "null",
-  grade: "null",
-  learnRequire: "null",
-  major: "null",
+  examArrange: null,
+  grade: null,
+  learnRequire: null,
+  major: null,
   modifier: 0,
   modifitionDate: null,
-  school: "null",
-  semester: "null",
-  teachProgress: "null",
-  teacher: "null",
+  school: null,
+  semester: null,
+  teachProgress: null,
+  teacher: null,
 };
 
 export default {
@@ -199,15 +207,15 @@ export default {
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
     return {
-      windowHeight: document.documentElement.clientHeight,   //实时屏幕高度
+      windowHeight: document.documentElement.clientHeight, //实时屏幕高度
       imageUrl: "",
       queryTypeOptions: [
-        { key: "name", display_name: "中文标识" },
+        { key: "name", display_name: "课程名称" },
         { key: "code", display_name: "英文标识" },
         { key: "description", display_name: "描述" },
       ],
       rules: {
-        name: [{ required: true, message: "请输入中文标识", trigger: "blur" }],
+        name: [{ required: true, message: "请输入课程名称", trigger: "blur" }],
         code: [{ required: true, message: "请输入英文标识", trigger: "blur" }],
       },
       permission: {
@@ -215,76 +223,50 @@ export default {
         edit: ["admin", "dict:edit"],
         del: ["admin", "dict:del"],
       },
-      paramRules: {
-        // name: [{ required: true, message: "请选择业务名称", trigger: "blur" }],
-        value1: [
-          {
-            required: true,
-            message: "请输入签到允许距离范围",
-            trigger: "blur",
-          },
-        ],
-        value2: [
-          { required: true, message: "请选择每次签到经验值", trigger: "blur" },
-        ],
-        value3: [
-          { required: true, message: "请输入一节课时间", trigger: "blur" },
-        ],
-      },
-      gradeRules: {
-        name: [{ required: true, message: "请输入等级名称", trigger: "blur" }],
-        scope: [
-          { required: true, message: "请选择出勤率范围", trigger: "blur" },
-        ],
-      },
-      grade: [
-        {
-          name: "",
-          scope: [0, 100],
-        },
-      ],
-      activeName: "first",
+      formdata: new window.FormData(),
     };
   },
   methods: {
     beforeUp(file) {
-      console.log(file);
-      var reader = new FileReader();
-      reader.readAsDataURL(file);
-      var that = this;
-      reader.onload = function (e) {
-        that.imageUrl = e.target.result;
-        // that.form.cover = imgcode
-        // console.log('form', that.form.cover)
-      };
+      console.log('phone', user.getPhone())
+      return false;
     },
     handleSuccess(response, file, fileList) {
-      this.$refs.upload.clearFiles()
-      this.crud.resetForm()
-      this.crud.toQuery()
+      this.$refs.upload.clearFiles();
+      this.crud.resetForm();
+      this.crud.toQuery();
     },
-    upload(file) {
-      console.log("file", file.file);
-      // this.form.cover = file.file
-      var formData = new FormData(this.form)
-      formData.append("data", file.file)
-      // var that = this;
-      // var reader = new FileReader();
-      // reader.readAsDataURL(file.file);
-      // reader.onload = function (e) {
-      //   var imgcode = e.target.result;
-      //   that.form.cover = imgcode;
-      //   console.log("form", that.form.cover);
-      // };
-      // this.imageUrl = URL.createObjectURL(file.raw);
-      // // this.form.cover = "1111";
-      // var image = base64ImgtoFile(this.form.cover)
-      // console.log('image', image)
-      // console.log('base64', Base64.encode(file))
-      // var base64img = Base64.encode(file.file)
-      // this.form.cover = base64img
-      // console.log('base64img', base64img)
-      // console.log('img', Base64.decode(base64img))
+    handleChange(file, fileList) {
+      this.formdata.append("cover", file.raw);
+      this.imageUrl = URL.createObjectURL(file.raw);
+      console.log('image', this.imageUrl)
+    },
+    submit() {
+      this.formdata.append("name", this.form.name);
+      this.formdata.append("grade", this.form.grade);
+      this.formdata.append("semester", this.form.semester);
+      this.formdata.append("school", this.form.school);
+      this.formdata.append("college", this.form.college);
+      this.formdata.append("major", this.form.major);
+      this.formdata.append("teacher", this.form.teacher);
+      this.formdata.append("learnRequire", this.form.learnRequire);
+      this.formdata.append("teachProgress", this.form.teachProgress);
+      this.formdata.append("examArrange", this.form.examArrange);
+      this.formdata.append("id", this.form.id);
+      this.formdata.append("qrcode", this.form.qrcode);
+      this.formdata.append("creationDate", this.form.creationDate);
+      this.formdata.append("modifitionDate", this.form.modifitionDate);
+      if (this.crud.status.add === CRUD.STATUS.PREPARED) {
+        this.formdata.append("creator", user.getPhone());
+        this.formdata.append("modifier", this.form.modifier);
+        this.crud.doAdd(this.formdata)
+      } else if (this.crud.status.edit === CRUD.STATUS.PREPARED) {
+        console.log('编辑课程')
+        this.formdata.append("creator", this.form.creator);
+        this.formdata.append("modifier", user.getPhone());
+        this.formdata.append("cover", this.form.cover)
+        this.crud.doEdit(this.formdata)
+      }
     },
   },
 };
@@ -325,5 +307,8 @@ export default {
   margin-right: 0;
   margin-bottom: 0;
   width: 50%;
+}
+.el-checkbox, .el-checkbox__input {
+  display: flex;
 }
 </style>

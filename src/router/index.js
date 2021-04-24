@@ -135,12 +135,6 @@ export const constantRoutes = [
         meta: { title: '菜单管理', icon: 'el-icon-coin' }
       },
       {
-        path: 'permission',
-        name: 'Permission',
-        component: () => import('@/views/system/permission'),
-        meta: { title: '权限管理', icon: 'el-icon-key' }
-      },
-      {
         path: 'dictionary',
         name: 'Dictionary',
         component: () => import('@/views/system/dictionary'),

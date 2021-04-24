@@ -1,6 +1,7 @@
 import { login, logout, getInfo, loginByPhone, register } from '@/api/user'
 import { getToken, setToken, removeToken, setSessionToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import user from '@/utils/userStore'
 
 const getDefaultState = () => {
   return {
@@ -46,9 +47,9 @@ const actions = {
         console.log(response)
         const data = response.data
         commit('SET_TOKEN', data.token)
-        // console.log('name', data.userInfo.username)
-        commit('SET_NAME', data.userInfo.username)
-        commit('SET_AVATAR', data.userInfo.avatar)
+        user.setAvatar(data.userInfo.avatar)
+        user.setPhone(data.userInfo.phone)
+        user.setName(data.userInfo.username)
         console.log(data.token)
         if (userInfo.rememberMe == true) {
           setToken(data.token)
@@ -75,9 +76,9 @@ const actions = {
         console.log(response)
         const data = response.data
         commit('SET_TOKEN', data.token)
-        // console.log('name', data.userInfo.username)
-        commit('SET_NAME', data.userInfo.username)
-        commit('SET_AVATAR', data.userInfo.avatar)
+        user.setAvatar(data.userInfo.avatar)
+        user.setPhone(data.userInfo.phone)
+        user.setName(data.userInfo.username)
         console.log(data.token)
         setSessionToken(data.token)
         resolve()
@@ -126,9 +127,9 @@ const actions = {
   loginByGithub({ commit }, data) {
     return new Promise(resolve => {
       commit('SET_TOKEN', data.token)
-      // console.log('name', data.userInfo.username)
-      commit('SET_NAME', data.userInfo.username)
-      commit('SET_AVATAR', data.userInfo.avatar)
+      user.setAvatar(data.userInfo.avatar)
+      user.setPhone(data.userInfo.phone)
+      user.setName(data.userInfo.username)
       console.log(data.token)
       setSessionToken(data.token)                                                                                                                 
       resolve()

@@ -148,6 +148,7 @@ import rrOperation from '@/components/Crud//RR.operation'
 import crudOperation from '@/components/Crud/CRUD.operation'
 import udOperation from '@/components/Crud/UD.operation'
 import DateRangePicker from '@/components/DateRangePicker'
+import user from '@/utils/userStore'
 
 // crud交由presenter持有
 const defaultForm = { id: null, title: null, menuSort: 999, path: null, component: null, componentName: null, iframe: false, roles: [], pid: 0, icon: null, cache: false, hidden: false, type: 0, permission: null }
@@ -155,7 +156,7 @@ export default {
   name: 'Menu',
   components: { Treeselect, IconSelect, crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '菜单', url: 'api/menus', crudMethod: { ...crudMenu }})
+    return CRUD({ title: '菜单', url: '/api/menu', params: { phone: user.getPhone() }, crudMethod: { ...crudMenu }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {

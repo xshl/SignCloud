@@ -131,6 +131,7 @@ function CRUD(options) {
       return new Promise((resolve, reject) => {
         crud.loading = true
         // 请求数据
+        console.log('params', crud.getQueryParams())
         initData(crud.url, crud.getQueryParams()).then(res => {
           console.log('data', res.data)
           const data = res.data
@@ -140,7 +141,7 @@ function CRUD(options) {
             table.store.states.lazyTreeNodeMap = {}
           }
           crud.page.total = data.totalElements
-          crud.data = data.content
+          crud.data = data
           console.log('content', crud.data)
           crud.resetDataStatus()
           // time 毫秒后显示表格
@@ -254,18 +255,22 @@ function CRUD(options) {
     /**
      * 执行添加
      */
-    doAdd() {
+    doAdd(form) {
+      if(!form) {
+        form = crud.form
+      }
       if (!callVmHook(crud, CRUD.HOOK.beforeSubmit)) {
         return
       }
       crud.status.add = CRUD.STATUS.PROCESSING
-      console.log('addform', crud.form)
-      crud.crudMethod.add(crud.form).then(() => {
+      console.log('addform', form)
+      crud.crudMethod.add(form).then((res) => {
         crud.status.add = CRUD.STATUS.NORMAL
         crud.resetForm()
         crud.addSuccessNotify()
         callVmHook(crud, CRUD.HOOK.afterSubmit)
         crud.toQuery()
+        return res.data
       }).catch(() => {
         crud.status.add = CRUD.STATUS.PREPARED
         callVmHook(crud, CRUD.HOOK.afterAddError)
@@ -274,14 +279,17 @@ function CRUD(options) {
     /**
      * 执行编辑
      */
-    doEdit() {
+    doEdit(form) {
+      if(!form) {
+        form = crud.form
+      }
       if (!callVmHook(crud, CRUD.HOOK.beforeSubmit)) {
         return
       }
       crud.status.edit = CRUD.STATUS.PROCESSING
-      crud.crudMethod.edit(crud.form).then(() => {
+      crud.crudMethod.edit(form).then(() => {
         crud.status.edit = CRUD.STATUS.NORMAL
-        crud.getDataStatus(crud.getDataId(crud.form)).edit = CRUD.STATUS.NORMAL
+        // crud.getDataStatus(crud.getDataId(form)).edit = CRUD.STATUS.NORMAL
         crud.editSuccessNotify()
         crud.resetForm()
         callVmHook(crud, CRUD.HOOK.afterSubmit)

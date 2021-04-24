@@ -9,7 +9,7 @@ export function getDicts() {
 
 export function edit(data) {
   return request({
-    url: '/api/dictionary-types',
+    url: '/api/class/course/modify',
     method: 'put',
     data
   })
@@ -26,8 +26,9 @@ export function add(data) {
 export function del(ids) {
   console.log('ids', ids)
   return request({
-    url: '/api/dictionary-types/batch?dicTypeIds=' + ids ,
+    url: '/api/class/course/delete-batch',
     method: 'delete',
+    data: ids
   })
 }
 
