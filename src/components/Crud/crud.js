@@ -31,6 +31,9 @@ function CRUD(options) {
     params: {},
     // Form 表单
     form: {},
+    // 返回结果
+    res: {},
+    addSuccess: false,
     // 重置表单
     defaultForm: () => { },
     // 排序规则，默认 id 降序， 支持多字段排序 ['id,desc', 'createTime,asc']
@@ -270,7 +273,8 @@ function CRUD(options) {
         crud.addSuccessNotify()
         callVmHook(crud, CRUD.HOOK.afterSubmit)
         crud.toQuery()
-        return res.data
+        crud.res = res
+        crud.addSuccess = true;
       }).catch(() => {
         crud.status.add = CRUD.STATUS.PREPARED
         callVmHook(crud, CRUD.HOOK.afterAddError)

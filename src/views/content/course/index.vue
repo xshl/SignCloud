@@ -18,7 +18,6 @@
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
     <el-dialog
       append-to-body
-      :close-on-click-modal="false"
       :before-close="crud.cancelCU"
       :visible="crud.status.cu > 0"
       :title="crud.status.title"
@@ -90,6 +89,24 @@
           @click="submit"
           >确认</el-button
         >
+      </div>
+    </el-dialog>
+    <el-dialog
+      append-to-body
+      :visible="crud.addSuccess"
+      :before-close="cancel"
+      width="500px">
+      <div class="addSuccess">
+        <img src="../../../assets/image/success1.png" width="20px" />
+        <h3 style="margin-left: 10px">课程创建成功</h3>
+      </div>
+      <h3 style="color: #000">班课号:{{courseNum}}</h3>
+      <el-image
+        style="width: 200px; height: 200px"
+        :src="courseQrcode"
+        :preview-src-list="[courseQrcode]"></el-image>
+      <div slot="footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
       </div>
     </el-dialog>
     <el-table
@@ -195,6 +212,9 @@ export default {
     rrOperation,
     udOperation,
   },
+  created() {
+    this.crud.addSuccess = false
+  },
   cruds() {
     return [
       CRUD({
@@ -224,7 +244,15 @@ export default {
         del: ["admin", "dict:del"],
       },
       formdata: new window.FormData(),
+      courseQrcode: '',
+      courseNum: "",
+      addSuccess: false
     };
+  },
+  watch: {
+    "crud.addSuccess"() {
+      this.courseQrcode = this.crud.res.data
+    }
   },
   methods: {
     beforeUp(file) {
@@ -268,6 +296,9 @@ export default {
         this.crud.doEdit(this.formdata)
       }
     },
+    cancel() {
+      this.crud.addSuccess = false;
+    }
   },
 };
 </script>
@@ -310,5 +341,17 @@ export default {
 }
 .el-checkbox, .el-checkbox__input {
   display: flex;
+}
+.addSuccess{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.el-dialog__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>
