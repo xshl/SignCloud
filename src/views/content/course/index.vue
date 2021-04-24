@@ -3,7 +3,7 @@
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
         <el-input
-          v-model="query.blurry"
+          v-model="query.keyword"
           clearable
           size="samll"
           placeholder="模糊搜索"
@@ -18,7 +18,7 @@
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
     <el-dialog
       append-to-body
-      :before-close="crud.cancelCU"
+      :before-close="cancelCourse"
       :visible="crud.status.cu > 0"
       :title="crud.status.title"
       width="500px"
@@ -60,15 +60,39 @@
           <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="年级" prop="grade">
-          <el-input v-model="form.grade" />
+          <el-select
+            v-model="form.grade"
+            style="width: 100%"
+            clearable
+          >
+            <el-option
+              v-for="item in grade"
+              :key="item.value"
+              :label="item.label"
+              :value="item.label"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="所属学期" prop="semester">
-          <el-input v-model="form.semester" />
+          <!-- <el-input v-model="form.semester" /> -->
+          <el-cascader
+            v-model="form.semester"
+            :options="semester"
+            :props="{ expandTrigger: 'hover' }"
+            separator="-"
+            clearable
+            style="width: 100%"
+          ></el-cascader>
         </el-form-item>
         <el-form-item label="院系" prop="college">
           <el-input v-model="form.college" />
         </el-form-item>
-        <el-form-item label="任课老师" prop="teacher">
+        <el-form-item
+          label="任课老师"
+          prop="teacher"
+          v-if="crud.status.edit > 0"
+        >
           <el-input v-model="form.teacher" />
         </el-form-item>
         <el-form-item label="学习要求" prop="learnRequire">
@@ -82,7 +106,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="crud.cancelCU">取消</el-button>
+        <el-button type="text" @click="cancelCourse">取消</el-button>
         <el-button
           :loading="crud.status.cu === 2"
           type="primary"
@@ -95,19 +119,19 @@
       append-to-body
       :visible="crud.addSuccess"
       :before-close="cancel"
-      width="500px">
+      width="500px"
+      class="addSuccess"
+    >
       <div class="addSuccess">
         <img src="../../../assets/image/success1.png" width="20px" />
         <h3 style="margin-left: 10px">课程创建成功</h3>
       </div>
-      <h3 style="color: #000">班课号:{{courseNum}}</h3>
+      <h3 style="color: #000">班课号:{{ courseNum }}</h3>
       <el-image
-        style="width: 200px; height: 200px"
+        style="width: 200px; height: 200px; margin-bottom: 15%"
         :src="courseQrcode"
-        :preview-src-list="[courseQrcode]"></el-image>
-      <div slot="footer">
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </div>
+        :preview-src-list="[courseQrcode]"
+      ></el-image>
     </el-dialog>
     <el-table
       ref="table"
@@ -121,7 +145,11 @@
         <template slot-scope="scope">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="课程封面">
-              <el-image :src="scope.row.cover" class="avatar" :preview-src-list="[scope.row.cover]"></el-image> 
+              <el-image
+                :src="scope.row.cover"
+                class="avatar"
+                :preview-src-list="[scope.row.cover]"
+              ></el-image>
             </el-form-item>
             <el-form-item label="课程名称">
               <span>{{ scope.row.name }}</span>
@@ -138,6 +166,9 @@
             <el-form-item label="院系">
               <span>{{ scope.row.college }}</span>
             </el-form-item>
+            <el-form-item label="任课老师">
+              <span>{{ scope.row.teacher }}</span>
+            </el-form-item>
             <el-form-item label="学习要求">
               <span>{{ scope.row.learnRequire }}</span>
             </el-form-item>
@@ -148,8 +179,12 @@
               <span>{{ scope.row.examArrange }}</span>
             </el-form-item>
             <el-form-item label="课程二维码">
-            <el-image :src="scope.row.qrcode" class="avatar" :preview-src-list="[scope.row.qrcode]"></el-image>
-          </el-form-item>
+              <el-image
+                :src="scope.row.qrcode"
+                class="avatar"
+                :preview-src-list="[scope.row.qrcode]"
+              ></el-image>
+            </el-form-item>
           </el-form>
         </template>
       </el-table-column>
@@ -180,7 +215,8 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
-import user from '@/utils/userStore'
+import user from "@/utils/userStore";
+import data from "@/utils/data";
 
 let Base64 = require("js-base64").Base64;
 
@@ -192,16 +228,16 @@ const defaultForm = {
   cover: null,
   creationDate: null,
   creator: 0,
-  examArrange: null,
+  examArrange: "",
   grade: null,
-  learnRequire: null,
+  learnRequire: "",
   major: null,
   modifier: 0,
   modifitionDate: null,
   school: null,
   semester: null,
-  teachProgress: null,
-  teacher: null,
+  teachProgress: "",
+  teacher: user.getName(),
 };
 
 export default {
@@ -213,7 +249,7 @@ export default {
     udOperation,
   },
   created() {
-    this.crud.addSuccess = false
+    this.crud.addSuccess = false;
   },
   cruds() {
     return [
@@ -231,12 +267,24 @@ export default {
       imageUrl: "",
       queryTypeOptions: [
         { key: "name", display_name: "课程名称" },
-        { key: "code", display_name: "英文标识" },
-        { key: "description", display_name: "描述" },
+        { key: "grade", display_name: "年级" },
+        { key: "semester", display_name: "所属学期" },
+        { key: "college", display_name: "院系" },
+        { key: "teacher", display_name: "任课老师" },
+        { key: "learnRequire", display_name: "学习要求" },
+        { key: "teachProgress", display_name: "教学进度" },
+        { key: "examArrange", display_name: "教学安排" },
       ],
       rules: {
         name: [{ required: true, message: "请输入课程名称", trigger: "blur" }],
-        code: [{ required: true, message: "请输入英文标识", trigger: "blur" }],
+        grade: [{ required: true, message: "请输入年级", trigger: "blur" }],
+        semester: [
+          { required: true, message: "请输入所属学期", trigger: "blur" },
+        ],
+        college: [{ required: true, message: "请输入院系", trigger: "blur" }],
+        teacher: [
+          { required: true, message: "请输入任课老师", trigger: "blur" },
+        ],
       },
       permission: {
         add: ["admin", "dict:add"],
@@ -244,22 +292,25 @@ export default {
         del: ["admin", "dict:del"],
       },
       formdata: new window.FormData(),
-      courseQrcode: '',
+      courseQrcode: "",
       courseNum: "",
-      addSuccess: false
+      addSuccess: false,
+      grade: data.grade,
+      semester: data.semester
     };
   },
   watch: {
     "crud.addSuccess"() {
-      this.courseQrcode = this.crud.res.data
-    }
+      this.courseQrcode = this.crud.res.data;
+    },
   },
   methods: {
     beforeUp(file) {
-      console.log('phone', user.getPhone())
+      console.log("phone", user.getPhone());
       return false;
     },
     handleSuccess(response, file, fileList) {
+      console.log('上传成功')
       this.$refs.upload.clearFiles();
       this.crud.resetForm();
       this.crud.toQuery();
@@ -267,9 +318,20 @@ export default {
     handleChange(file, fileList) {
       this.formdata.append("cover", file.raw);
       this.imageUrl = URL.createObjectURL(file.raw);
-      console.log('image', this.imageUrl)
+      console.log("image", this.imageUrl);
+      console.log("form", this.form);
     },
     submit() {
+      if (this.form.learnRequire == "") {
+        this.form.learnRequire = "暂无内容";
+      }
+      if (this.form.teacherProgress == "") {
+        this.form.teacherProgress = "暂无内容";
+      }
+      if (this.form.examArrange == "") {
+        this.form.examArrange = "暂无内容";
+      }
+      this.semesterToString()
       this.formdata.append("name", this.form.name);
       this.formdata.append("grade", this.form.grade);
       this.formdata.append("semester", this.form.semester);
@@ -287,17 +349,26 @@ export default {
       if (this.crud.status.add === CRUD.STATUS.PREPARED) {
         this.formdata.append("creator", user.getPhone());
         this.formdata.append("modifier", this.form.modifier);
-        this.crud.doAdd(this.formdata)
+        this.crud.doAdd(this.formdata);
       } else if (this.crud.status.edit === CRUD.STATUS.PREPARED) {
-        console.log('编辑课程')
+        console.log("编辑课程");
         this.formdata.append("creator", this.form.creator);
         this.formdata.append("modifier", user.getPhone());
-        this.formdata.append("cover", this.form.cover)
-        this.crud.doEdit(this.formdata)
+        this.formdata.append("cover", this.form.cover);
+        this.crud.doEdit(this.formdata);
       }
+      this.imageUrl = ""
+      this.$refs.upload.clearFiles();
     },
     cancel() {
       this.crud.addSuccess = false;
+    },
+    cancelCourse() {
+      this.imageUrl = ""
+      this.crud.cancelCU()
+    },
+    semesterToString() {
+      this.form.semester = this.form.semester[0] + "-" + this.form.semester[1]
     }
   },
 };
@@ -339,16 +410,18 @@ export default {
   margin-bottom: 0;
   width: 50%;
 }
-.el-checkbox, .el-checkbox__input {
+.el-checkbox,
+.el-checkbox__input {
   display: flex;
 }
-.addSuccess{
+.addSuccess {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-top: 0;
 }
-.el-dialog__body {
+.addSuccess .el-dialog__body {
   display: flex;
   flex-direction: column;
   justify-content: center;

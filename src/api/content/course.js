@@ -1,12 +1,5 @@
 import request from '@/utils/request'
 
-export function getDicts() {
-  return request({
-    url: '/api/dictionary-types',
-    method: 'get'
-  })
-}
-
 export function edit(data) {
   return request({
     url: '/api/class/course/modify',
@@ -29,6 +22,14 @@ export function del(ids) {
     url: '/api/class/course/delete-batch',
     method: 'delete',
     data: ids
+  })
+}
+
+export function search(params) {
+  return request({
+    url: 'api/class/course/search',
+    method: 'get',
+    params
   })
 }
 
