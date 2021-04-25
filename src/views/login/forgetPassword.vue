@@ -80,8 +80,8 @@
 
 <script>
 import { validPhone, validPassword } from "@/utils/validate";
-import { getCode, forgetPassword } from '@/api/user'
-import { validPhoneNumber } from './passport'
+import { getCode, forgetPassword } from "@/api/user";
+import { validPhoneNumber } from "./passport";
 export default {
   data() {
     var validConfirmps = (rule, value, callback) => {
@@ -113,7 +113,9 @@ export default {
           { required: true, message: "请再次输入密码", trigger: "blur" },
           { validator: validConfirmps, trigger: "blur" },
         ],
-        verificationCode: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+        verificationCode: [
+          { required: true, message: "请输入验证码", trigger: "blur" },
+        ],
       },
       passwordType: "password",
       time: 0, // 验证码倒计时
@@ -156,7 +158,7 @@ export default {
             this.$message.error(res.message);
           });
       } else {
-        this.$message.error("手机号码格式错误")
+        this.$message.error("手机号码格式错误");
         console.log("手机号码格式错误");
       }
     },
@@ -165,16 +167,15 @@ export default {
         const user = {
           phone: this.forgetPasswordForm.phone,
           password: this.forgetPasswordForm.password,
-          verificationCode: this.forgetPasswordForm.verificationCode
+          verificationCode: this.forgetPasswordForm.verificationCode,
         };
         if (valid) {
           forgetPassword(user)
             .then((response) => {
+              this.$message.success("修改成功");
               setTimeout(() => {
-                console.log(response);
-                this.$message.success(response.data);
+                this.Back();
               }, 1000);
-              this.Back();
             })
             .catch((error) => {
               console.log(error);

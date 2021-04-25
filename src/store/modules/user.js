@@ -43,7 +43,7 @@ const actions = {
   loginByPwd({ commit }, userInfo) {
     console.log(userInfo)
     return new Promise((resolve, reject) => {
-      login(userInfo).then(response => {
+      login({phone: userInfo.phone, password: userInfo.password}).then(response => {
         console.log(response)
         const data = response.data
         commit('SET_TOKEN', data.token)

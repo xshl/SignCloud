@@ -224,11 +224,12 @@ export default {
         if (valid) {
           register(user)
             .then((response) => {
+              this.$message.success("注册成功");
               setTimeout(() => {
                 console.log(response);
-                this.$message.success(response.data);
-              }, 1000);
-              this.Back();
+                this.$message.success(response.message);
+                this.Back();
+              }, 3000);
             })
             .catch((error) => {
               console.log(error);
