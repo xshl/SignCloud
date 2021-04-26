@@ -43,13 +43,7 @@
             ref="verificationCode"
           >
           </el-input>
-          <el-button
-            type="primary"
-            style="width: 40%"
-            :disabled="disabled"
-            @click.native.prevent="getCode"
-            >{{ btntxt }}</el-button
-          >
+          <SendCode :phone="form.phone"></SendCode>
         </el-form-item>
         <el-form-item style="width: 100%">
           <el-button
@@ -119,13 +113,10 @@
 
 <script>
 import { validPhone, validPassword } from "@/utils/validate";
-import { validPhoneNumber } from "./login/passport";
-import { getCode, additional } from "@/api/user";
+import { additional } from "@/api/user";
+import SendCode from '@/components/SendCode'
 export default {
-  created() {
-    
-      console.log('githubId', this.$route.query.githubId["githubId"])
-  },
+  components: { SendCode },
   data() {
     var validConfirmps = (rule, value, callback) => {
       if (value === "") {
@@ -167,42 +158,6 @@ export default {
     };
   },
   methods: {
-    timer() {
-      if (this.time > 0) {
-        this.time--;
-        // console.log(this.time);
-        this.btntxt = this.time + "s后重新获取";
-        setTimeout(this.timer, 1000);
-      } else {
-        this.time = 0;
-        this.btntxt = "获取验证码";
-        this.disabled = false;
-      }
-    },
-    getCode() {
-      if (validPhoneNumber(this.form.phone)) {
-        
-        getCode(this.form.phone)
-          .then((res) => {
-            console.log(res);
-            if (res.code == 200) {
-              console.log("验证码");
-              console.log(res.data);
-              this.$message.success("发送成功");
-              this.time = 60;
-              this.disabled = true;
-              this.timer();
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            this.$message.error(res.message);
-          });
-      } else {
-        this.$message.error("手机号码格式错误");
-        console.log("手机号码格式错误");
-      }
-    },
     before() {
       this.active = 0;
     },

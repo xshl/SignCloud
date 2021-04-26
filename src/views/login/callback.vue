@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <img src="../assets/image/success.png" width="300px" />
+    <img src="/assets/image/success.png" width="300px" />
     <h1>授权成功，正在跳转...</h1>
     <h3>若长时间未跳转，请刷新</h3>
   </div>

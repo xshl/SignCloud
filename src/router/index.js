@@ -51,6 +51,14 @@ export const constantRoutes = [
         name: "ForgetPassword",
         component: () => import("@/views/login/forgetPassword.vue")
       },
+      {
+        path: '/additional',
+        component: () => import('@/views/login/additional.vue')
+      },
+      {
+        path: '/callback',
+        component: () => import('@/views/login/callback.vue')
+      },
     ]
   },
   {
@@ -67,14 +75,7 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/additional',
-    component: () => import('@/views/additional.vue')
-  },
-  {
-    path: '/callback',
-    component: () => import('@/views/callback.vue')
-  },
+  
   {
     path: '/',
     component: Layout,

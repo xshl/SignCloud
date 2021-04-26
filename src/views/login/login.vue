@@ -106,13 +106,7 @@
               ref="verificationCode"
             >
             </el-input>
-            <el-button
-              type="primary"
-              style="width: 40%"
-              :disabled="disabled"
-              @click.native.prevent="getCode"
-              >{{ btntxt }}</el-button
-            >
+            <SendCode :phone="loginByPhoneForm.phone"></SendCode>
           </el-form-item>
           <el-form-item style="width: 100%">
             <el-button
@@ -132,7 +126,7 @@
     <el-divider content-position="center">第三方登录</el-divider>
     <div class="third" @click="loginByGithub">
       <div class="third-icon">
-        <img src="../../assets/image/github.png" width="50px"/>
+        <img src="../../assets/image/github.png" width="50px" />
       </div>
     </div>
   </div>
@@ -140,11 +134,9 @@
 
 <script>
 import { validPhone } from "@/utils/validate";
-import Qs from "qs";
-import { getCode, loginByPhone, loginByGithub } from "@/api/user";
-import { validPhoneNumber } from "./passport";
-
+import SendCode from "@/components/SendCode";
 export default {
+  components: { SendCode },
   data() {
     return {
       activeName: "loginByAccount",
@@ -172,9 +164,6 @@ export default {
       },
       loading: false,
       passwordType: "password",
-      time: 0, // 验证码倒计时
-      disabled: false, // 验证码按钮可用
-      btntxt: "获取验证码", //验证码按钮文字
     };
   },
   watch: {
@@ -193,6 +182,7 @@ export default {
           this.$store
             .dispatch("user/loginByPwd", this.loginByAccountForm)
             .then(() => {
+              this.$message.success("登录成功");
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;
             })
@@ -213,6 +203,7 @@ export default {
           this.$store
             .dispatch("user/loginByPhone", this.loginByPhoneForm)
             .then(() => {
+              this.$message.success("登录成功");
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;
             })
@@ -226,44 +217,10 @@ export default {
       });
       // this.$router.push("/home");
     },
-    timer() {
-      if (this.time > 0) {
-        this.time--;
-        // console.log(this.time);
-        this.btntxt = this.time + "s后重新获取";
-        setTimeout(this.timer, 1000);
-      } else {
-        this.time = 0;
-        this.btntxt = "获取验证码";
-        this.disabled = false;
-      }
-    },
-    getCode() {
-      if (validPhoneNumber(this.loginByPhoneForm.phone)) {
-        getCode(this.loginByPhoneForm.phone)
-          .then((res) => {
-            console.log(res);
-            if (res.code == 200) {
-              console.log("验证码");
-              console.log(res.data);
-              this.$message.success("发送成功");
-              this.time = 60;
-              this.disabled = true;
-              this.timer();
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            this.$message.error(res.message);
-          });
-      } else {
-        this.$message.error("手机号码格式错误")
-        console.log("手机号码格式错误");
-      }
-    },
     loginByGithub() {
-      window.location.href = 'https://github.com/login/oauth/authorize?client_id=f733d49acafb50cac307&state=STATE&redirect_uri=http://localhost:8080/callback'
-    }
+      window.location.href =
+        "https://github.com/login/oauth/authorize?client_id=f733d49acafb50cac307&state=STATE&redirect_uri=http://localhost:8080/callback";
+    },
   },
 };
 </script>

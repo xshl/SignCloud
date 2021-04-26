@@ -24,29 +24,6 @@
           >
           </el-input>
         </el-form-item>
-        <!-- <el-form-item prop="email">
-          <el-input
-            prefix-icon="iconfont icon-email"
-            ref="email"
-            v-model="registerForm.email"
-            placeholder="邮箱"
-            auto-complete="on"
-            clearable
-          >
-          </el-input>
-        </el-form-item> -->
-        <!-- <el-form-item prop="realname">
-          <el-input
-            prefix-icon="iconfont icon-name"
-            ref="realname"
-            v-model="registerForm.realname"
-            placeholder="真实姓名"
-            type="text"
-            auto-complete="on"
-            clearable
-          >
-          </el-input>
-        </el-form-item> -->
         <el-form-item prop="phone">
           <el-input
             prefix-icon="iconfont icon-phone"
@@ -67,13 +44,7 @@
             ref="code"
           >
           </el-input>
-          <el-button
-            type="primary"
-            style="width: 40%"
-            :disabled="disabled"
-            @click.native.prevent="getCode"
-            >{{ btntxt }}</el-button
-          >
+          <SendCode :phone="registerForm.phone"></SendCode>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -114,10 +85,11 @@
 </template>
 
 <script>
-import { validPhone, validPassword, validEmail } from "@/utils/validate";
-import { register, getCode } from "@/api/user";
-import { validPhoneNumber } from "./passport";
+import { validPhone, validPassword } from "@/utils/validate";
+import { register } from "@/api/user";
+import SendCode from '@/components/SendCode'
 export default {
+  components: { SendCode },
   data() {
     var validConfirmps = (rule, value, callback) => {
       if (value === "") {
@@ -132,9 +104,7 @@ export default {
       registerForm: {
         username: "",
         password: "",
-        // realname: "",
         phone: "",
-        // email: "",
         confirmPassword: "",
         code: "",
       },
@@ -150,17 +120,10 @@ export default {
         username: [
           { required: true, message: "请输入账户名", trigger: "blur" },
         ],
-        // email: [
-        //   { required: true, message: "请输入邮箱", trigger: "blur" },
-        //   { validator: validEmail, trigger: "blur" },
-        // ],
         confirmPassword: [
           { required: true, message: "请再次输入密码", trigger: "blur" },
           { validator: validConfirmps, trigger: "blur" },
         ],
-        // realname: [
-        //   { required: true, message: "请输入真实名字", trigger: "blur" },
-        // ],
         code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
       passwordType: "password",
@@ -174,41 +137,6 @@ export default {
     Back() {
       this.$router.back();
     },
-    timer() {
-      if (this.time > 0) {
-        this.time--;
-        // console.log(this.time);
-        this.btntxt = this.time + "s后重新获取";
-        setTimeout(this.timer, 1000);
-      } else {
-        this.time = 0;
-        this.btntxt = "获取验证码";
-        this.disabled = false;
-      }
-    },
-    getCode() {
-      if (validPhoneNumber(this.registerForm.phone)) {
-        getCode(this.registerForm.phone)
-          .then((res) => {
-            console.log(res);
-            if (res.code == 200) {
-              console.log("验证码");
-              console.log(res.data);
-              this.$message.success("发送成功");
-              this.time = 60;
-              this.disabled = true;
-              this.timer();
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            this.$message.error(res.message);
-          });
-      } else {
-        this.$message.error("手机号码格式错误")
-        console.log("手机号码格式错误");
-      }
-    },
     register() {
       this.$refs.registerForm.validate((valid) => {
         const user = {
@@ -218,18 +146,15 @@ export default {
           // email: this.registerForm.email,
           phone: this.registerForm.phone,
           verificationCode: this.registerForm.code,
-          role: "teacher"
+          role: "teacher",
         };
-        console.log(user)
+        console.log(user);
         if (valid) {
           register(user)
             .then((response) => {
               this.$message.success("注册成功");
-              setTimeout(() => {
-                console.log(response);
-                this.$message.success(response.message);
-                this.Back();
-              }, 3000);
+              console.log(response);
+              this.Back();
             })
             .catch((error) => {
               console.log(error);

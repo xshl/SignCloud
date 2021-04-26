@@ -32,13 +32,7 @@
             ref="verificationCode"
           >
           </el-input>
-          <el-button
-            type="primary"
-            style="width: 40%"
-            :disabled="disabled"
-            @click.native.prevent="getCode"
-            >{{ btntxt }}</el-button
-          >
+          <SendCode :phone="forgetPasswordForm.phone"></SendCode>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -80,9 +74,10 @@
 
 <script>
 import { validPhone, validPassword } from "@/utils/validate";
-import { getCode, forgetPassword } from "@/api/user";
-import { validPhoneNumber } from "./passport";
+import { forgetPassword } from "@/api/user";
+import SendCode from '@/components/SendCode'
 export default {
+  components: { SendCode },
   data() {
     var validConfirmps = (rule, value, callback) => {
       if (value === "") {
@@ -127,41 +122,6 @@ export default {
     Back() {
       this.$router.back();
     },
-    timer() {
-      if (this.time > 0) {
-        this.time--;
-        // console.log(this.time);
-        this.btntxt = this.time + "s后重新获取";
-        setTimeout(this.timer, 1000);
-      } else {
-        this.time = 0;
-        this.btntxt = "获取验证码";
-        this.disabled = false;
-      }
-    },
-    getCode() {
-      if (validPhoneNumber(this.forgetPasswordForm.phone)) {
-        getCode(this.forgetPasswordForm.phone)
-          .then((res) => {
-            console.log(res);
-            if (res.code == 200) {
-              console.log("验证码");
-              console.log(res.data);
-              this.$message.success("发送成功");
-              this.time = 60;
-              this.disabled = true;
-              this.timer();
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            this.$message.error(res.message);
-          });
-      } else {
-        this.$message.error("手机号码格式错误");
-        console.log("手机号码格式错误");
-      }
-    },
     forgetPassword() {
       this.$refs.forgetPasswordForm.validate((valid) => {
         const user = {
@@ -173,9 +133,7 @@ export default {
           forgetPassword(user)
             .then((response) => {
               this.$message.success("修改成功");
-              setTimeout(() => {
-                this.Back();
-              }, 1000);
+              this.Back();
             })
             .catch((error) => {
               console.log(error);
