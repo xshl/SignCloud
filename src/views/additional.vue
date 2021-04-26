@@ -122,6 +122,10 @@ import { validPhone, validPassword } from "@/utils/validate";
 import { validPhoneNumber } from "./login/passport";
 import { getCode, additional } from "@/api/user";
 export default {
+  created() {
+    
+      console.log('githubId', this.$route.query.githubId["githubId"])
+  },
   data() {
     var validConfirmps = (rule, value, callback) => {
       if (value === "") {
@@ -177,6 +181,7 @@ export default {
     },
     getCode() {
       if (validPhoneNumber(this.form.phone)) {
+        
         getCode(this.form.phone)
           .then((res) => {
             console.log(res);
@@ -207,7 +212,7 @@ export default {
     complete() {
       const params = {
         phone: this.form.phone,
-        githubId: this.$route.query.githubId,
+        githubId: this.$route.query.githubId["githubId"],
         verificationCode: this.form.verificationCode,
         password: this.form.password,
       };
