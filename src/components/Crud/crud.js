@@ -125,6 +125,7 @@ function CRUD(options) {
     toQuery() {
       crud.page.page = 1
       crud.refresh()
+      
     },
     // 刷新
     refresh() {

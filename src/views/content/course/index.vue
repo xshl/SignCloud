@@ -3,7 +3,7 @@
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
         <el-input
-          v-model="query.keyword"
+          v-model="query.keywords"
           clearable
           size="samll"
           placeholder="模糊搜索"

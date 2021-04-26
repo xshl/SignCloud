@@ -3,7 +3,7 @@
     <div class="content">
       <div class="title">工程实践2班06组</div>
       <div class="member">
-        <el-table :data="tableData" stripe="true" style="width: 100%">
+        <el-table :data="tableData" stripe style="width: 100%">
           <el-table-column prop="title" label=" " align="center">
           </el-table-column>
           <el-table-column prop="name" label="姓名" align="center">

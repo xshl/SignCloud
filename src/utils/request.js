@@ -32,15 +32,13 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-    if (res.code == 406) {
-      return res;
-    }else if (res.code !== 200) {
+    if (res.code !== 200) {
       Message({
         message: res.message || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
-      
+
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       // if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
@@ -64,7 +62,7 @@ service.interceptors.response.use(
     if (error.response.data instanceof Blob && error.response.data.type.toLowerCase().indexOf('json') !== -1) {
       const reader = new FileReader()
       reader.readAsText(error.response.data, 'utf-8')
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         const errorMsg = JSON.parse(reader.result).message
         Notification.error({
           title: errorMsg,
