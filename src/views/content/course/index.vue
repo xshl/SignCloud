@@ -60,11 +60,7 @@
           <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="年级" prop="grade">
-          <el-select
-            v-model="form.grade"
-            style="width: 100%"
-            clearable
-          >
+          <el-select v-model="form.grade" style="width: 100%" clearable>
             <el-option
               v-for="item in grade"
               :key="item.value"
@@ -296,7 +292,7 @@ export default {
       courseNum: "",
       addSuccess: false,
       grade: data.grade,
-      semester: data.semester
+      semester: data.semester,
     };
   },
   watch: {
@@ -310,7 +306,7 @@ export default {
       return false;
     },
     handleSuccess(response, file, fileList) {
-      console.log('上传成功')
+      console.log("上传成功");
       this.$refs.upload.clearFiles();
       this.crud.resetForm();
       this.crud.toQuery();
@@ -331,7 +327,7 @@ export default {
       if (this.form.examArrange == "") {
         this.form.examArrange = "暂无内容";
       }
-      this.semesterToString()
+      this.semesterToString();
       this.formdata.append("name", this.form.name);
       this.formdata.append("grade", this.form.grade);
       this.formdata.append("semester", this.form.semester);
@@ -345,31 +341,31 @@ export default {
       this.formdata.append("id", this.form.id);
       this.formdata.append("qrcode", this.form.qrcode);
       this.formdata.append("creationDate", this.form.creationDate);
+      this.formdata.append("modifier", this.form.modifier);
+      this.formdata.append("creator", this.form.creator);
       this.formdata.append("modifitionDate", this.form.modifitionDate);
       if (this.crud.status.add === CRUD.STATUS.PREPARED) {
-        this.formdata.append("creator", user.getPhone());
-        this.formdata.append("modifier", this.form.modifier);
+        this.formdata.append("creator", user.getId());
         this.crud.doAdd(this.formdata);
       } else if (this.crud.status.edit === CRUD.STATUS.PREPARED) {
         console.log("编辑课程");
-        this.formdata.append("creator", this.form.creator);
-        this.formdata.append("modifier", user.getPhone());
+        this.formdata.append("modifier", user.getId());
         this.formdata.append("cover", this.form.cover);
         this.crud.doEdit(this.formdata);
       }
-      this.imageUrl = ""
+      this.imageUrl = "";
       this.$refs.upload.clearFiles();
     },
     cancel() {
       this.crud.addSuccess = false;
     },
     cancelCourse() {
-      this.imageUrl = ""
-      this.crud.cancelCU()
+      this.imageUrl = "";
+      this.crud.cancelCU();
     },
     semesterToString() {
-      this.form.semester = this.form.semester[0] + "-" + this.form.semester[1]
-    }
+      this.form.semester = this.form.semester[0] + "-" + this.form.semester[1];
+    },
   },
 };
 </script>

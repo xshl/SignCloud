@@ -7,9 +7,8 @@ import router from '@/router'
 
 //创建axios实例
 const service = axios.create({
-  // baseURL: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_API : '/', // api 的 base_url
-  baseURL: '', // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
+  baseURL: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_API : '/', // api 的 base_url
+  // baseURL: '', // url = base url + request url
   timeout: 5000 // request timeout
 })
 
@@ -38,21 +37,6 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
-
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      // if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-      //   // to re-login
-      //   MessageBox.confirm('您已退出，可以取消以保留在该页面上，或者再次登录', '确认退出', {
-      //     confirmButtonText: 'Re-Login',
-      //     cancelButtonText: 'Cancel',
-      //     type: 'warning'
-      //   }).then(() => {
-      //     store.dispatch('user/resetToken').then(() => {
-      //       location.reload()
-      //     })
-      //   })
-      // }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
       return res
@@ -87,7 +71,8 @@ service.interceptors.response.use(
         if (code === 401) {
           store.dispatch('LogOut').then(() => {
             // 用户登录界面提示
-            Cookies.set('point', 401)
+            localStorage.setItem('point', 401)
+            // Cookies.set('point', 401)
             location.reload()
           })
         } else if (code === 403) {

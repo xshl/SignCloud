@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function edit(data) {
   return request({
-    url: '/api/class/course/modify',
+    url: '/api/class/course-contain-cover',
     method: 'put',
     data
   })
@@ -10,7 +10,7 @@ export function edit(data) {
 
 export function add(data) {
   return request({
-    url: '/api/class/course/add',
+    url: '/api/class/courses',
     method: 'post',
     data
   })

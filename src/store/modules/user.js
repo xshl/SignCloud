@@ -47,6 +47,7 @@ const actions = {
         console.log(response)
         const data = response.data
         commit('SET_TOKEN', data.token)
+        user.setId(data.userInfo.id)
         user.setAvatar(data.userInfo.avatar)
         user.setPhone(data.userInfo.phone)
         user.setName(data.userInfo.username)
@@ -76,6 +77,7 @@ const actions = {
         console.log(response)
         const data = response.data
         commit('SET_TOKEN', data.token)
+        user.setId(data.userInfo.id)
         user.setAvatar(data.userInfo.avatar)
         user.setPhone(data.userInfo.phone)
         user.setName(data.userInfo.username)
@@ -127,6 +129,7 @@ const actions = {
   loginByGithub({ commit }, data) {
     return new Promise(resolve => {
       commit('SET_TOKEN', data.token)
+      user.setId(data.userInfo.id)
       user.setAvatar(data.userInfo.avatar)
       user.setPhone(data.userInfo.phone)
       user.setName(data.userInfo.username)

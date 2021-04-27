@@ -45,14 +45,6 @@ module.exports = {
         }
       }
     },
-    // after: require('./mock/mock-server.js'),
-    // [process.env.VUE_APP_BASE_API]: {
-    //   target: "http://59.77.134.88",
-    //   changeOrigin: true,  //配置跨域
-    //   pathRewrite: {
-    //     ['^' + process.env.VUE_APP_BASE_API]: ''
-    //   }
-    // }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

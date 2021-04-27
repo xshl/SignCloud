@@ -1,27 +1,35 @@
 export function setPhone(phone) {
-    window.localStorage.setItem('phone', phone)
+    localStorage.setItem('phone', phone)
 }
 export function getPhone() {
-    return window.localStorage.getItem('phone')
+    return localStorage.getItem('phone')
 }
 export function setAvatar(avatar) {
-    window.localStorage.setItem('avatar', avatar)
+    localStorage.setItem('avatar', avatar)
 }
 export function getAvatar() {
-    return window.localStorage.getItem('avatar')
+    return localStorage.getItem('avatar')
 }
 export function setName(name) {
-    window.localStorage.setItem('name', name)
+    localStorage.setItem('name', name)
 }
 export function getName() {
-    return window.localStorage.getItem('name')
+    return localStorage.getItem('name')
+}
+export function setId(id) {
+    localStorage.setItem('id', id)
+}
+export function getId() {
+    return localStorage.getItem('id') 
 }
 
 export default {
     getAvatar,
     getName,
     getPhone,
+    getId,
     setAvatar,
     setName,
-    setPhone
+    setPhone,
+    setId
 }
