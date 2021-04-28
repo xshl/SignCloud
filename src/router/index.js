@@ -129,6 +129,12 @@ export const constantRoutes = [
     meta: { title: '系统管理', icon: 'el-icon-setting' },
     children: [
       {
+        path: 'permission',
+        name: 'Permission',
+        component: () => import('@/views/system/permission'),
+        meta: { title: '权限管理', icon: 'el-icon-key' }
+      },
+      {
         path: 'menu',
         name: 'Menu',
         component: () => import('@/views/system/menu'),

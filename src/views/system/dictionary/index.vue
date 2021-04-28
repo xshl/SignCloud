@@ -23,7 +23,11 @@
           <el-input v-model="form.code" style="width: 370px" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-switch v-model="form.status" :active-value="1" :inactive-value="0"></el-switch>
+          <el-switch
+            v-model="form.status"
+            :active-value="1"
+            :inactive-value="0"
+          ></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -85,18 +89,15 @@
               prop="code"
               label="英文标识"
             />
-            <el-table-column
-              prop="status"
-              label="状态"
-            >
-             <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.status"
-              :active-value="1"
-              :inactive-value="0"
-              @change="dicStatusChange(scope.row, scope.row.status)"
-            ></el-switch>
-          </template>
+            <el-table-column prop="status" label="状态">
+              <template slot-scope="scope">
+                <el-switch
+                  v-model="scope.row.status"
+                  :active-value="1"
+                  :inactive-value="0"
+                  @change="dicStatusChange(scope.row, scope.row.status)"
+                ></el-switch>
+              </template>
             </el-table-column>
             <el-table-column
               label="操作"
@@ -176,7 +177,11 @@ export default {
   },
   cruds() {
     return [
-      CRUD({ title: "字典", url: "/api/dictionary-types", crudMethod: { ...crudDict } }),
+      CRUD({
+        title: "字典",
+        url: "/api/dictionary-types",
+        crudMethod: { ...crudDict },
+      }),
     ];
   },
   mixins: [presenter(), header(), form(defaultForm)],
@@ -189,9 +194,7 @@ export default {
       ],
       rules: {
         name: [{ required: true, message: "请输入中文标识", trigger: "blur" }],
-        code: [
-          { required: true, message: "请输入英文标识", trigger: "blur" },
-        ]
+        code: [{ required: true, message: "请输入英文标识", trigger: "blur" }],
       },
       permission: {
         add: ["admin", "dict:add"],
@@ -220,10 +223,10 @@ export default {
       crudDict.edit(data).then((res) => {
         this.$notify({
           title: res.data,
-          type: 'success'
+          type: "success",
         });
-      })
-    }
+      });
+    },
   },
 };
 </script>

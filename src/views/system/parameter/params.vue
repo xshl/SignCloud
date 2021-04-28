@@ -56,7 +56,7 @@
       <el-table-column label="操作" width="130px" align="center" fixed="right">
         <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
         <template slot-scope="scope">
-          <el-button :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(scope.row)" />
+          <el-button :loading="crud.status.cu === 2" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(scope.row)" />
         </template>
       </el-table-column>
     </el-table>
@@ -99,11 +99,6 @@ export default {
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
     return {
-      queryTypeOptions: [
-        { key: "value1", display_name: "每次签到经验值" },
-        { key: "value2", display_name: "签到允许距离范围(m)" },
-        { key: "value3", display_name: "一节课时间" },
-      ],
       rules: {
         value1: [
           { required: true, message: "请输入每次签到经验值", trigger: "blur" },

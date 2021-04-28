@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import api from "@/api/test";
 
 export default {
   

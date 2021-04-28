@@ -114,11 +114,6 @@ export default {
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
     return {
-      queryTypeOptions: [
-        { key: "value1", display_name: "每次签到经验值" },
-        { key: "value2", display_name: "签到允许距离范围(m)" },
-        { key: "value3", display_name: "一节课时间" },
-      ],
       rules: {
         value1: [
           { required: true, message: "请输入每次签到经验值", trigger: "blur" },

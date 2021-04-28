@@ -139,7 +139,7 @@
     >
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <el-form label-position="left" inline class="demo-table-expand">
+          <el-form label-position="left" class="demo-table-expand">
             <el-form-item label="课程封面">
               <el-image
                 :src="scope.row.cover"
@@ -151,7 +151,7 @@
               <span>{{ scope.row.name }}</span>
             </el-form-item>
             <el-form-item label="课程编号">
-              <span>{{ scope.row.id }}</span>
+              <span>{{ scope.row.code }}</span>
             </el-form-item>
             <el-form-item label="年级">
               <span>{{ scope.row.grade }}</span>
@@ -185,7 +185,7 @@
         </template>
       </el-table-column>
       <el-table-column type="selection" width="25px" />
-      <el-table-column prop="id" label="课程编号" align="center" />
+      <el-table-column prop="code" label="课程编号" align="center" />
       <el-table-column prop="name" label="课程名称" align="center" />
       <el-table-column prop="grade" label="年级" align="center" />
       <el-table-column prop="semester" label="所属学期" align="center" />
@@ -205,7 +205,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import curdCourse from "@/api/content/course";
+import crudCourse from "@/api/content/course";
 import CRUD, { presenter, header, form } from "@/components/Crud/crud";
 import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
@@ -252,7 +252,7 @@ export default {
       CRUD({
         title: "课程",
         url: "/api/class/course/all",
-        crudMethod: { ...curdCourse },
+        crudMethod: { ...crudCourse },
       }),
     ];
   },
@@ -261,16 +261,6 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight, //实时屏幕高度
       imageUrl: "",
-      queryTypeOptions: [
-        { key: "name", display_name: "课程名称" },
-        { key: "grade", display_name: "年级" },
-        { key: "semester", display_name: "所属学期" },
-        { key: "college", display_name: "院系" },
-        { key: "teacher", display_name: "任课老师" },
-        { key: "learnRequire", display_name: "学习要求" },
-        { key: "teachProgress", display_name: "教学进度" },
-        { key: "examArrange", display_name: "教学安排" },
-      ],
       rules: {
         name: [{ required: true, message: "请输入课程名称", trigger: "blur" }],
         grade: [{ required: true, message: "请输入年级", trigger: "blur" }],
@@ -321,8 +311,8 @@ export default {
       if (this.form.learnRequire == "") {
         this.form.learnRequire = "暂无内容";
       }
-      if (this.form.teacherProgress == "") {
-        this.form.teacherProgress = "暂无内容";
+      if (this.form.teachProgress == "") {
+        this.form.teachProgress = "暂无内容";
       }
       if (this.form.examArrange == "") {
         this.form.examArrange = "暂无内容";
