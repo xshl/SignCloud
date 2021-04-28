@@ -19,7 +19,7 @@ export function add(data) {
 export function del(ids) {
   console.log('ids', ids)
   return request({
-    url: '/api/class/course/delete-batch',
+    url: '/api/class/courses-batch',
     method: 'delete',
     data: ids
   })
@@ -27,10 +27,10 @@ export function del(ids) {
 
 export function search(params) {
   return request({
-    url: 'api/class/course/search',
+    url: 'api/class/courses/search',
     method: 'get',
     params
   })
 }
 
-export default { add, edit, del }
+export default { add, edit, del, search }

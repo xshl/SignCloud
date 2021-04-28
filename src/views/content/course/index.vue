@@ -9,7 +9,7 @@
           placeholder="模糊搜索"
           style="width: 200px"
           class="filter-item"
-          @keyup.enter.native="crud.toQuery"
+          @keyup.enter.native="crud.Query"
         ></el-input>
         <rrOperation />
       </div>

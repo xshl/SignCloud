@@ -156,7 +156,7 @@ export default {
   name: 'Menu',
   components: { Treeselect, IconSelect, crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '菜单', url: '/api/menu', params: { phone: user.getPhone() }, crudMethod: { ...crudMenu }})
+    return CRUD({ title: '菜单', url: '/api/menu', crudMethod: { ...crudMenu }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {

@@ -125,7 +125,40 @@ function CRUD(options) {
     toQuery() {
       crud.page.page = 1
       crud.refresh()
-      
+    },
+    Query() {
+      crud.page.page = 1
+      if (!callVmHook(crud, CRUD.HOOK.beforeRefresh)) {
+        return
+      }
+      return new Promise((resolve, reject) => {
+        crud.loading = true
+        console.log('搜索')
+        // 请求数据
+        console.log('params', crud.getQueryParams())
+        crud.crudMethod.search(crud.getQueryParams()).then(res => {
+          console.log('data', res.data)
+          const data = res.data
+          const table = crud.getTable()
+          if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
+            table.store.states.treeData = {}
+            table.store.states.lazyTreeNodeMap = {}
+          }
+          crud.page.total = data.totalElements
+          crud.data = data.content
+          console.log('content', crud.data)
+          crud.resetDataStatus()
+          // time 毫秒后显示表格
+          setTimeout(() => {
+            crud.loading = false
+            callVmHook(crud, CRUD.HOOK.afterRefresh)
+          }, crud.time)
+          resolve(data)
+        }).catch(err => {
+          crud.loading = false
+          reject(err)
+        })
+      })
     },
     // 刷新
     refresh() {
@@ -260,7 +293,7 @@ function CRUD(options) {
      * 执行添加
      */
     doAdd(form) {
-      if(!form) {
+      if (!form) {
         form = crud.form
       }
       if (!callVmHook(crud, CRUD.HOOK.beforeSubmit)) {
@@ -285,7 +318,7 @@ function CRUD(options) {
      * 执行编辑
      */
     doEdit(form) {
-      if(!form) {
+      if (!form) {
         form = crud.form
       }
       if (!callVmHook(crud, CRUD.HOOK.beforeSubmit)) {
