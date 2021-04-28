@@ -1,19 +1,5 @@
 <template>
   <div>
-    <div class="head-container">
-      <div>
-        <el-input
-          v-model="query.blurry"
-          clearable
-          size="samll"
-          placeholder="模糊搜索"
-          style="width: 200px"
-          class="filter-item"
-          @keyup.enter.native="crud.toQuery"
-        ></el-input>
-        <rrOperation />
-      </div>
-    </div>
     <!-- 签到参数设置表单组件 -->
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
     <el-dialog
