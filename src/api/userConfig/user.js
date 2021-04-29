@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function add(data) {
   return request({
-    url: 'api/users',
+    url: 'api/admins/users',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function add(data) {
 
 export function del(ids) {
   return request({
-    url: 'api/users',
+    url: 'api/admins/users/batches',
     method: 'delete',
     data: ids
   })
@@ -18,7 +18,7 @@ export function del(ids) {
 
 export function edit(data) {
   return request({
-    url: 'api/users',
+    url: 'api/admins/users',
     method: 'put',
     data
   })
@@ -35,18 +35,6 @@ export function editUser(data) {
 export function updatePass(data) {
   return request({
     url: 'api/users/updatePass/',
-    method: 'post',
-    data
-  })
-}
-
-export function updateEmail(form) {
-  const data = {
-    password: encrypt(form.pass),
-    email: form.email
-  }
-  return request({
-    url: 'api/users/updateEmail/' + form.code,
     method: 'post',
     data
   })

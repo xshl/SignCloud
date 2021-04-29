@@ -1,25 +1,19 @@
 import request from '@/utils/request'
 
-export function getSchools(params) {
+export function getSchools() {
   return request({
-    url: 'api/school',
+    url: 'api/sys/schools',
     method: 'get',
-    params
-  })
-}
-
-export function getSchoolSuperior(ids) {
-  const data = ids.length || ids.length === 0 ? ids : Array.of(ids)
-  return request({
-    url: 'api/school/superior',
-    method: 'post',
-    data
+    params: {
+      pageNum: 0,
+      pageSize: 999
+    }
   })
 }
 
 export function add(data) {
   return request({
-    url: 'api/school',
+    url: 'api/sys/schools',
     method: 'post',
     data
   })
@@ -35,10 +29,18 @@ export function del(ids) {
 
 export function edit(data) {
   return request({
-    url: 'api/school',
+    url: 'api/sys/schools',
     method: 'put',
     data
   })
 }
 
-export default { add, edit, del, getSchools, getSchoolSuperior }
+export function search(params) {
+  return request({
+    url: 'api/sys/schools/search',
+    method: 'get',
+    params
+  })
+}
+
+export default { add, edit, del, getSchools, search }

@@ -229,12 +229,11 @@ import pagination from '@/components/Crud/Pagination'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
-import DateRangePicker from '@/components/DateRangePicker'
 
 const defaultForm = { id: null, name: null, nameZh: null, description: null, menus: [], perms: [] }
 export default {
   name: 'Role',
-  components: { Treeselect, pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
+  components: { Treeselect, pagination, crudOperation, rrOperation, udOperation },
   cruds() {
     return CRUD({ title: '角色', url: 'api/role/all', crudMethod: { ...crudRoles }})
   },

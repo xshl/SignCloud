@@ -2,14 +2,14 @@ import request from '@/utils/request'
 
 export function getPerm() {
   return request({
-    url: '/api/perm/all',
+    url: '/api/perms',
     method: 'get'
   })
 }
 
 export function edit(data) {
   return request({
-    url: '/api/perm',
+    url: '/api/perms',
     method: 'put',
     data
   })
@@ -17,7 +17,7 @@ export function edit(data) {
 
 export function add(data) {
   return request({
-    url: '/api/perm',
+    url: '/api/perms',
     method: 'post',
     data
   })
@@ -25,7 +25,7 @@ export function add(data) {
 
 export function del(data) {
   return request({
-    url: '/api/perm/batch',
+    url: '/api/perms/batches',
     method: 'delete',
     data
   })
@@ -33,7 +33,7 @@ export function del(data) {
 
 export function search(params) {
     return request({
-        url: '/api/perm/search',
+        url: '/api/perms/search',
         method: 'get',
         params
     })

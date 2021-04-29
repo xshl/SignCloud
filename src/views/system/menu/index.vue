@@ -10,7 +10,7 @@
       <crudOperation :permission="permission" />
     </div>
     <!--表单渲染-->
-    <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="580px">
+    <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="crud.status.cu > 0" :title="crud.status.title" width="580px">
       <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
         <el-form-item label="菜单类型" prop="type">
           <el-radio-group v-model="form.type" size="mini" style="width: 178px">
@@ -147,14 +147,13 @@ import CRUD, { presenter, header, form, crud } from '@/components/Crud/crud'
 import rrOperation from '@/components/Crud//RR.operation'
 import crudOperation from '@/components/Crud/CRUD.operation'
 import udOperation from '@/components/Crud/UD.operation'
-import DateRangePicker from '@/components/DateRangePicker'
 import user from '@/utils/userStore'
 
 // crud交由presenter持有
 const defaultForm = { id: null, title: null, menuSort: 999, path: null, component: null, componentName: null, iframe: false, roles: [], pid: 0, icon: null, cache: false, hidden: false, type: 0, permission: null }
 export default {
   name: 'Menu',
-  components: { Treeselect, IconSelect, crudOperation, rrOperation, udOperation, DateRangePicker },
+  components: { Treeselect, IconSelect, crudOperation, rrOperation, udOperation },
   cruds() {
     return CRUD({ title: '菜单', url: '/api/menu', crudMethod: { ...crudMenu }})
   },
