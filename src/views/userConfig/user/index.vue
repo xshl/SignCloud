@@ -31,18 +31,34 @@
         size="small"
         label-width="80px"
       >
-        <el-form-item label="权限名称" prop="name">
-          <el-input v-model="form.name" style="width: 370px" />
+        <el-form-item label="用户姓名" prop="username">
+          <el-input v-model="form.username" style="width: 370px" />
         </el-form-item>
-        <el-form-item label="权限描述" prop="code">
-          <el-input v-model="form.description" style="width: 370px" />
+        <el-form-item label="手机号码" prop="phone">
+          <el-input v-model="form.phone" style="width: 370px" />
         </el-form-item>
-        <el-form-item label="权限路径" prop="code">
-          <el-input v-model="form.uri" style="width: 370px" />
+        <el-form-item label="角色" prop="roles">
+          <el-select
+            v-model="roleDatas"
+            style="width: 370px"
+            multiple
+            placeholder="请选择"
+            @remove-tag="deleteTag"
+            @change="changeRole"
+          >
+            <el-option
+              v-for="item in roles"
+              :key="item.name"
+              :disabled="level !== 1 && item.level <= level"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+          <!-- <el-input v-model="form.roles" style="width: 370px" /> -->
         </el-form-item>
-        <el-form-item label="状态" prop="status">
+        <el-form-item label="状态" prop="enabled">
           <el-switch
-            v-model="form.status"
+            v-model="form.enabled"
             :active-value="1"
             :inactive-value="0"
           ></el-switch>
@@ -67,16 +83,16 @@
       style="width: 100%"
     >
       <el-table-column type="selection" width="25px" />
-      <el-table-column prop="name" label="权限名称" align="center" />
-      <el-table-column prop="uri" label="权限路径" align="center" />
-      <el-table-column prop="description" label="权限描述" align="center" />
-      <el-table-column prop="status" label="状态" align="center">
+      <el-table-column prop="username" label="用户姓名" align="center" />
+      <el-table-column prop="phone" label="手机号码" align="center" />
+      <el-table-column prop="roles" label="角色" align="center" />
+      <el-table-column prop="enabled" label="状态" align="center">
         <template slot-scope="scope">
           <el-switch
-            v-model="scope.row.status"
+            v-model="scope.row.enabled"
             :active-value="1"
             :inactive-value="0"
-            @change="statusChange(scope.row, scope.row.status)"
+            @change="statusChange(scope.row, scope.row.enabled)"
           ></el-switch>
         </template>
       </el-table-column>
@@ -94,7 +110,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import crudPerm from "@/api/system/permission";
+import crudUser from "@/api/userConfig/user";
 import CRUD, { presenter, header, form } from "@/components/Crud/crud";
 import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
@@ -102,18 +118,19 @@ import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
 import user from "@/utils/userStore";
 
+let userRoles = []
 const defaultForm = {
   id: 0,
-  name: null,
-  code: null,
-  description: null,
+  username: null,
+  roles: [],
+  password: "123456",
   method: null,
-  status: 0,
-  uri: null,
+  enabled: 0,
+  salt: null,
 };
 
 export default {
-  name: "Perm",
+  name: "User",
   components: {
     crudOperation,
     pagination,
@@ -123,40 +140,96 @@ export default {
   cruds() {
     return [
       CRUD({
-        title: "权限",
-        url: "/api/perm/all",
-        crudMethod: { ...crudPerm },
+        title: "用户",
+        url: "/api/admins/users",
+        crudMethod: { ...crudUser },
       }),
     ];
+  },
+  created() {
+    this.crud.msg.add = '新增成功，默认密码：123456'
   },
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
     return {
       windowHeight: document.documentElement.clientHeight, //实时屏幕高度
-      imageUrl: "",
+      roles: [],
+      defaultProps: { children: 'children', label: 'name', isLeaf: 'leaf' },
       rules: {
-        name: [{ required: true, message: "请输入权限名称", trigger: "blur" }],
-        uri: [{ required: true, message: "请输入权限路径", trigger: "blur" }],
-        description: [
-          { required: true, message: "请输入权限描述", trigger: "blur" },
-        ],
+        phone: [{ required: true, message: "请输入电话号码", trigger: "blur" }],
+        // roles: [{ required: true, message: "请输入角色", trigger: "blur" }],
       },
       permission: {
-        add: ["admin", "perm:add"],
-        edit: ["admin", "perm:edit"],
-        del: ["admin", "perm:del"],
+        add: ["admin", "user:add"],
+        edit: ["admin", "user:edit"],
+        del: ["admin", "user:del"],
       },
+      roleDatas: []
     };
   },
   methods: {
+    changeRole(value) {
+      userRoles = []
+      value.forEach(function(data, index) {
+        const role = { id: data }
+        userRoles.push(role)
+      })
+    },
+    deleteTag(value) {
+      userRoles.forEach(function(data, index) {
+        if (data.id === value) {
+          userRoles.splice(index, value)
+        }
+      })
+    },
     statusChange(data, val) {
-      crudPerm.edit(data).then((res) => {
+      crudUser.edit(data).then((res) => {
         this.$notify({
-          title: res.data,
+          title: res.message,
           type: "success",
         });
       });
     },
+    // 新增与编辑前做的操作
+    [CRUD.HOOK.afterToCU](crud, form) {
+      this.getRoles()
+      form.enabled = form.enabled.toString()
+    },
+    // 新增前将多选的值设置为空
+    [CRUD.HOOK.beforeToAdd]() {
+      this.roleDatas = []
+    },
+    // 初始化编辑时候的角色与岗位
+    [CRUD.HOOK.beforeToEdit](crud, form) {
+      this.roleDatas = []
+      userRoles = []
+      const _this = this
+      form.roles.forEach(function(role, index) {
+        _this.roleDatas.push(role.id)
+        const rol = { id: role.id }
+        userRoles.push(rol)
+      })
+    },
+    // 提交前做的操作
+    [CRUD.HOOK.afterValidateCU](crud) {
+      if (this.roleDatas.length === 0) {
+        this.$message({
+          message: '角色不能为空',
+          type: 'warning'
+        })
+        return false
+      }
+      crud.form.roles = userRoles
+      return true
+    },
+    getRoles() {
+      getAll().then(res => {
+        this.roles = res
+      }).catch(() => { })
+    },
+    checkboxT(row, rowIndex) {
+      return row.id !== this.user.id
+    }
   },
 };
 </script>
@@ -166,4 +239,8 @@ export default {
 .el-checkbox__input {
   display: flex;
 }
+::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
+    height: 30px;
+    line-height: 30px;
+  }
 </style>

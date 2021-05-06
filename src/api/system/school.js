@@ -43,4 +43,11 @@ export function search(params) {
   })
 }
 
-export default { add, edit, del, getSchools, search }
+export function getSupSchool(id) {
+  return request({
+    url: '/api/sys/schools/children?sid=' + id,
+    method: 'get',
+  })
+}
+
+export default { add, edit, del, getSchools, search, getSupSchool }

@@ -44,14 +44,13 @@
             controls-position="right"
           />
         </el-form-item>
-        <el-form-item label="是否为学校">
+        <!-- <el-form-item label="是否为学校">
           <el-radio-group v-model="isSchool">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
-          v-if="isSchool == '0'"
           style="margin-bottom: 0"
           label="上级学校/学院"
           prop="parentId"
@@ -80,7 +79,7 @@
       v-loading="crud.loading"
       lazy
       :load="getSchoolDatas"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :data="crud.data"
       row-key="id"
       @select="crud.selectChange"
@@ -117,13 +116,11 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import udOperation from "@/components/Crud/UD.operation";
 
 const defaultForm = {
-  id: null,
+  id: 0,
   name: null,
-  parentId: null,
+  parentId: 0,
   sort: 999,
-  children: [
-    null
-  ]
+  children: [null],
 };
 export default {
   name: "School",
@@ -160,28 +157,30 @@ export default {
         edit: ["admin", "school:edit"],
         del: ["admin", "school:del"],
       },
-      isSchool: 1
+      // isSchool: 1,
     };
   },
   methods: {
     getSchoolDatas(tree, treeNode, resolve) {
-      const params = { parentId: tree.id };
       setTimeout(() => {
-        crudSchool.getSchools(params).then((res) => {
-          resolve(res.content);
+        crudSchool.getSupSchool(tree.id).then((res) => {
+          resolve(res.data);
         });
       }, 100);
     },
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
-      if (form.id != null) {
-        this.getSupSchools(form.id);
-      } else {
-        this.getSchools();
-      }
+      this.schools = [];
+      // crudSchool.search()
+      this.schools.push({ id: 0, label: '顶级类目', children: null })
+      // if (form.id != 0) {
+      //   this.getSupSchools(form.id);
+      // } else {
+      //   this.getSchools();
+      // }
     },
     getSupSchools(id) {
-      crudSchool.getSchoolSuperior(id).then((res) => {
+      crudSchool.getSupSchool(id).then((res) => {
         const date = res.content;
         this.buildSchools(date);
         this.Schools = date;
@@ -192,63 +191,61 @@ export default {
         if (data.children) {
           this.buildSchools(data.children);
         }
-        if (data.hasChildren && !data.children) {
+        if (data.hasChildren || !data.children) {
           data.children = null;
         }
       });
     },
-    getSchools() {
-      crudSchool.getSchools().then((res) => {
-        console.log('data', res.data.content)
-        this.schools = res.data.content.map(function (obj) {
-          console.log('obj', obj)
-          if (obj.hasChildren) {
-            obj.children = null;
-          }
-          return obj;
-        });
-      });
-    },
+    // getSchools() {
+    //   crudSchool.getSupSchool(0).then((res) => {
+    //     console.log("data", res.data);
+    //     this.schools = res.data.map(function (obj) {
+    //       console.log("obj", obj);
+    //       if (!obj.children) {
+    //         return { id: obj.id, label: obj.name };
+    //       }
+    //       return { id: obj.id, label: obj.name, children: obj.children };
+    //     });
+    //   });
+    // },
     // 获取弹窗内学校数据
     loadSchools({ action, parentNode, callback }) {
-      console.log('action', action)
+      console.log("action", action);
       if (action === LOAD_CHILDREN_OPTIONS) {
-        console.log('加载弹窗数据')
-        crudSchool
-          .getSchools()
-          .then((res) => {
-            parentNode.children = res.data.content.map(val => {
-              console.log('val', val)
-              let obj = {}
-              obj.label = val.parentId
-              obj.children = val.children
-              return obj
-            })
-            // parentNode.children = res.data.content.map(function (obj) {
-            //   console.log('children', obj)
-            //   if (obj.hasChildren) {
-            //     obj.children = null;
-            //   }
-            //   return obj;
-            // });
-            setTimeout(() => {
-              callback();
-            }, 100);
+        console.log("加载弹窗数据");
+        crudSchool.getSupSchool(parentNode.id).then((res) => {
+          parentNode.children = res.data.map(function (obj) {
+            if (obj.children.length == 0) {
+              console.log('无儿子节点')
+              return { id: obj.id, label: obj.name }
+            }
+            return { id: obj.id, label: obj.name, children: null };
           });
+          // parentNode.children = res.data.content.map(function (obj) {
+          //   console.log('children', obj)
+          //   if (obj.hasChildren) {
+          //     obj.children = null;
+          //   }
+          //   return obj;
+          // });
+          setTimeout(() => {
+            callback();
+          }, 100);
+        });
       }
     },
     // 提交前的验证
     [CRUD.HOOK.afterValidateCU]() {
-      if (this.form.parentId !== null && this.form.parentId === this.form.id) {
+      if (this.form.parentId === this.form.id) {
         this.$message({
           message: "上级学校/院系不能为空",
           type: "warning",
         });
         return false;
       }
-      if (this.form.isSchool === "1") {
-        this.form.parentId = null;
-      }
+      // if (this.isSchool == 1) {
+      //   this.form.parentId = 0;
+      // }
       return true;
     },
     checkboxT(row, rowIndex) {

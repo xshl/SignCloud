@@ -32,13 +32,24 @@
         label-width="80px"
       >
         <el-form-item label="权限名称" prop="name">
-          <el-input v-model="form.name" style="width: 370px" />
+          <el-input v-model="form.name" />
+        </el-form-item>
+        <el-form-item label="权限路径" prop="uri">
+          <el-input v-model="form.uri"/>
+        </el-form-item>
+        <el-form-item label="方法" prop="method">
+          <el-select v-model="form.method" style="width: 100%" clearable>
+            <el-option
+              v-for="item in method"
+              :key="item.value"
+              :label="item.label"
+              :value="item.label"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="权限描述" prop="code">
-          <el-input v-model="form.description" style="width: 370px" />
-        </el-form-item>
-        <el-form-item label="权限路径" prop="code">
-          <el-input v-model="form.uri" style="width: 370px" />
+          <el-input v-model="form.description"/>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-switch
@@ -69,8 +80,8 @@
       <el-table-column type="selection" width="25px" />
       <el-table-column prop="name" label="权限名称" align="center" />
       <el-table-column prop="uri" label="权限路径" align="center" />
-      <el-table-column prop="description" label="权限描述" align="center" />
-      <el-table-column prop="status" label="状态" align="center">
+      <el-table-column prop="method" label="方法" align="center" />
+      <el-table-column prop="status" label="状态" align="center" >
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
@@ -80,6 +91,7 @@
           ></el-switch>
         </template>
       </el-table-column>
+      <el-table-column prop="description" label="权限描述" align="center" />
       <el-table-column label="操作" width="130px" align="center" fixed="right">
         <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
         <template slot-scope="scope">
@@ -100,6 +112,7 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
+import data from '@/utils/data'
 import user from "@/utils/userStore";
 
 const defaultForm = {
@@ -108,7 +121,7 @@ const defaultForm = {
   code: null,
   description: null,
   method: null,
-  status: 0,
+  status: 1,
   uri: null,
 };
 
@@ -124,7 +137,7 @@ export default {
     return [
       CRUD({
         title: "权限",
-        url: "/api/perm/all",
+        url: "/api/perms",
         crudMethod: { ...crudPerm },
       }),
     ];
@@ -137,6 +150,7 @@ export default {
       rules: {
         name: [{ required: true, message: "请输入权限名称", trigger: "blur" }],
         uri: [{ required: true, message: "请输入权限路径", trigger: "blur" }],
+        method: [{ required: true, message: "请选择方法", trigger: "blur" }],
         description: [
           { required: true, message: "请输入权限描述", trigger: "blur" },
         ],
@@ -146,13 +160,14 @@ export default {
         edit: ["admin", "perm:edit"],
         del: ["admin", "perm:del"],
       },
+      method: data.method
     };
   },
   methods: {
     statusChange(data, val) {
       crudPerm.edit(data).then((res) => {
         this.$notify({
-          title: res.data,
+          title: res.message,
           type: "success",
         });
       });

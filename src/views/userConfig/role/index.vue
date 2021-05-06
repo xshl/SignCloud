@@ -22,7 +22,7 @@
       append-to-body
       :close-on-click-modal="false"
       :before-close="crud.cancelCU"
-      :visible.sync="crud.status.cu > 0"
+      :visible="crud.status.cu > 0"
       :title="crud.status.title"
       width="520px"
     >
@@ -235,7 +235,7 @@ export default {
   name: 'Role',
   components: { Treeselect, pagination, crudOperation, rrOperation, udOperation },
   cruds() {
-    return CRUD({ title: '角色', url: 'api/role/all', crudMethod: { ...crudRoles }})
+    return CRUD({ title: '角色', url: '/api/roles/roles', crudMethod: { ...crudRoles }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
@@ -436,9 +436,9 @@ export default {
       }
     },
     statusChange(data, val) {
-      crudPerm.edit(data).then((res) => {
+      crudRoles.edit(data).then((res) => {
         this.$notify({
-          title: res.data,
+          title: res.message,
           type: "success",
         });
       });

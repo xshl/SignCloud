@@ -222,7 +222,7 @@ export default {
     dicStatusChange(data, val) {
       crudDict.edit(data).then((res) => {
         this.$notify({
-          title: res.data,
+          title: res.message,
           type: "success",
         });
       });

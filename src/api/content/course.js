@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function edit(data) {
   return request({
-    url: '/api/class/course-contain-cover',
+    url: '/api/classes/course-contain-covers',
     method: 'put',
     data
   })
@@ -10,7 +10,7 @@ export function edit(data) {
 
 export function add(data) {
   return request({
-    url: '/api/class/courses',
+    url: '/api/classes/courses',
     method: 'post',
     data
   })
@@ -19,7 +19,7 @@ export function add(data) {
 export function del(ids) {
   console.log('ids', ids)
   return request({
-    url: '/api/class/courses-batch',
+    url: '/api/classes/courses-batch',
     method: 'delete',
     data: ids
   })
@@ -27,7 +27,7 @@ export function del(ids) {
 
 export function search(params) {
   return request({
-    url: 'api/class/courses/search',
+    url: 'api/classes/courses/search',
     method: 'get',
     params
   })

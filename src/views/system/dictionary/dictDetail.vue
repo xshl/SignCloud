@@ -188,7 +188,7 @@ export default {
       crudDictDetail.edit(data).then((res) => {
         console.log('res', res)
         this.$notify({
-          title: res.data,
+          title: res.message,
           type: 'success'
         });
       })

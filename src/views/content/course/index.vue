@@ -204,7 +204,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import crudCourse from "@/api/content/course";
 import CRUD, { presenter, header, form } from "@/components/Crud/crud";
 import crudOperation from "@/components/Crud/CRUD.operation";
@@ -213,8 +212,6 @@ import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
 import user from "@/utils/userStore";
 import data from "@/utils/data";
-
-let Base64 = require("js-base64").Base64;
 
 const defaultForm = {
   id: 0,
@@ -251,7 +248,7 @@ export default {
     return [
       CRUD({
         title: "课程",
-        url: "/api/class/course/all",
+        url: "/api/classes/courses",
         crudMethod: { ...crudCourse },
       }),
     ];
@@ -345,6 +342,7 @@ export default {
       }
       this.imageUrl = "";
       this.$refs.upload.clearFiles();
+      this.formdata = new window.FormData()
     },
     cancel() {
       this.crud.addSuccess = false;

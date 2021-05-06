@@ -21,6 +21,7 @@ export default  {
         value: '选项7',
         label: '2022'
     },],
+
     semester: [{
         value: '2016-2017',
         label: '2016-2017',
@@ -92,4 +93,21 @@ export default  {
             label: "02"
         }]
     },],
+
+    method: [{
+        value: "*",
+        label: "*",
+    },{
+        value: "get",
+        label: "get",
+    },{
+        value: "post",
+        label: "post",
+    },{
+        value: "put",
+        label: "put",
+    },{
+        value: "delete",
+        label: "delete",
+    },]
 }

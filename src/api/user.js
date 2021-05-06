@@ -57,7 +57,7 @@ export function forgetPassword(params) {
 
 export function loginByGithub(params) {
   return request({
-    url: '/api/callback',
+    url: '/api/github/callback',
     method: 'get',
     params
   })
