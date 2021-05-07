@@ -48,7 +48,7 @@ export function add(data) {
 
 export function del(ids) {
   return request({
-    url: '/api/menus',
+    url: '/api/menus/batches',
     method: 'delete',
     data: ids
   })

@@ -53,11 +53,8 @@
         <el-form-item label="英文名称" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item
-          label="权限标识"
-          prop="permission"
-        >
-          <el-input v-model="form.permission" placeholder="如：menu:list"/>
+        <el-form-item label="权限标识" prop="permission">
+          <el-input v-model="form.permission" placeholder="如：menu:list" />
         </el-form-item>
         <el-form-item
           v-if="form.type.toString() !== '2'"
@@ -123,16 +120,44 @@
       @select-all="crud.selectAllChange"
       @selection-change="crud.selectionChangeHandler"
     >
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="selection" width="55px" />
       <el-table-column
         :show-overflow-tooltip="true"
         label="菜单标题"
         width="125px"
-        prop="name"
+        prop="nameZh"
       />
-      <el-table-column prop="icon" label="图标" align="center" width="60px">
+      <el-table-column prop="icon" label="图标" align="center">
         <template slot-scope="scope">
-          <svg-icon :icon-class="scope.row.icon ? scope.row.icon : ''" />
+          <i :class="scope.row.icon"></i>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="permission"
+        label="权限标识"
+        align="center"
+      />
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="path"
+        label="路由地址"
+        align="center"
+      />
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="component"
+        label="组件路径"
+        align="center"
+      />
+      <el-table-column prop="enabled" label="状态" align="center">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.enabled"
+            :active-value="1"
+            :inactive-value="0"
+            @change="enabledChange(scope.row)"
+          ></el-switch>
         </template>
       </el-table-column>
       <el-table-column prop="sort" align="center" label="排序">
@@ -140,35 +165,6 @@
           {{ scope.row.sort }}
         </template>
       </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="permission"
-        label="权限标识"
-      />
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="component"
-        label="组件路径"
-      />
-      <el-table-column prop="iframe" label="外链" width="75px">
-        <template slot-scope="scope">
-          <span v-if="scope.row.iframe">是</span>
-          <span v-else>否</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="cache" label="缓存" width="75px">
-        <template slot-scope="scope">
-          <span v-if="scope.row.cache">是</span>
-          <span v-else>否</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="hidden" label="可见" width="75px">
-        <template slot-scope="scope">
-          <span v-if="scope.row.hidden">否</span>
-          <span v-else>是</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createTime" label="创建日期" width="135px" />
       <el-table-column label="操作" width="130px" align="center" fixed="right">
         <!-- <el-table-column v-if="checkPer(['admin','menu:edit','menu:del'])" label="操作" width="130px" align="center" fixed="right"> -->
         <template slot-scope="scope">
@@ -202,7 +198,7 @@ const defaultForm = {
   nameZh: null,
   sort: 999,
   path: null,
-  component: null,
+  component: "Layout",
   parentId: 0,
   icon: null,
   type: 0,
@@ -236,10 +232,16 @@ export default {
         del: ["admin", "menu:del"],
       },
       rules: {
-        nameZh: [{ required: true, message: "请输入中文名称", trigger: "blur" }],
+        nameZh: [
+          { required: true, message: "请输入中文名称", trigger: "blur" },
+        ],
         path: [{ required: true, message: "请输入路由地址", trigger: "blur" }],
-        permission: [{ required: true, message: "请输入权限标识", trigger: "blur" }],
-        component: [{ required: true, message: "请输入组件路径", trigger: "blur" }]
+        permission: [
+          { required: true, message: "请输入权限标识", trigger: "blur" },
+        ],
+        component: [
+          { required: true, message: "请输入组件路径", trigger: "blur" },
+        ],
       },
     };
   },
@@ -247,21 +249,31 @@ export default {
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
       this.menus = [];
-      // if (form.id != null) {
+      if (this.crud.status.edit == CRUD.STATUS.PREPARED) {
+        if (form.id != 0) {
+          this.getSupMenus(form.parentId)
+        } else {
+          this.menus.push({ id: 0, label: "顶级类目", children: null });
+        }
+      } else {
+        console.log('tag')
+        this.menus.push({ id: 0, label: "顶级类目", children: null });
+      }
+      // if (form.id != 0) {
       //   if (form.parentId === null) {
       //     form.parentId = 0
       //   }
       //   // this.getSupDepts(form.id)
       // } else {
-      this.menus.push({ id: 0, label: "顶级类目", children: null });
+      //   this.menus.push({ id: 0, label: "顶级类目", children: null });
       // }
     },
     [CRUD.HOOK.afterValidateCU]() {
       if (this.form.type == 0) {
-        this.form.component = 'Layout'
+        this.form.component = "Layout";
       }
       if (this.form.icon == null && this.form.type != 2) {
-        this.form.icon = 'el-icon-add'
+        this.form.icon = "el-icon-add";
       }
       return true;
     },
@@ -272,22 +284,23 @@ export default {
         });
       }, 100);
     },
-    // getSupDepts(id) {
-    //   console.log("id", id);
-    //   crudMenu.getChild(id).then((res) => {
-    //     const children = res.data.map(function (obj) {
-    //       if (!obj.children) {
-    //         obj.children = null;
-    //       }
-    //       return { id: obj.id, label: obj.nameZh, children: obj.children };
-    //     });
-    //     this.menus = [{ id: 0, label: "顶级类目", children: children }];
-    //   });
-    // },
+    getSupMenus(id) {
+      console.log('id', id)
+      crudMenu.getChild(id).then((res) => {
+        const children = res.data.map(function (obj) {
+          if (!obj.children.length == 0) {
+              console.log("无儿子节点");
+              return { id: obj.id, label: obj.nameZh };
+          }
+          return { id: obj.id, label: obj.nameZh, children: null };
+        });
+        this.menus = [{ id: 0, label: "顶级类目", children: children }];
+      });
+    },
     loadMenus({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
         crudMenu.getChild(parentNode.id).then((res) => {
-          console.log('res', res)
+          console.log("res", res);
           parentNode.children = res.data.map(function (obj) {
             console.log("obj", obj);
             if (obj.children.length == 0) {
@@ -301,6 +314,15 @@ export default {
           }, 100);
         });
       }
+    },
+    enabledChange(data) {
+      crudMenu.edit(data).then((res) => {
+        console.log("res", res);
+        this.$notify({
+          title: res.message,
+          type: "success",
+        });
+      });
     },
     // 选中图标
     selected(name) {
