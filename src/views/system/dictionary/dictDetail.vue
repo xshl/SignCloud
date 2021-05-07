@@ -145,7 +145,7 @@ export default {
     return [
       CRUD({
         title: "字典详情",
-        url: "/api/dictionary-details",
+        url: "/api/dictionaries/dictionary-details",
         query: { dicTypeId: "" },
         crudMethod: { ...crudDictDetail },
         optShow: {

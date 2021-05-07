@@ -64,4 +64,16 @@ export function search(params) {
   })
 }
 
+export function getMenusByRoles(id) {
+  return request({
+    url: '/api/menus/roles',
+    method: 'get',
+    params: {
+      roleId: id,
+      pageNum: 0,
+      pageSize: 999
+    }
+  })
+}
+
 export default { add, edit, del, getMenus, getChild, getFather, search }

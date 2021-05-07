@@ -84,7 +84,11 @@
       <el-table-column type="selection" width="25px" />
       <el-table-column prop="username" label="用户姓名" align="center" />
       <el-table-column prop="phone" label="手机号码" align="center" />
-      <el-table-column prop="roles" label="角色" align="center" />
+      <el-table-column prop="roles" label="角色" align="center">
+        <template slot-scope="scope">
+          <el-tag v-for="role in scope.row.roles" :key="role.id" size="mini" style="margin-left:3px">{{role.nameZh}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="enabled" label="状态" align="center">
         <template slot-scope="scope">
           <el-switch
@@ -110,23 +114,25 @@
 <script>
 import { mapGetters } from "vuex";
 import crudUser from "@/api/userConfig/user";
-import { getAll } from '@/api/userConfig/role'
+import { getAll } from "@/api/userConfig/role";
 import CRUD, { presenter, header, form } from "@/components/Crud/crud";
 import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
+import { validPhone } from "@/utils/validate";
 import user from "@/utils/userStore";
 
-let userRoles = []
+let userRoles = [];
 const defaultForm = {
   id: 0,
   username: null,
   roles: [],
   password: "123456",
   method: null,
-  enabled: 0,
+  enabled: 1,
   salt: null,
+  phone: null,
 };
 
 export default {
@@ -147,41 +153,47 @@ export default {
     ];
   },
   created() {
-    this.crud.msg.add = '新增成功，默认密码：123456'
+    this.crud.msg.add = "新增成功，默认密码：123456";
   },
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
     return {
       windowHeight: document.documentElement.clientHeight, //实时屏幕高度
       roles: [],
-      defaultProps: { children: 'children', label: 'name', isLeaf: 'leaf' },
+      defaultProps: { children: "children", label: "name", isLeaf: "leaf" },
       rules: {
-        name: [{ required: true, message: "请输入用户姓名", trigger: "blur" }],
-        phone: [{ required: true, message: "请输入电话号码", trigger: "blur" }],
-        roles: [{ required: true, message: "请选择角色", trigger: "blur" }],
+        username: [
+          { required: true, message: "请输入用户姓名", trigger: "blur" },
+        ],
+        phone: [
+          { required: true, message: "请输入电话号码", trigger: "blur" },
+          { validator: validPhone, trigger: "blur" },
+        ],
+        // roles: [{ required: true, message: "请选择角色", trigger: "blur" }],
       },
       permission: {
         add: ["admin", "user:add"],
         edit: ["admin", "user:edit"],
         del: ["admin", "user:del"],
       },
-      roleDatas: []
+      roleDatas: [],
     };
   },
   methods: {
     changeRole(value) {
-      userRoles = []
-      value.forEach(function(data, index) {
-        const role = { id: data }
-        userRoles.push(role)
-      })
+      console.log('roles', this.form.roles[0].nameZh)
+      userRoles = [];
+      value.forEach(function (data, index) {
+        const role = { id: data };
+        userRoles.push(role);
+      });
     },
     deleteTag(value) {
-      userRoles.forEach(function(data, index) {
+      userRoles.forEach(function (data, index) {
         if (data.id === value) {
-          userRoles.splice(index, value)
+          userRoles.splice(index, value);
         }
-      })
+      });
     },
     statusChange(data, val) {
       crudUser.edit(data).then((res) => {
@@ -193,44 +205,45 @@ export default {
     },
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
-      this.getRoles()
-      form.enabled = form.enabled.toString()
+      this.getRoles();
     },
     // 新增前将多选的值设置为空
     [CRUD.HOOK.beforeToAdd]() {
-      this.roleDatas = []
+      this.roleDatas = [];
     },
     // 初始化编辑时候的角色与岗位
     [CRUD.HOOK.beforeToEdit](crud, form) {
-      this.roleDatas = []
-      userRoles = []
-      const _this = this
-      form.roles.forEach(function(role, index) {
-        _this.roleDatas.push(role.id)
-        const rol = { id: role.id }
-        userRoles.push(rol)
-      })
+      this.roleDatas = [];
+      userRoles = [];
+      const _this = this;
+      form.roles.forEach(function (role, index) {
+        _this.roleDatas.push(role.id);
+        const rol = { id: role.id };
+        userRoles.push(rol);
+      });
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
       if (this.roleDatas.length === 0) {
         this.$message({
-          message: '角色不能为空',
-          type: 'warning'
-        })
-        return false
+          message: "角色不能为空",
+          type: "warning",
+        });
+        return false;
       }
-      crud.form.roles = userRoles
-      return true
+      crud.form.roles = userRoles;
+      return true;
     },
     getRoles() {
-      getAll().then(res => {
-        this.roles = res.data.content
-      }).catch(() => { })
+      getAll()
+        .then((res) => {
+          this.roles = res.data.content;
+        })
+        .catch(() => {});
     },
     checkboxT(row, rowIndex) {
-      return row.id !== this.user.id
-    }
+      return row.id !== this.user.id;
+    },
   },
 };
 </script>
@@ -240,8 +253,10 @@ export default {
 .el-checkbox__input {
   display: flex;
 }
-::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
-    height: 30px;
-    line-height: 30px;
-  }
+::v-deep .vue-treeselect__control,
+::v-deep .vue-treeselect__placeholder,
+::v-deep .vue-treeselect__single-value {
+  height: 30px;
+  line-height: 30px;
+}
 </style>

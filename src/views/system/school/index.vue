@@ -2,8 +2,7 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
-      <div v-if="crud.props.searchToggle">
-        <!-- 搜索 -->
+      <!-- <div v-if="crud.props.searchToggle">
         <el-input
           v-model="query.keywords"
           clearable
@@ -14,7 +13,7 @@
           @keyup.enter.native="crud.Query"
         />
         <rrOperation />
-      </div>
+      </div> -->
       <crudOperation :permission="permission" />
     </div>
     <!--表单组件-->

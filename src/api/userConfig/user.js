@@ -24,7 +24,10 @@ export function edit(data) {
   return request({
     url: '/api/admins/users',
     method: 'put',
-    data
+    data,
+    params: {
+      modifierId: userStore.getId()
+    }
   })
 }
 

@@ -51,4 +51,4 @@ export function search(params) {
   })
 }
 
-export default { add, edit, del, get, search }
+export default { add, edit, del, get, search, getAll }

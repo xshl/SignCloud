@@ -186,6 +186,7 @@ function CRUD(options) {
             crud.loading = false
             callVmHook(crud, CRUD.HOOK.afterRefresh)
           }, crud.time)
+          console.log('11111', '')
           resolve(data)
         }).catch(err => {
           crud.loading = false

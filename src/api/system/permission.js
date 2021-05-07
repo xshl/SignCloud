@@ -3,7 +3,11 @@ import request from '@/utils/request'
 export function getPerm() {
   return request({
     url: '/api/perms',
-    method: 'get'
+    method: 'get',
+    params: {
+      pageNum: 0,
+      pageSize: 999
+    }
   })
 }
 

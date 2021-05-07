@@ -179,7 +179,7 @@ export default {
     return [
       CRUD({
         title: "字典",
-        url: "/api/dictionary-types",
+        url: "/api/dictionaries/dictionary-types",
         crudMethod: { ...crudDict },
       }),
     ];

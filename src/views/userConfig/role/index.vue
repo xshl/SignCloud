@@ -34,10 +34,10 @@
         label-width="80px"
       >
         <el-form-item label="角色名称" prop="name">
-          <el-input v-model="form.name"/>
+          <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="中文名称" prop="nameZh">
-          <el-input v-model="form.nameZh"/>
+          <el-input v-model="form.nameZh" />
         </el-form-item>
         <el-form-item label="状态" prop="enabled">
           <el-switch
@@ -47,9 +47,7 @@
           ></el-switch>
         </el-form-item>
         <el-form-item label="描述信息" prop="description">
-          <el-input
-            v-model="form.description"
-          />
+          <el-input v-model="form.description" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -82,18 +80,20 @@
             @selection-change="crud.selectionChangeHandler"
             @current-change="handleCurrentChange"
           >
+            <el-table-column type="selection" width="25px" />
+            <el-table-column prop="nameZh" label="角色名称" align="center" />
             <el-table-column
-              type="selection"
-              width="25px"
-            />
-            <el-table-column prop="nameZh" label="角色名称" />
-            <el-table-column prop="status" label="状态" align="center">
+              prop="enabled"
+              label="状态"
+              align="center"
+              width="80px"
+            >
               <template slot-scope="scope">
                 <el-switch
-                  v-model="scope.row.status"
+                  v-model="scope.row.enabled"
                   :active-value="1"
                   :inactive-value="0"
-                  @change="statusChange(scope.row, scope.row.status)"
+                  @change="statusChange(scope.row, scope.row.enabled)"
                 ></el-switch>
               </template>
             </el-table-column>
@@ -101,6 +101,7 @@
               :show-overflow-tooltip="true"
               prop="description"
               label="描述"
+              align="center"
             />
             <!-- <el-table-column
               :show-overflow-tooltip="true"
@@ -116,10 +117,7 @@
               fixed="right"
             >
               <template slot-scope="scope">
-                <udOperation
-                  :data="scope.row"
-                  :permission="permission"
-                />
+                <udOperation :data="scope.row" :permission="permission" />
               </template>
             </el-table-column>
           </el-table>
@@ -162,12 +160,9 @@
           </div>
           <el-tree
             ref="menu"
-            lazy
-            :data="menus"
+            :data="menusData"
             :default-checked-keys="menuIds"
-            :load="getMenuDatas"
             :props="defaultProps"
-            check-strictly
             accordion
             show-checkbox
             node-key="id"
@@ -176,7 +171,7 @@
         </el-card>
       </el-col>
       <!-- 权限选择 -->
-      <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="7">
+      <!-- <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="7">
         <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
             <el-tooltip
@@ -188,7 +183,7 @@
               <span class="role-span">权限分配</span>
             </el-tooltip>
             <el-button
-              :disabled="!showPermButton"
+              :disabled="!showButton"
               :loading="permLoading"
               icon="el-icon-check"
               size="mini"
@@ -200,242 +195,215 @@
           </div>
           <el-tree
             ref="perm"
-            lazy
-            :data="perms"
+            :data="permsData"
             :default-checked-keys="permIds"
-            :load="getPermDatas"
-            :props="defaultProps"
-            check-strictly
+            :props="defaultPermProps"
             accordion
             show-checkbox
             node-key="id"
             @check="permChange"
           />
         </el-card>
-      </el-col>
+      </el-col> -->
     </el-row>
   </div>
 </template>
 
 <script>
-import crudRoles from '@/api/userConfig/role'
-import { getPerm } from '@/api/system/permission'
-import { getMenusTree, getChild } from '@/api/system/menu'
-import CRUD, { presenter, header, form, crud } from '@/components/Crud/crud'
-import rrOperation from '@/components/Crud/RR.operation'
-import crudOperation from '@/components/Crud/CRUD.operation'
-import udOperation from '@/components/Crud/UD.operation'
-import pagination from '@/components/Crud/Pagination'
-import Treeselect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
+import crudRoles from "@/api/userConfig/role";
+import { getPerm } from "@/api/system/permission";
+import { getMenus, getChild, getMenusByRoles } from "@/api/system/menu";
+import CRUD, { presenter, header, form, crud } from "@/components/Crud/crud";
+import rrOperation from "@/components/Crud/RR.operation";
+import crudOperation from "@/components/Crud/CRUD.operation";
+import udOperation from "@/components/Crud/UD.operation";
+import pagination from "@/components/Crud/Pagination";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
+import user from "@/utils/userStore";
 
-const defaultForm = { id: null, name: null, nameZh: null, description: null, menus: [], perms: [] }
+const defaultForm = {
+  id: null,
+  name: null,
+  nameZh: null,
+  description: null,
+  menus: [],
+  perms: [],
+  enabled: 1,
+};
 export default {
-  name: 'Role',
-  components: { Treeselect, pagination, crudOperation, rrOperation, udOperation },
+  name: "Role",
+  components: {
+    Treeselect,
+    pagination,
+    crudOperation,
+    rrOperation,
+    udOperation,
+  },
   cruds() {
-    return CRUD({ title: '角色', url: '/api/roles/roles', crudMethod: { ...crudRoles }})
+    return CRUD({
+      title: "角色",
+      url: "/api/roles/roles",
+      crudMethod: { ...crudRoles },
+    });
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
+  created() {
+    getMenus().then((res) => {
+      this.menusData = res.data.content;
+    });
+    getPerm().then((res) => {
+      this.permsData = res.data.content;
+    });
+  },
   data() {
     return {
-      defaultProps: { children: 'children', label: 'label', isLeaf: 'leaf' },
-      currentId: 0, menuLoading: false, showButton: false,
-      permLoading: false, showPermButton: false,
-      menus: [], menuIds: [], perms: [], permIds: [], // 多选时使用
+      defaultProps: {
+        children: "children",
+        label: "nameZh",
+        isLeaf: "hasChildren",
+      },
+      defaultPermProps: {
+        children: "children",
+        label: "name",
+        isLeaf: "hasChildren",
+      },
+      currentId: 0,
+      menuLoading: false,
+      showButton: false,
+      permLoading: false,
+      showPermButton: false,
+      menus: [],
+      menuIds: [],
+      menusData: [],
+      perms: [],
+      permIds: [], // 多选时使用
+      permsData: [],
+      roleForm: [],
       permission: {
-        add: ['admin', 'roles:add'],
-        edit: ['admin', 'roles:edit'],
-        del: ['admin', 'roles:del']
+        add: ["admin", "roles:add"],
+        edit: ["admin", "roles:edit"],
+        del: ["admin", "roles:del"],
       },
       rules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
+        name: [{ required: true, message: "请输入角色名称", trigger: "blur" }],
+        nameZh: [
+          { required: true, message: "请输入中文名称", trigger: "blur" },
         ],
-        nameZh: [{ required: true, message: '请中文名称', trigger: 'blur' }]
-      }
-    }
+      },
+    };
   },
   methods: {
-    getMenuDatas(node, resolve) {
-      setTimeout(() => {
-        getMenusTree(node.data.id ? node.data.id : 0).then(res => {
-          resolve(res)
-        })
-      }, 100)
-    },
-    getPermDatas(node, resolve) {
-
-    },
-    [CRUD.HOOK.afterRefresh]() {
-      this.$refs.menu.setCheckedKeys([])
-    },
-    // 新增前初始化部门信息
-    [CRUD.HOOK.beforeToAdd](crud, form) {
-      this.deptDatas = []
-      form.menus = null
-    },
-    // 编辑前初始化自定义数据权限的部门信息
-    [CRUD.HOOK.beforeToEdit](crud, form) {
-      this.deptDatas = []
-      if (form.dataScope === '自定义') {
-        this.getSupDepts(form.depts)
-      }
-      const _this = this
-      form.depts.forEach(function(dept) {
-        _this.deptDatas.push(dept.id)
-      })
-    },
-    // 提交前做的操作
-    [CRUD.HOOK.afterValidateCU](crud) {
-      if (crud.form.dataScope === '自定义' && this.deptDatas.length === 0) {
-        this.$message({
-          message: '自定义数据权限不能为空',
-          type: 'warning'
-        })
-        return false
-      } else if (crud.form.dataScope === '自定义') {
-        const depts = []
-        this.deptDatas.forEach(function(data) {
-          const dept = { id: data }
-          depts.push(dept)
-        })
-        crud.form.depts = depts
-      } else {
-        crud.form.depts = []
-      }
-      return true
-    },
     // 触发单选
     handleCurrentChange(val) {
+      this.roleForm = val;
       if (val) {
-        const _this = this
+        const _this = this;
         // 清空菜单的选中
-        this.$refs.menu.setCheckedKeys([])
+        this.$refs.menu.setCheckedKeys([]);
         // 保存当前的角色id
-        this.currentId = val.id
+        this.currentId = val.id;
         // 初始化默认选中的key
-        this.menuIds = []
-        val.menus.forEach(function(data) {
-          _this.menuIds.push(data.id)
-        })
-        this.showButton = true
+        this.menuIds = [];
+        getMenusByRoles(val.id).then((res) => {
+          val.menus.forEach(function (data) {
+            _this.menuIds.push(data.id);
+          });
+        });
+        this.$refs.menu.setCheckedKeys(this.menuIds);
+        // crudRoles.getAll().then((res) => {
+        //   console.log("res", res.data.content);
+        //   const data = res.data.content;
+        //   for (const val in data) {
+        //     if ((val.id = this.currentId)) {
+        //       const _this = this;
+        //       val.perms.forEach(function (data) {
+        //         _this.permIds.push(data.id);
+        //       });
+        //     }
+        //     this.$refs.perm.setCheckedKeys(this.permIds);
+        //   }
+        // });
+        this.showButton = true;
       }
     },
     menuChange(menu) {
-      // 获取该节点的所有子节点，id 包含自身
-      getChild(menu.id).then(childIds => {
-        // 判断是否在 menuIds 中，如果存在则删除，否则添加
-        if (this.menuIds.indexOf(menu.id) !== -1) {
-          for (let i = 0; i < childIds.length; i++) {
-            const index = this.menuIds.indexOf(childIds[i])
-            if (index !== -1) {
-              this.menuIds.splice(index, 1)
-            }
-          }
-        } else {
-          for (let i = 0; i < childIds.length; i++) {
-            const index = this.menuIds.indexOf(childIds[i])
-            if (index === -1) {
-              this.menuIds.push(childIds[i])
-            }
-          }
-        }
-        this.$refs.menu.setCheckedKeys(this.menuIds)
-      })
+      if (!this.showButton) {
+        this.$message({
+          message: "请选择修改角色",
+          type: "warning",
+        });
+      }
     },
     permChange(perm) {
-
+      if (!this.showButton) {
+        this.$message({
+          message: "请选择修改角色",
+          type: "warning",
+        });
+      }
     },
     // 保存菜单
     saveMenu() {
-      this.menuLoading = true
-      const role = { id: this.currentId, menus: [] }
-      // 得到已选中的 key 值
-      this.menuIds.forEach(function(id) {
-        const menu = { id: id }
-        role.menus.push(menu)
-      })
-      crudRoles.editMenu(role).then(() => {
-        this.crud.notify('保存成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
-        this.menuLoading = false
-        this.update()
-      }).catch(err => {
-        this.menuLoading = false
-        console.log(err.response.data.message)
-      })
+      this.menuLoading = true;
+      const _this = this;
+      this.roleForm.menus = [];
+      this.menuIds = this.$refs.menu.getCheckedKeys();
+      this.menuIds.forEach(function (id) {
+        const menu = { id: id };
+        _this.roleForm.menus.push(menu);
+      });
+      this.roleForm.modifier = user.getId();
+      console.log("form", this.roleForm);
+      crudRoles
+        .edit(this.roleForm)
+        .then((res) => {
+          this.crud.notify("保存成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
+          this.menuLoading = false;
+        })
+        .catch((err) => {
+          this.menuLoading = false;
+          console.log(err.response.data.message);
+        });
     },
     savePerm() {
-
+      this.permLoading = true;
+      const _this = this;
+      this.roleForm.perms = [];
+      this.permIds = this.$refs.perm.getCheckedKeys();
+      this.permIds.forEach(function (id) {
+        const perm = { id: id };
+        _this.roleForm.perms.push(perm);
+      });
+      this.roleForm.modifier = user.getId();
+      console.log("form", this.roleForm);
+      crudRoles
+        .edit(this.roleForm)
+        .then((res) => {
+          this.crud.notify("保存成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
+          this.permLoading = false;
+        })
+        .catch((err) => {
+          this.permLoading = false;
+          console.log(err.response.data.message);
+        });
     },
     // 改变数据
     update() {
       // 无刷新更新 表格数据
-      crudRoles.get(this.currentId).then(res => {
+      crudRoles.get(this.currentId).then((res) => {
         for (let i = 0; i < this.crud.data.length; i++) {
           if (res.id === this.crud.data[i].id) {
-            this.crud.data[i] = res
-            break
+            this.crud.data[i] = res;
+            break;
           }
         }
-      })
-    },
-    // 获取部门数据
-    getDepts() {
-      getDepts({ enabled: true }).then(res => {
-        this.depts = res.content.map(function(obj) {
-          if (obj.hasChildren) {
-            obj.children = null
-          }
-          return obj
-        })
-      })
-    },
-    getSupDepts(depts) {
-      const ids = []
-      depts.forEach(dept => {
-        ids.push(dept.id)
-      })
-      getDeptSuperior(ids).then(res => {
-        const date = res.content
-        this.buildDepts(date)
-        this.depts = date
-      })
-    },
-    buildDepts(depts) {
-      depts.forEach(data => {
-        if (data.children) {
-          this.buildDepts(data.children)
-        }
-        if (data.hasChildren && !data.children) {
-          data.children = null
-        }
-      })
-    },
-    // 获取弹窗内部门数据
-    loadDepts({ action, parentNode, callback }) {
-      if (action === LOAD_CHILDREN_OPTIONS) {
-        getDepts({ enabled: true, pid: parentNode.id }).then(res => {
-          parentNode.children = res.content.map(function(obj) {
-            if (obj.hasChildren) {
-              obj.children = null
-            }
-            return obj
-          })
-          setTimeout(() => {
-            callback()
-          }, 200)
-        })
-      }
-    },
-    // 如果数据权限为自定义则获取部门数据
-    changeScope() {
-      if (this.form.dataScope === '自定义') {
-        this.getDepts()
-      }
+      });
     },
     statusChange(data, val) {
+      data.perms = [];
+      data.menus = [];
       crudRoles.edit(data).then((res) => {
         this.$notify({
           title: res.message,
@@ -443,8 +411,8 @@ export default {
         });
       });
     },
-  }
-}
+  },
+};
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
@@ -465,5 +433,10 @@ export default {
 ::v-deep .vue-treeselect__multi-value-item {
   border: 0;
   padding: 0;
+}
+.perm {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3px;
 }
 </style>

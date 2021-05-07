@@ -124,7 +124,6 @@
       <el-table-column
         :show-overflow-tooltip="true"
         label="菜单标题"
-        width="125px"
         prop="nameZh"
       />
       <el-table-column prop="icon" label="图标" align="center">
@@ -250,18 +249,26 @@ export default {
     [CRUD.HOOK.afterToCU](crud, form) {
       this.menus = [];
       if (this.crud.status.edit == CRUD.STATUS.PREPARED) {
-        if (form.id != 0) {
-          this.getSupMenus(form.id)
-        } else {
+        console.log(0, form.parentId);
+        if (form.parentId == 0) {
           this.menus.push({ id: 0, label: "顶级类目", children: null });
+        } else {
+          console.log("tag", "找父节点");
+          this.getSupMenus(form.id);
         }
       } else {
-        console.log('tag')
+        console.log("tag");
         this.menus.push({ id: 0, label: "顶级类目", children: null });
       }
-      
     },
     [CRUD.HOOK.afterValidateCU]() {
+      if (this.form.parentId === this.form.id) {
+        this.$message({
+          message: "上级学校/院系不能为空",
+          type: "warning",
+        });
+        return false;
+      }
       if (this.form.type == 0) {
         this.form.component = "Layout";
       }
@@ -278,10 +285,12 @@ export default {
       }, 100);
     },
     getSupMenus(id) {
-      console.log('id', id)
+      console.log("id", id);
       crudMenu.getFather(id).then((res) => {
-        const children = [{ id: this.form.parentId, label: res.data, children:null }]
-        console.log('children', children)
+        const children = [
+          { id: this.form.parentId, label: res.data, children: null },
+        ];
+        console.log("children", children);
         this.menus = [{ id: 0, label: "顶级类目", children: children }];
       });
     },
