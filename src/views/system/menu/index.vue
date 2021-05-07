@@ -251,7 +251,7 @@ export default {
       this.menus = [];
       if (this.crud.status.edit == CRUD.STATUS.PREPARED) {
         if (form.id != 0) {
-          this.getSupMenus(form.parentId)
+          this.getSupMenus(form.id)
         } else {
           this.menus.push({ id: 0, label: "顶级类目", children: null });
         }
@@ -259,14 +259,7 @@ export default {
         console.log('tag')
         this.menus.push({ id: 0, label: "顶级类目", children: null });
       }
-      // if (form.id != 0) {
-      //   if (form.parentId === null) {
-      //     form.parentId = 0
-      //   }
-      //   // this.getSupDepts(form.id)
-      // } else {
-      //   this.menus.push({ id: 0, label: "顶级类目", children: null });
-      // }
+      
     },
     [CRUD.HOOK.afterValidateCU]() {
       if (this.form.type == 0) {
@@ -286,14 +279,9 @@ export default {
     },
     getSupMenus(id) {
       console.log('id', id)
-      crudMenu.getChild(id).then((res) => {
-        const children = res.data.map(function (obj) {
-          if (!obj.children.length == 0) {
-              console.log("无儿子节点");
-              return { id: obj.id, label: obj.nameZh };
-          }
-          return { id: obj.id, label: obj.nameZh, children: null };
-        });
+      crudMenu.getFather(id).then((res) => {
+        const children = [{ id: this.form.parentId, label: res.data, children:null }]
+        console.log('children', children)
         this.menus = [{ id: 0, label: "顶级类目", children: children }];
       });
     },

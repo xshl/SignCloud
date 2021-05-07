@@ -1,10 +1,14 @@
 import request from '@/utils/request'
+import userStore from '@/utils/userStore'
 
 export function add(data) {
   return request({
     url: '/api/admins/users',
     method: 'post',
-    data
+    data,
+    params: {
+      creatorId: userStore.getId()
+    }
   })
 }
 

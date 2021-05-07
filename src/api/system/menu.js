@@ -1,28 +1,22 @@
 import request from '@/utils/request'
 
-// export function getMenusTree(pid) {
-//   return request({
-//     url: '/api/menus/lazy?pid=' + pid,
-//     method: 'get'
-//   })
-// }
-
-export function getMenus(params) {
+export function getMenus() {
   return request({
     url: '/api/menus',
     method: 'get',
-    params
+    params: {
+      pageNum: 0,
+      pageSize: 999
+    }
   })
 }
 
-// export function getMenuSuperior(ids) {
-//   const data = ids.length || ids.length === 0 ? ids : Array.of(ids)
-//   return request({
-//     url: '/api/menus/superior',
-//     method: 'post',
-//     data
-//   })
-// }
+export function getFather(id) {
+  return request({
+    url: '/api/menus/father?mid=' + id,
+    method: 'get',
+  })
+}
 
 export function getChild(id) {
   return request({
@@ -62,4 +56,12 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del, getMenus, getChild }
+export function search(params) {
+  return request({
+    url: '/api/menus/search',
+    method: 'get',
+    params
+  })
+}
+
+export default { add, edit, del, getMenus, getChild, getFather, search }

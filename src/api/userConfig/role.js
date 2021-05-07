@@ -4,7 +4,11 @@ import request from '@/utils/request'
 export function getAll() {
   return request({
     url: '/api/roles/roles',
-    method: 'get'
+    method: 'get',
+    params: {
+      pageNum: 0,
+      pageSize: 999
+    }
   })
 }
 

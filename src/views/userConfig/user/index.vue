@@ -48,9 +48,8 @@
           >
             <el-option
               v-for="item in roles"
-              :key="item.name"
-              :disabled="level !== 1 && item.level <= level"
-              :label="item.name"
+              :key="item.nameZh"
+              :label="item.nameZh"
               :value="item.id"
             />
           </el-select>
@@ -111,6 +110,7 @@
 <script>
 import { mapGetters } from "vuex";
 import crudUser from "@/api/userConfig/user";
+import { getAll } from '@/api/userConfig/role'
 import CRUD, { presenter, header, form } from "@/components/Crud/crud";
 import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
@@ -156,8 +156,9 @@ export default {
       roles: [],
       defaultProps: { children: 'children', label: 'name', isLeaf: 'leaf' },
       rules: {
+        name: [{ required: true, message: "请输入用户姓名", trigger: "blur" }],
         phone: [{ required: true, message: "请输入电话号码", trigger: "blur" }],
-        // roles: [{ required: true, message: "请输入角色", trigger: "blur" }],
+        roles: [{ required: true, message: "请选择角色", trigger: "blur" }],
       },
       permission: {
         add: ["admin", "user:add"],
@@ -224,7 +225,7 @@ export default {
     },
     getRoles() {
       getAll().then(res => {
-        this.roles = res
+        this.roles = res.data.content
       }).catch(() => { })
     },
     checkboxT(row, rowIndex) {
