@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { getMenusById } from '@/api/system/menu'
 
 Vue.use(Router)
 
@@ -210,6 +211,12 @@ const createRouter = () => new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
+
+export const loadMenus = (next, to) => {
+  getMenusById().then(res => {
+    console.log('res', res.data,content)
+  })
+}
 
 const router = createRouter()
 

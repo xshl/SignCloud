@@ -22,14 +22,30 @@ export function setId(id) {
 export function getId() {
     return localStorage.getItem('id') 
 }
+export function setUser(user) {
+    localStorage.setItem('user', JSON.stringify(user))
+}
+export function getUser() {
+    return localStorage.getItem('user')
+}
+export function getMenu() {
+    return localStorage.getItem('menus')
+}
+export function setMenu(menus) {
+    localStorage.setItem('menu', JSON.stringify(menus))
+}
 
 export default {
     getAvatar,
     getName,
     getPhone,
     getId,
+    getUser,
+    getMenu,
     setAvatar,
     setName,
     setPhone,
-    setId
+    setId,
+    setUser,
+    setMenu
 }

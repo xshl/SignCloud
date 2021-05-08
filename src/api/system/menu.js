@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import user from '@/utils/userStore'
 
 export function getMenus() {
   return request({
@@ -22,13 +23,6 @@ export function getChild(id) {
   return request({
     url: '/api/menus/children?mid=' + id,
     method: 'get',
-  })
-}
-
-export function buildMenus() {
-  return request({
-    url: '/api/menus/build',
-    method: 'get'
   })
 }
 
@@ -70,6 +64,19 @@ export function getMenusByRoles(id) {
     method: 'get',
     params: {
       roleId: id,
+      pageNum: 0,
+      pageSize: 999
+    }
+  })
+}
+
+export function getMenusById() {
+  const id = user.getId()
+  return request({
+    url: '/api/menus/' + id,
+    method: 'get',
+    params: {
+      userId: id,
       pageNum: 0,
       pageSize: 999
     }

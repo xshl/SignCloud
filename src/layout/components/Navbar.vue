@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       defaultAvatar: defaultAvatar,
-      avatar: user.getAvatar()
+      avatar: user.getUser().avatar
     }
   },
   computed: {
@@ -57,7 +57,8 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      console.log('退出登录')
+      this.$router.push('/login')
     }
   }
 }

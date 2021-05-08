@@ -171,7 +171,7 @@
         </el-card>
       </el-col>
       <!-- 权限选择 -->
-      <!-- <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="7">
+      <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="7">
         <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
             <el-tooltip
@@ -204,7 +204,7 @@
             @check="permChange"
           />
         </el-card>
-      </el-col> -->
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -307,16 +307,17 @@ export default {
         // 初始化默认选中的key
         this.menuIds = [];
         getMenusByRoles(val.id).then((res) => {
-          val.menus.forEach(function (data) {
+          console.log('res', res)
+          res.data.content.forEach(function (data) {
             _this.menuIds.push(data.id);
           });
+          console.log('menuIds', this.menuIds)
         });
-        this.$refs.menu.setCheckedKeys(this.menuIds);
+        // this.$refs.menu.setCheckedKeys([1,3]);
         // crudRoles.getAll().then((res) => {
-        //   console.log("res", res.data.content);
         //   const data = res.data.content;
         //   for (const val in data) {
-        //     if ((val.id = this.currentId)) {
+        //     if ((val.id == this.currentId)) {
         //       const _this = this;
         //       val.perms.forEach(function (data) {
         //         _this.permIds.push(data.id);
@@ -349,6 +350,7 @@ export default {
       this.menuLoading = true;
       const _this = this;
       this.roleForm.menus = [];
+      this.roleForm.perms = [];
       this.menuIds = this.$refs.menu.getCheckedKeys();
       this.menuIds.forEach(function (id) {
         const menu = { id: id };

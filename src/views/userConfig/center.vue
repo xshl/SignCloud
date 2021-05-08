@@ -1,9 +1,9 @@
 <template>
   <div class="conatiner">
     <el-card class="cardContent">
-      <img v-if="avatar" :src="avatar" width="100px" class="avatar" />
+      <img v-if="user.avatar" :src="avatar" width="100px" class="avatar" />
       <img v-else src="../../assets/image/avatar.png" width="100px"/>
-      <h2>{{name}}</h2>
+      <h2>{{user.name}}</h2>
       <div></div>
     </el-card>
   </div>
@@ -11,11 +11,11 @@
 
 <script>
 import user from '@/utils/userStore'
+import avatar from '@/assets/image/avatar.png'
 export default {
   data() {
     return {
-      avatar: user.getAvatar(),
-      name: user.getName()
+      user: user.getUser()
     }
   }
 }

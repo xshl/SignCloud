@@ -1,6 +1,7 @@
 import { login, logout, getInfo, loginByPhone, register } from '@/api/user'
 import { getToken, setToken, removeToken, setSessionToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import { getMenusById } from '@/api/system/menu'
 import user from '@/utils/userStore'
 
 const getDefaultState = () => {
@@ -51,6 +52,7 @@ const actions = {
         user.setAvatar(data.userInfo.avatar)
         user.setPhone(data.userInfo.phone)
         user.setName(data.userInfo.username)
+        user.setUser(data.userInfo)
         console.log(data.token)
         if (userInfo.rememberMe == true) {
           setToken(data.token)
@@ -81,6 +83,7 @@ const actions = {
         user.setAvatar(data.userInfo.avatar)
         user.setPhone(data.userInfo.phone)
         user.setName(data.userInfo.username)
+        user.setUser(data.userInfo)
         console.log(data.token)
         setSessionToken(data.token)
         resolve()
@@ -97,14 +100,10 @@ const actions = {
    */
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      removeToken()
+      resetRouter()
+      resolve()
+      user.setUser([])
     })
   },
 
@@ -133,6 +132,7 @@ const actions = {
       user.setAvatar(data.userInfo.avatar)
       user.setPhone(data.userInfo.phone)
       user.setName(data.userInfo.username)
+      user.setUser(data.userInfo)
       console.log(data.token)
       setSessionToken(data.token)                                                                                                                 
       resolve()

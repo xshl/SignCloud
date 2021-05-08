@@ -5,12 +5,14 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
+import user from '@/utils/userStore'
+import { loadMenus } from '@/router'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/login/register', '/login/forgetPassword', '/additional', '/callback', '/error/404', '/error/403', '/error/500'] // no redirect whitelist
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // start progress bar
   NProgress.start()
 
@@ -26,9 +28,9 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
-      if (hasGetUserInfo) {
+      if (user.getUser().length != 0) {
         next()
+        // loadMenus(next, to)
       } else {
         try {
           next()
