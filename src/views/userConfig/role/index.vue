@@ -306,26 +306,40 @@ export default {
         this.currentId = val.id;
         // 初始化默认选中的key
         this.menuIds = [];
+        this.permIds = [];
         getMenusByRoles(val.id).then((res) => {
-          console.log('res', res)
+          console.log("res", res);
           res.data.content.forEach(function (data) {
             _this.menuIds.push(data.id);
           });
-          console.log('menuIds', this.menuIds)
+          console.log("menuIds", this.menuIds);
+          this.$refs.menu.setCheckedKeys(this.menuIds);
+          console.log("menu", this.$refs.menu.getCheckedKeys());
         });
-        // this.$refs.menu.setCheckedKeys([1,3]);
-        // crudRoles.getAll().then((res) => {
-        //   const data = res.data.content;
-        //   for (const val in data) {
-        //     if ((val.id == this.currentId)) {
-        //       const _this = this;
-        //       val.perms.forEach(function (data) {
-        //         _this.permIds.push(data.id);
-        //       });
-        //     }
-        //     this.$refs.perm.setCheckedKeys(this.permIds);
-        //   }
-        // });
+        crudRoles.getAll().then((res) => {
+          const data = res.data.content;
+          console.log("res", data);
+          const _this = this;
+          data.forEach(function (val) {
+            if (val.id == _this.currentId) {
+              val.perms.forEach(function (data) {
+                _this.permIds.push(data.id);
+              });
+            }
+          });
+          // for (val in data) {
+          //   console.log('val', val)
+          //   console.log('currernt', this.currentId, val.id)
+          //   if (val.id == this.currentId) {
+          //     const _this = this;
+          //     val.perms.forEach(function (data) {
+          //       _this.permIds.push(data.id);
+          //     });
+          //   }
+          // }
+          console.log("perms", this.permIds);
+          this.$refs.perm.setCheckedKeys(this.permIds);
+        });
         this.showButton = true;
       }
     },
@@ -372,6 +386,7 @@ export default {
     savePerm() {
       this.permLoading = true;
       const _this = this;
+      this.roleForm.menus = [];
       this.roleForm.perms = [];
       this.permIds = this.$refs.perm.getCheckedKeys();
       this.permIds.forEach(function (id) {
