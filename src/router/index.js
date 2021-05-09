@@ -214,7 +214,11 @@ const createRouter = () => new Router({
 
 export const loadMenus = (next, to) => {
   getMenusById().then(res => {
-    console.log('res', res.data,content)
+    console.log('router', res.data.content)
+    const data = res.data.content
+    data.forEach(val => {
+      console.log('val', val)
+    });
   })
 }
 

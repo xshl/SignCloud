@@ -30,7 +30,7 @@ router.beforeEach(async (to, from, next) => {
     } else {
       if (user.getUser().length != 0) {
         next()
-        // loadMenus(next, to)
+        loadMenus(next, to)
       } else {
         try {
           next()

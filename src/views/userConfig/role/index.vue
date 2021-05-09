@@ -160,6 +160,7 @@
           </div>
           <el-tree
             ref="menu"
+            v-loading="loading"
             :data="menusData"
             :default-checked-keys="menuIds"
             :props="defaultProps"
@@ -196,6 +197,7 @@
           <el-tree
             ref="perm"
             :data="permsData"
+            v-loading="loading"
             :default-checked-keys="permIds"
             :props="defaultPermProps"
             accordion
@@ -292,6 +294,7 @@ export default {
           { required: true, message: "请输入中文名称", trigger: "blur" },
         ],
       },
+      loading: false
     };
   },
   methods: {
@@ -308,6 +311,7 @@ export default {
         this.menuIds = [];
         this.permIds = [];
         getMenusByRoles(val.id).then((res) => {
+          this.loading = true
           console.log("res", res);
           res.data.content.forEach(function (data) {
             _this.menuIds.push(data.id);
@@ -327,18 +331,9 @@ export default {
               });
             }
           });
-          // for (val in data) {
-          //   console.log('val', val)
-          //   console.log('currernt', this.currentId, val.id)
-          //   if (val.id == this.currentId) {
-          //     const _this = this;
-          //     val.perms.forEach(function (data) {
-          //       _this.permIds.push(data.id);
-          //     });
-          //   }
-          // }
           console.log("perms", this.permIds);
           this.$refs.perm.setCheckedKeys(this.permIds);
+          this.loading = false
         });
         this.showButton = true;
       }
