@@ -312,17 +312,14 @@ export default {
         this.permIds = [];
         getMenusByRoles(val.id).then((res) => {
           this.loading = true
-          console.log("res", res);
           res.data.content.forEach(function (data) {
             _this.menuIds.push(data.id);
           });
-          console.log("menuIds", this.menuIds);
           this.$refs.menu.setCheckedKeys(this.menuIds);
           console.log("menu", this.$refs.menu.getCheckedKeys());
         });
         crudRoles.getAll().then((res) => {
           const data = res.data.content;
-          console.log("res", data);
           const _this = this;
           data.forEach(function (val) {
             if (val.id == _this.currentId) {
@@ -331,7 +328,6 @@ export default {
               });
             }
           });
-          console.log("perms", this.permIds);
           this.$refs.perm.setCheckedKeys(this.permIds);
           this.loading = false
         });
@@ -366,7 +362,6 @@ export default {
         _this.roleForm.menus.push(menu);
       });
       this.roleForm.modifier = user.getId();
-      console.log("form", this.roleForm);
       crudRoles
         .edit(this.roleForm)
         .then((res) => {
@@ -389,7 +384,6 @@ export default {
         _this.roleForm.perms.push(perm);
       });
       this.roleForm.modifier = user.getId();
-      console.log("form", this.roleForm);
       crudRoles
         .edit(this.roleForm)
         .then((res) => {

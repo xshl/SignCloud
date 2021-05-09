@@ -273,7 +273,7 @@ export default {
         this.form.component = "Layout";
       }
       if (this.form.icon == null && this.form.type != 2) {
-        this.form.icon = "el-icon-add";
+        this.form.icon = "el-icon-plus";
       }
       return true;
     },

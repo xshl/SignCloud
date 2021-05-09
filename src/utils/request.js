@@ -43,6 +43,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.log('error', error)
     if (error.response.data instanceof Blob && error.response.data.type.toLowerCase().indexOf('json') !== -1) {
       const reader = new FileReader()
       reader.readAsText(error.response.data, 'utf-8')
@@ -54,19 +55,26 @@ service.interceptors.response.use(
         })
       }
     } else {
+      console.log('2', '')
       let code = 0
       try {
         code = error.response.data.status
       } catch (e) {
-        if (error.toString().indexOf('Error: timeout') !== -1) {
+        if (error.toString().includes('Error: timeout') !== -1) {
           Notification.error({
             title: '网络请求超时',
             duration: 5000
           })
           return Promise.reject(error)
-        }
+        } 
       }
-      console.log(code)
+      if (error.toString().includes('403')) {
+        router.push({ path: '/error/403' })
+      } else if (error.toString().includes('404')) {
+        router.push({ path: '/error/404' })
+      } else if (error.toString().includes('500')) {
+        router.push({ path: '/error/500' })
+      }
       if (code) {
         if (code === 401) {
           store.dispatch('LogOut').then(() => {
@@ -76,6 +84,7 @@ service.interceptors.response.use(
             location.reload()
           })
         } else if (code === 403) {
+          console.log('403')
           router.push({ path: '/error/403' })
         } else if (code === 500) {
           router.push({ path: '/error/500' })
