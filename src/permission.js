@@ -6,7 +6,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 import user from '@/utils/userStore'
-import { loadMenus } from '@/router'
+import { getMenusById } from '@/api/system/menu'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -30,7 +30,7 @@ router.beforeEach(async (to, from, next) => {
     } else {
       if (user.getUser().length != 0) {
         next()
-        loadMenus(next, to)
+        // loadMenus(next, to)
       } else {
         try {
           next()
@@ -57,6 +57,22 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 })
+
+export const loadMenus = (next, to) => {
+  getMenusById().then(res => {
+    const sdata = JSON.parse(JSON.stringify(res.data.content))
+    const rdata = JSON.parse(JSON.stringify(res.data.content))
+    const sidebarRoutes = filterAsyncRouter(sdata)
+    const rewriteRoutes = filterAsyncRouter(rdata, true)
+    rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
+
+    store.dispatch('GenerateRoutes', rewriteRoutes).then(() => { // 存储路由
+      router.addRoutes(rewriteRoutes) // 动态添加可访问路由表
+      next({ ...to, replace: true })
+    })
+    store.dispatch('SetSidebarRouters', sidebarRoutes) 
+  })
+}
 
 router.afterEach(() => {
   // finish progress bar

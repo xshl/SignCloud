@@ -50,14 +50,12 @@ export const constantRouterMap = [
     path: '/',
     component: Layout,
     redirect: '/home',
-    children: [
-      {
-        path: 'home',
-        component: (resolve) => require(['@/views/home'], resolve),
-        name: 'Home',
-        meta: { title: '首页', icon: 'index', affix: true, noCache: true }
-      }
-    ]
+    children: [{
+      path: 'home',
+      name: 'Home',
+      component: () => import('@/views/home'),
+      meta: { title: '首页', icon: 'el-icon-stopwatch', affix: true }
+    }]
   },
   {
     path: '/user',
