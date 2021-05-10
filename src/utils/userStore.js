@@ -29,7 +29,7 @@ export function getUser() {
     return localStorage.getItem('user')
 }
 export function getMenu() {
-    return localStorage.getItem('menus')
+    return JSON.parse(localStorage.getItem('menu'))
 }
 export function setMenu(menus) {
     localStorage.setItem('menu', JSON.stringify(menus))

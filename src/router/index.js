@@ -29,10 +29,12 @@ export const constantRouterMap = [
   },
   {
     path: '/additional',
+    hidden: true,
     component: () => import('@/views/login/additional.vue')
   },
   {
     path: '/callback',
+    hidden: true,
     component: () => import('@/views/login/callback.vue')
   },
   {

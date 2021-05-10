@@ -1,8 +1,8 @@
 <template>
-  <div v-if="!item.hidden">
-    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
+  <div v-if="!item.hidden&&show">
+    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)">
+      <app-link v-if="onlyOneChild.meta&&showChildren" :to="resolvePath(onlyOneChild.path)">
+        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}" v-if="showChildren">
           <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
         </el-menu-item>
       </app-link>
@@ -10,7 +10,7 @@
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
+        <item v-if="item.meta&&showChildren" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -54,8 +54,24 @@ export default {
     this.onlyOneChild = null
     return {}
   },
+  computed: {
+    showChildren() {
+      console.log('onlyOneChildren', this.onlyOneChild)
+      console.log('onlyOneChild.meta', this.onlyOneChild.meta)
+      return true
+    },
+    show() { 
+      console.log('item', this.item)
+      return true
+    }
+  },
   methods: {
     hasOneShowingChild(children = [], parent) {
+      console.log('判断是否有儿子节点')
+      console.log('children', children)
+      if (children == null) {
+        children = []
+      }
       const showingChildren = children.filter(item => {
         if (item.hidden) {
           return false
