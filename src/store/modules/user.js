@@ -53,6 +53,7 @@ const actions = {
         user.setPhone(data.userInfo.phone)
         user.setName(data.userInfo.username)
         user.setUser(data.userInfo)
+        user.setMenu()
         console.log(data.token)
         if (userInfo.rememberMe == true) {
           setToken(data.token)
@@ -84,6 +85,7 @@ const actions = {
         user.setPhone(data.userInfo.phone)
         user.setName(data.userInfo.username)
         user.setUser(data.userInfo)
+        user.setMenu()
         console.log(data.token)
         setSessionToken(data.token)
         resolve()
@@ -133,6 +135,7 @@ const actions = {
       user.setPhone(data.userInfo.phone)
       user.setName(data.userInfo.username)
       user.setUser(data.userInfo)
+      user.setMenu()
       console.log(data.token)
       setSessionToken(data.token)                                                                                                                 
       resolve()

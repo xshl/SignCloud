@@ -1,3 +1,6 @@
+import { getMenusById } from '@/api/system/menu'
+import { filterAsyncRouter } from '@/store/modules/permission'
+
 export function setPhone(phone) {
     localStorage.setItem('phone', phone)
 }
@@ -20,7 +23,7 @@ export function setId(id) {
     localStorage.setItem('id', id)
 }
 export function getId() {
-    return localStorage.getItem('id') 
+    return localStorage.getItem('id')
 }
 export function setUser(user) {
     localStorage.setItem('user', JSON.stringify(user))
@@ -31,8 +34,15 @@ export function getUser() {
 export function getMenu() {
     return JSON.parse(localStorage.getItem('menu'))
 }
-export function setMenu(menus) {
-    localStorage.setItem('menu', JSON.stringify(menus))
+export function setMenu() {
+    getMenusById().then((res) => {
+        console.log('存储菜单', '')
+        const rdata = JSON.parse(JSON.stringify(res.data.content))
+        const rewriteRoutes = filterAsyncRouter(rdata, true)
+        console.log('rewriteRoutes', rewriteRoutes)
+        rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
+        localStorage.setItem('menu', JSON.stringify(rewriteRoutes))
+    })
 }
 
 export default {

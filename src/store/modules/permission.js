@@ -36,7 +36,7 @@ export const filterAsyncRouter = (routers, isRewrite = false) => { // 遍历后�
       router.hidden = true
     }
     if (router.type == 2) {
-      return 
+      return
     }
     if (isRewrite && router.children) {
       router.children = filterChildren(router.children)
@@ -60,17 +60,15 @@ function filterChildren(childrenMap) {
   var children = []
   childrenMap.forEach((el, index) => {
     if (el.children && el.children.length) {
-      if (el.component === 'ParentView') {
-        el.children.forEach(c => {
-          c.path = el.path + '/' + c.path
-          if (c.children && c.children.length) {
-            children = children.concat(filterChildren(c.children, c))
-            return
-          }
-          children.push(c)
-        })
-        return
-      }
+      el.children.forEach(c => {
+        c.path = el.path + '/' + c.path
+        if (c.children && c.children.length) {
+          children = children.concat(filterChildren(c.children, c))
+          return
+        }
+        children.push(c)
+      })
+      return
     }
     children = children.concat(el)
   })

@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'has-logo':showLogo}">
+  <div :class="{ 'has-logo': showLogo }">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -12,51 +12,87 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item
+          v-for="route in routes"
+          :key="route.path"
+          :item="route"
+          :base-path="route.path"
+        />
       </el-menu>
     </el-scrollbar>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Logo from './Logo'
-import SidebarItem from './SidebarItem'
-import variables from '@/styles/variables.scss'
-import router from '@/router'
-import user from '@/utils/userStore'
+import { mapGetters } from "vuex";
+import Logo from "./Logo";
+import SidebarItem from "./SidebarItem";
+import variables from "@/styles/variables.scss";
+import router from "@/router";
+import user from "@/utils/userStore";
+import Layout from "@/layout/index";
 
 export default {
   components: { SidebarItem, Logo },
   computed: {
-    ...mapGetters([
-      'sidebar'
-    ]),
+    ...mapGetters(["sidebar"]),
     routes() {
-      user.getMenu()
-      console.log('route1', this.$router.options.routes)
-      return this.$router.options.routes
+      const menu = [
+        {
+          path: "/",
+          component: Layout,
+          redirect: "/home",
+          children: [
+            {
+              path: "home",
+              name: "Home",
+              component: () => import("@/views/home"),
+              meta: { title: "首页", icon: "el-icon-stopwatch", affix: true },
+            },
+          ],
+        },
+      ];
+      user.getMenu().forEach((val) => {
+        menu.push(val);
+      });
+      menu.push({
+        path: "/aboutMe",
+        component: Layout,
+        redirect: "/aboutMe",
+        children: [
+          {
+            path: "aboutMe",
+            name: "AboutMe",
+            component: () => import("@/views/aboutMe"),
+            meta: { title: "关于我们", icon: "el-icon-warning-outline" },
+          },
+        ],
+      });
+      // return this.$router.options.routes;
+      console.log("menu", menu);
+      console.log("routes", this.$router.options.routes);
+      return menu;
     },
     activeMenu() {
-      const route = this.$route
-      const { meta, path } = route
+      const route = this.$route;
+      const { meta, path } = route;
       // if set path, the sidebar will highlight the path you set
       if (meta.activeMenu) {
-        return meta.activeMenu
+        return meta.activeMenu;
       }
-      return path
+      return path;
     },
     showLogo() {
-      return this.$store.state.settings.sidebarLogo
+      return this.$store.state.settings.sidebarLogo;
     },
     variables() {
-      return variables
+      return variables;
     },
     isCollapse() {
-      return !this.sidebar.opened
-    }
-  }
-}
+      return !this.sidebar.opened;
+    },
+  },
+};
 </script>
 <style scoped>
 </style>

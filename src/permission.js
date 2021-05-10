@@ -8,6 +8,7 @@ import getPageTitle from '@/utils/get-page-title'
 import user from '@/utils/userStore'
 import { getMenusById } from '@/api/system/menu'
 import { filterAsyncRouter } from '@/store/modules/permission'
+import { constantRouterMap } from '@/router'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -61,17 +62,17 @@ router.beforeEach(async (to, from, next) => {
 
 export const loadMenus = (next, to) => {
   getMenusById().then(res => {
-    const sdata = JSON.parse(JSON.stringify(res.data.content))
-    const rdata = JSON.parse(JSON.stringify(res.data.content))
-    const sidebarRoutes = filterAsyncRouter(sdata)
-    const rewriteRoutes = filterAsyncRouter(rdata, true)
-    rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
-    console.log('router', rewriteRoutes)
-    rewriteRoutes.forEach(val => {
-      router.options.routes.push(val)
-    })
+      const sdata = JSON.parse(JSON.stringify(res.data.content))
+      const rdata = JSON.parse(JSON.stringify(res.data.content))
+      const sidebarRoutes = filterAsyncRouter(sdata)
+      const rewriteRoutes = filterAsyncRouter(rdata, true)
+      rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
+      rewriteRoutes.forEach(val => {
+        router.options.routes.push(val)
+      })
+    
+    console.log('tag', router.options.routes)
     // router.addRoutes(rewriteRoutes) // 动态添加可访问路由表
-    console.log('router', router)
     next({ ...to, replace: true })
     // store.dispatch('GenerateRoutes', rewriteRoutes).then(() => { // 存储路由
       
