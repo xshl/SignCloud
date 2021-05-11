@@ -59,6 +59,7 @@ export const constantRouterMap = [
       meta: { title: '首页', icon: 'el-icon-stopwatch', affix: true }
     }]
   },
+  
   {
     path: '/user',
     component: Layout,

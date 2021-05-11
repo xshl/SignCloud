@@ -367,6 +367,7 @@ export default {
         .then((res) => {
           this.crud.notify("保存成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
           this.menuLoading = false;
+          user.setMenu()
         })
         .catch((err) => {
           this.menuLoading = false;

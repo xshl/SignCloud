@@ -69,8 +69,6 @@ export default {
         ],
       });
       // return this.$router.options.routes;
-      console.log("menu", menu);
-      console.log("routes", this.$router.options.routes);
       return menu;
     },
     activeMenu() {

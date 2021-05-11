@@ -10,6 +10,7 @@ import { getMenusById } from '@/api/system/menu'
 import { filterAsyncRouter } from '@/store/modules/permission'
 import { constantRouterMap } from '@/router'
 
+
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/login/register', '/login/forgetPassword', '/additional', '/callback', '/error/404', '/error/403', '/error/500'] // no redirect whitelist
@@ -67,17 +68,11 @@ export const loadMenus = (next, to) => {
       const sidebarRoutes = filterAsyncRouter(sdata)
       const rewriteRoutes = filterAsyncRouter(rdata, true)
       rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
-      rewriteRoutes.forEach(val => {
-        router.options.routes.push(val)
+      store.dispatch('GenerateRoutes', rewriteRoutes).then(() => { // 存储路由
+        router.addRoutes(rewriteRoutes) // 动态添加可访问路由表
+        next({ ...to, replace: true })
       })
-    
-    console.log('tag', router.options.routes)
-    // router.addRoutes(rewriteRoutes) // 动态添加可访问路由表
-    next({ ...to, replace: true })
-    // store.dispatch('GenerateRoutes', rewriteRoutes).then(() => { // 存储路由
-      
-    // })
-    // store.dispatch('SetSidebarRouters', sidebarRoutes) 
+      store.dispatch('SetSidebarRouters', sidebarRoutes) 
   })
 }
 

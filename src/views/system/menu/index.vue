@@ -315,6 +315,7 @@ export default {
     enabledChange(data) {
       crudMenu.edit(data).then((res) => {
         console.log("res", res);
+        user.setMenu()
         this.$notify({
           title: res.message,
           type: "success",

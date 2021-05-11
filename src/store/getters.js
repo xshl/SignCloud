@@ -6,5 +6,6 @@ const getters = {
   visitedViews: state => state.tagsView.visitedViews,
   cachedViews: state => state.tagsView.cachedViews,
   phone: state => state.user.phone,
+  initMenu: state => state.permission.init
 }
 export default getters
