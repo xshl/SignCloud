@@ -103,7 +103,7 @@ const actions = {
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       removeToken()
-      resetRouter()
+      // resetRouter()
       resolve()
       user.setUser([])
     })

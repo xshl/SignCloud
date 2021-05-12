@@ -17,14 +17,23 @@
         size="small"
         label-width="156px"
       >
-        <el-form-item label="签到允许距离范围(m)" prop="value1">
-          <el-input v-model="form.value2" />
+        <el-form-item label="签到允许距离范围(m)" prop="signinRange">
+          <el-input v-model="form.signinRange" />
         </el-form-item>
-        <el-form-item label="每次签到经验值" prop="value2">
-          <el-input v-model="form.value1" />
+        <el-form-item label="每次签到经验值" prop="signinExperience">
+          <el-input v-model="form.signinExperience" />
         </el-form-item>
-        <el-form-item label="一节课时间(min)" prop="value3">
-          <el-input v-model="form.value3" />
+        <el-form-item label="一节课时间(min)" prop="classTime">
+          <el-input v-model="form.classTime" />
+        </el-form-item>
+        <el-form-item label="优秀（>=）" prop="classTime">
+          <el-input v-model="form.level1" />
+        </el-form-item>
+        <el-form-item label="良好（>=）" prop="classTime">
+          <el-input v-model="form.level2" />
+        </el-form-item>
+        <el-form-item label="及格（>=）" prop="classTime">
+          <el-input v-model="form.level3" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -46,13 +55,16 @@
       style="width: 100%"
     >
       <el-table-column
-        prop="value2"
+        prop="signinRange"
         label="签到允许距离范围(m)"
         align="center"
       />
-      <el-table-column prop="value1" label="每次签到经验值" align="center" />
-      <el-table-column prop="value3" label="一节课时间" align="center" />
+      <el-table-column prop="signinExperience" label="每次签到经验值" align="center" />
+      <el-table-column prop="classTime" label="一节课时间" align="center" />
       <el-table-column prop="updateTime" label="更新时间" align="center" />
+      <el-table-column prop="level1" label="优秀（>=）" align="center" />
+      <el-table-column prop="level2" label="良好（>=）" align="center" />
+      <el-table-column prop="level3" label="及格（>=）" align="center" />
       <el-table-column label="操作" width="130px" align="center" fixed="right">
         <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
         <template slot-scope="scope">
@@ -76,9 +88,9 @@ import udOperation from "@/components/Crud/UD.operation";
 
 const defaultForm = {
   id: null,
-  value1: null,
-  value2: null,
-  value3: null,
+  signinExperience: null,
+  signinRange: null,
+  classTime: null,
 };
 
 export default {
@@ -100,17 +112,17 @@ export default {
   data() {
     return {
       rules: {
-        value1: [
+        signinExperience: [
           { required: true, message: "请输入每次签到经验值", trigger: "blur" },
         ],
-        value2: [
+        signinRange: [
           {
             required: true,
             message: "请输入签到允许距离范围",
             trigger: "blur",
           },
         ],
-        value3: [
+        classTime: [
           { required: true, message: "请输入一节课时间", trigger: "blur" },
         ],
       },

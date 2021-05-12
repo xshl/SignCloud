@@ -320,6 +320,10 @@ export default {
           title: res.message,
           type: "success",
         });
+         setTimeout(() => {
+            location.reload()
+          }, 1000)
+        // location.reload()
       });
     },
     // 选中图标
