@@ -1,10 +1,11 @@
 import request from '@/utils/request'
+import userStore from '@/utils/userStore'
+import user from '@/utils/userStore'
 
-export function getParams(params) {
+export function getParams() {
   return request({
-    url: '/api/params',
+    url: '/api/params/' + userStore.getId(),
     method: 'get',
-    params
   })
 }
 

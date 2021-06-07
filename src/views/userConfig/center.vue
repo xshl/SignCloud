@@ -1,5 +1,5 @@
 <template>
-  <div class="conatiner">
+  <div class="container">
     <el-card class="cardContent">
       <img v-if="userInfo.avatar" :src="userInfo.avatar" width="100px" class="avatar" />
       <img v-else :src="avatar" width="100px"/>
@@ -25,7 +25,7 @@ export default {
 </script>
 
 <style>
-.conatiner {
+.container {
   display: flex;
   justify-content: center;
   align-items: center;

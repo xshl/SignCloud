@@ -84,5 +84,24 @@ export function validateUsername(rule,value,callback){
     }
   }
 }
+/**
+ * 验证数字
+ * @param {*} rule 
+ * @param {*} value 
+ * @param {*} callback 
+ */
+ export function validateNumber(rule,value,callback){
+  const reg =/^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/;
+  if(value==''||value==undefined||value==null){
+    callback();
+  }else{
+    
+    if (!reg.test(value)){
+      callback(new Error('请输入大于0的数字'))
+    } else {
+      callback();
+    }
+  }
+}
 
 export default {}
