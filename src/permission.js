@@ -63,6 +63,7 @@ router.beforeEach(async (to, from, next) => {
 
 export const loadMenus = (next, to) => {
   getMenusById().then(res => {
+    console.log('menu', res.data.content)
       const sdata = JSON.parse(JSON.stringify(res.data.content))
       const rdata = JSON.parse(JSON.stringify(res.data.content))
       const sidebarRoutes = filterAsyncRouter(sdata)

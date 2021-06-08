@@ -17,6 +17,24 @@ export function edit(data) {
   })
 }
 
+export function add(data) {
+  return request({
+    url: '/api/params',
+    method: 'post',
+    data
+  })
+}
+
+export function del(ids) {
+  return request({
+    url: '/api/params',
+    method: 'delete',
+    params: {
+      sysParamId: ids[0]
+    }
+  })
+}
 
 
-export default { getParams, edit }
+
+export default { getParams, edit, add, del }

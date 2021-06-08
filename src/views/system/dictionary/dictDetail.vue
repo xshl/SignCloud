@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="query.dicTypeId === ''">
-      <div class="my-code">点击字典查看详情</div>
+      <div class="my-code">点击字典查看明细</div>
     </div>
     <div v-else>
       <!--工具栏-->
@@ -106,13 +106,13 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="130px"
+          width="230px"
           align="center"
           fixed="right"
         >
           <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
           <template slot-scope="scope">
-            <udOperation :data="scope.row" :permission="permission" />
+            <udOperation :data="scope.row" :permission="permission" :move="true"/>
           </template>
         </el-table-column>
       </el-table>
@@ -144,7 +144,7 @@ export default {
   cruds() {
     return [
       CRUD({
-        title: "字典详情",
+        title: "字典明细",
         url: "/api/dictionaries/dictionary-details",
         query: { dicTypeId: "" },
         crudMethod: { ...crudDictDetail },

@@ -1,55 +1,70 @@
 <template>
-  <div class="setting-container">
-    <el-card style="width: 700px">
-      <div style="font-size: 14px; font-weight: bold; margin-bottom: 40px">
-        系统参数设置
-      </div>
+  <div class="app-container">
+    <div class="head-container">
+      
+      <crudOperation :permission="permission" />
+    </div>
+    <!-- 签到参数设置表单组件 -->
+    <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
+    <el-dialog
+      append-to-body
+      :close-on-click-modal="false"
+      :before-close="crud.cancelCU"
+      :visible="crud.status.cu > 0"
+      :title="crud.status.title"
+      width="500px"
+    >
       <el-form
         ref="form"
         :model="form"
         :rules="rules"
         size="small"
         label-width="156px"
-        style="margin-left: 5%"
       >
-        <el-form-item label="签到允许距离范围(m)" prop="signinRange">
-          <el-input v-model="form.signinRange" style="width: 400px" />
+        <el-form-item label="名称" prop="nameZh">
+          <el-input v-model="form.nameZh" />
         </el-form-item>
-        <el-form-item label="每次签到经验值" prop="signinExperience">
-          <el-input v-model="form.signinExperience" style="width: 400px" />
+        <el-form-item label="关键字" prop="name">
+          <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="一节课时间(min)" prop="classTime">
-          <el-input v-model="form.classTime" style="width: 400px" />
-        </el-form-item>
-        <el-form-item label="默认密码" prop="defaultPwd">
-          <el-input v-model="form.defaultPwd" style="width: 400px" />
-        </el-form-item>
-        <el-form-item label="优秀（出勤率>=）" prop="level1">
-          <el-input v-model="form.level1" style="width: 400px" />
-        </el-form-item>
-        <el-form-item label="良好（出勤率>=）" prop="level2">
-          <el-input v-model="form.level2" style="width: 400px" />
-        </el-form-item>
-        <el-form-item label="及格（出勤率>=）" prop="level3">
-          <el-input v-model="form.level3" style="width: 400px" />
-        </el-form-item>
-        <el-form-item label="更新时间" prop="updateTime">
-          <el-input
-            v-model="form.updateTime"
-            style="width: 400px"
-            :disabled="true"
-          />
+        <el-form-item label="值" prop="value">
+          <el-input v-model="form.value" />
         </el-form-item>
       </el-form>
-      <div class="submit">
+      <div slot="footer" class="dialog-footer">
+        <el-button type="text" @click="crud.cancelCU">取消</el-button>
         <el-button
           :loading="crud.status.cu === 2"
           type="primary"
-          @click="submit"
-          >修改</el-button
+          @click="crud.submitCU"
+          >确认</el-button
         >
       </div>
-    </el-card>
+    </el-dialog>
+
+    <!-- 参数列表 -->
+    <el-table
+      ref="table"
+      v-loading="crud.loading"
+      :data="crud.data"
+      style="width: 100%"
+    >
+      <el-table-column
+        prop="nameZh"
+        label="名称"
+        align="center"
+      />
+      <el-table-column prop="name" label="关键字" align="center" />
+      <el-table-column prop="value" label="值" align="center" />
+      <el-table-column label="操作" width="130px" align="center" fixed="right">
+        <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
+        <template slot-scope="scope">
+          <udOperation :data="scope.row" :permission="permission" />
+        </template>
+      </el-table-column>
+    </el-table>
+    <!--分页组件-->
+    <pagination />
   </div>
 </template>
 
@@ -61,18 +76,17 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
-import { formatData } from "@/utils/formatData";
-import { validateNumber } from "@/utils/validate";
+import { same} from '@/utils/validate'
 
 const defaultForm = {
   id: null,
-  signinExperience: null,
-  signinRange: null,
-  classTime: null,
+  name: null,
+  nameZh: null,
+  value: null,
 };
 
 export default {
-  name: "Param",
+  name: "Dict",
   components: {
     crudOperation,
     pagination,
@@ -81,84 +95,40 @@ export default {
   },
   cruds() {
     return CRUD({
-      title: "签到参数",
+      title: "参数系统",
       url: "/api/params",
       crudMethod: { ...crudParams },
     });
   },
   mixins: [presenter(), header(), form(defaultForm)],
-  created() {
-    crudParams.getParams().then((res) => {
-      this.form = res.data;
-      this.form.updateTime = this.form.updateTime.substring(0,10) + " " + this.form.updateTime.substring(11,19)
-      console.log('time', this.form.updateTime)
-    });
-  },
   data() {
     return {
       rules: {
-        signinExperience: [
-          { required: true, message: "请输入每次签到经验值", trigger: "blur" },
-          { validator: validateNumber, trigger: "blur" },
+        nameZh: [
+          { required: true, message: "请输入参数名称", trigger: "blur" },
         ],
-        signinRange: [
+        name: [
           {
             required: true,
-            message: "请输入签到允许距离范围",
+            message: "请输入参数关键字",
             trigger: "blur",
           },
-          { validator: validateNumber, trigger: "blur" },
+           { validator: same, trigger: "blur" },
         ],
-        classTime: [
-          { required: true, message: "请输入一节课时间", trigger: "blur" },
-          { validator: validateNumber, trigger: "blur" },
-        ],
-        defaultPwd: [
-          { required: true, message: "请输入默认密码", trigger: "blur" },
-        ],
-        level1: [
-          { required: true, message: "请输入优秀出勤率", trigger: "blur" },
-          { validator: validateNumber, trigger: "blur" },
-        ],
-        level2: [
-          { required: true, message: "请输入良好出勤率", trigger: "blur" },
-          { validator: validateNumber, trigger: "blur" },
-        ],
-        level3: [
-          { required: true, message: "请输入及格出勤率", trigger: "blur" },
-          { validator: validateNumber, trigger: "blur" },
+        value: [
+          { required: true, message: "请输入参数值", trigger: "blur" },
         ],
       },
       permission: {
-        add: ["admin", "param:add"],
-        edit: ["admin", "param:edit"],
-        del: ["admin", "param:del"],
+        add: ["admin", "dict:add"],
+        edit: ["admin", "dict:edit"],
+        del: ["admin", "dict:del"],
       },
     };
   },
-  methods: {
-    submit() {
-      crudParams.edit(this.form).then((res) => {
-        this.crud.notify("修改成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
-      });
-    },
-  },
+  methods: {},
 };
 </script>
 
 <style>
-.setting-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  padding: 40px 80px 65px 80px;
-  width: 100%;
-}
-.submit {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 </style>

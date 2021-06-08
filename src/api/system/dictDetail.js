@@ -1,13 +1,13 @@
 import request from '@/utils/request'
 
-export function get(dictName) {
+export function get(dicTypeId) {
   const params = {
-    dictName,
-    page: 0,
-    size: 9999
+    dicTypeId,
+    pageNum: 0,
+    pageSize: 9999
   }
   return request({
-    url: '/api/dictionaries/dictDetail',
+    url: '/api/dictionaries/dictionary-details',
     method: 'get',
     params
   })
@@ -50,4 +50,4 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export default { add, edit, del, get }

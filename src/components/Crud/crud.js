@@ -1,5 +1,7 @@
 import { initData } from '@/api/data'
 import { parseTime } from '@/utils/index'
+import { curdDict } from '@/api/system/dict'
+import { curdDetail } from '@/api/system/dictDetail'
 import Vue from 'vue'
 
 let Base64 = require("js-base64").Base64
@@ -162,6 +164,7 @@ function CRUD(options) {
     },
     // 刷新
     refresh() {
+      console.log('刷新', '')
       if (!callVmHook(crud, CRUD.HOOK.beforeRefresh)) {
         return
       }
@@ -324,6 +327,12 @@ function CRUD(options) {
       if (!callVmHook(crud, CRUD.HOOK.beforeSubmit)) {
         return
       }
+      if (crud.url == '/api/dictionaries/dictionary-types-details') {
+        console.log('form', form)
+        curdDict.edit(form).then(() => {
+          // curdDetail.edit(form.detail)
+        })
+      }
       crud.status.edit = CRUD.STATUS.PROCESSING
       crud.crudMethod.edit(form).then(() => {
         crud.status.edit = CRUD.STATUS.NORMAL
@@ -336,6 +345,7 @@ function CRUD(options) {
         crud.status.edit = CRUD.STATUS.PREPARED
         callVmHook(crud, CRUD.HOOK.afterEditError)
       })
+      
     },
     /**
      * 执行删除

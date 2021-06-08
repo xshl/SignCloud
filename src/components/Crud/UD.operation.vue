@@ -1,5 +1,7 @@
 <template>
   <div>
+    <el-button v-if="move" :disabled="disabledDle" type="success" icon="el-icon-top" size="mini" @click="toUp" />
+    <el-button v-if="move" :disabled="disabledDle" type="danger" icon="el-icon-bottom" size="mini" @click="toDown" />
     <!-- <el-button v-permission="permission.edit" :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" /> -->
     <el-button :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" />
     <!-- <el-popover v-model="pop" v-permission="permission.del" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide"> -->
@@ -7,7 +9,8 @@
       <p>{{ msg }}</p>
       <div style="text-align: right; margin: 0">
         <el-button size="mini" type="text" @click="doCancel">取消</el-button>
-        <el-button :loading="crud.dataStatus[crud.getDataId(data)].delete === 2" type="primary" size="mini" @click="crud.doDelete(data)">确定</el-button>
+        <!-- <el-button :loading="crud.dataStatus[crud.getDataId(data)].delete === 2" type="primary" size="mini" @click="crud.doDelete(data)">确定</el-button> -->
+        <el-button type="primary" size="mini" @click="crud.doDelete(data)">确定</el-button>
       </div>
       <el-button slot="reference" :disabled="disabledDle" type="danger" icon="el-icon-delete" size="mini" @click="toDelete" />
     </el-popover>
@@ -15,12 +18,17 @@
 </template>
 <script>
 import CRUD, { crud } from '@/components/Crud/crud'
+import crudDetail from '@/api/system/dictDetail'
 export default {
   mixins: [crud()],
   props: {
     data: {
       type: Object,
       required: true
+    },
+    move: {
+      type: Boolean,
+      default: false
     },
     permission: {
       type: Object,
@@ -67,6 +75,21 @@ export default {
     },
     handleDocumentClick(event) {
       this.pop = false
+    },
+    toUp(data) {
+      console.log('上移', '')
+      console.log('data', data)
+      data.sort --;
+      crudDictDetail.edit(data).then((res) => {
+        console.log('res', res)
+        this.$notify({
+          title: res.message,
+          type: 'success'
+        });
+      })
+    },
+    toDown() {
+      console.log('下移', '')
     }
   }
 }
