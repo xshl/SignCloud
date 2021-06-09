@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div v-if="crud.status.cu > 0" class="adddetail">
-      <addDict ref="addDict" @cancel="crud.cancelCU"></addDict>
+      <addDict ref="addDict" @cancel="cancel"></addDict>
     </div>
     <div>
       <!-- 字典列表 -->
@@ -201,6 +201,11 @@ export default {
         });
       });
     },
+    cancel() {
+      this.crud.cancelCU()
+      this.crud.refresh()
+      this.$refs.dictDetail.crud.refresh()
+    }
   },
 };
 </script>

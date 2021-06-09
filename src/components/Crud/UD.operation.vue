@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-button v-if="move" :disabled="disabledDle" type="success" icon="el-icon-top" size="mini" @click="toUp" />
-    <el-button v-if="move" :disabled="disabledDle" type="danger" icon="el-icon-bottom" size="mini" @click="toDown" />
+    <el-button v-if="move" :disabled="disabledDle" type="success" icon="el-icon-top" size="mini" @click="toUp(data)" />
+    <el-button v-if="move" :disabled="disabledDle" type="danger" icon="el-icon-bottom" size="mini" @click="toDown(data)" />
     <!-- <el-button v-permission="permission.edit" :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" /> -->
     <el-button :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" />
     <!-- <el-popover v-model="pop" v-permission="permission.del" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide"> -->
@@ -18,7 +18,7 @@
 </template>
 <script>
 import CRUD, { crud } from '@/components/Crud/crud'
-import crudDetail from '@/api/system/dictDetail'
+import crudDictDetail from '@/api/system/dictDetail'
 export default {
   mixins: [crud()],
   props: {
@@ -86,6 +86,7 @@ export default {
           title: res.message,
           type: 'success'
         });
+        this.$emit('refresh')
       })
     },
     toDown() {

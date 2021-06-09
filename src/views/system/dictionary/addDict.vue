@@ -109,8 +109,10 @@
         ref="table"
         v-loading="crud.loading"
         :data="detail"
+        @sort-change="sortChange"
         highlight-current-row
         style="width: 100%"
+        :key="mainTableKey"
         @selection-change="crud.selectionChangeHandler"
       >
         <el-table-column prop="name" label="字典标签" />
@@ -122,7 +124,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="sort" label="排序" sortable />
+        <!-- <el-table-column prop="sort" label="排序" sortable /> -->
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <el-switch
@@ -141,11 +143,58 @@
         >
           <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
           <template slot-scope="scope">
-            <udOperation
-              :data="scope.row"
-              :permission="permission"
-              :move="true"
+            <el-button
+              type="success"
+              icon="el-icon-top"
+              :disabled="getIndex(scope.row) == 0"
+              size="mini"
+              @click="toUp(scope.row)"
             />
+            <el-button
+              type="danger"
+              icon="el-icon-bottom"
+              :disabled="getIndex(scope.row) == detail.length - 1"
+              size="mini"
+              @click="toDown(scope.row)"
+            />
+            <!-- <el-button v-permission="permission.edit" :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" /> -->
+            <el-button
+              :loading="crud.status.cu === 2"
+              size="mini"
+              type="primary"
+              icon="el-icon-edit"
+              @click="toEdit(scope.row)"
+            />
+            <!-- <el-popover v-model="pop" v-permission="permission.del" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide"> -->
+            <el-popover
+              :value="pop == scope.row.value"
+              placement="top"
+              width="180"
+              trigger="manual"
+              @show="onPopoverShow"
+              @hide="onPopoverHide"
+            >
+              <p>{{ msg }}</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="doCancel(scope.row)"
+                  >取消</el-button
+                >
+                <!-- <el-button :loading="crud.dataStatus[crud.getDataId(data)].delete === 2" type="primary" size="mini" @click="crud.doDelete(data)">确定</el-button> -->
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="doDelete(scope.row)"
+                  >确定</el-button
+                >
+              </div>
+              <el-button
+                slot="reference"
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                @click="toDelete(scope.row)"
+              />
+            </el-popover>
           </template>
         </el-table-column>
       </el-table>
@@ -174,7 +223,7 @@ import udOperation from "@/components/Crud/UD.operation";
 const defaultForm = {
   name: null,
   value: 0,
-  sort: 999,
+  sort: 0,
   defaultValue: 0,
   status: 1,
   updateTime: null,
@@ -198,17 +247,37 @@ export default {
       }),
     ];
   },
-  created() {
+  activated() {
     setTimeout(() => {
-      console.log("t", this.dictType);
       var _this = this;
       curdDictDetail.get(this.dictType.id).then((res) => {
-        _this.detail[0] = res.data.content;
+        console.log("detail", res.data.content);
+        _this.detail = res.data.content;
+        _this.defaultForm = _this.detail.length;
+      });
+    }, 100);
+  },
+  created() {
+    setTimeout(() => {
+      var _this = this;
+      curdDictDetail.get(this.dictType.id).then((res) => {
+        console.log("detail", res.data.content);
+        _this.detail = res.data.content;
+        _this.defaultForm = _this.detail.length;
       });
     }, 100);
   },
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
+    var valueIsUnique = (rule, value, callback) => {
+      if (value == "" || value == undefined || value == null) {
+        callback();
+      } else if (this.isUnique(value)) {
+        callback(new Error("数值重复"));
+      } else {
+        callback();
+      }
+    };
     return {
       queryTypeOptions: [
         { key: "name", display_name: "中文标识" },
@@ -221,7 +290,10 @@ export default {
       },
       detailrules: {
         name: [{ required: true, message: "请输入字典标签", trigger: "blur" }],
-        value: [{ required: true, message: "请输入字典值", trigger: "blur" },],
+        value: [
+          { required: true, message: "请输入字典值", trigger: "blur" },
+          { validator: valueIsUnique, trigger: "blur" },
+        ],
       },
       permission: {
         add: ["admin", "dict:add"],
@@ -229,22 +301,58 @@ export default {
         del: ["admin", "dict:del"],
       },
       detail: [],
-      dictType: { id: null, name: null, code: null },
+      dictType: { id: null, name: null, code: null, status: 1 },
       Dictdetail: [],
       isadd: false,
-      value1: 0
+      isedit: false,
+      value1: 0,
+      pop: -1,
+      msg: "确定删除本条数据吗？",
+      mainTableKey: 1,
     };
   },
   methods: {
     add() {
-      console.log("新增", "");
       this.isadd = false;
-      console.log("tag", this.form);
-      console.log("detail", this.form);
-      var de = this.form
-      this.detail.push(de);
-      this.form.value ++;
-      this.form.name = ""
+      console.log("this.isedit", this.isedit);
+      if (this.isedit == true) {
+        console.log("修改", "");
+        console.log("tag", this.detail.length);
+        for (var i = 0; i < this.detail.length; i++) {
+          if (this.detail[i].value == this.form.value) {
+            this.detail[i] = this.form;
+          }
+          this.detail[i].sort = i;
+        }
+        if (this.form.defaultValue == 1) {
+          this.changeDefault(this.form);
+        }
+      } else {
+        console.log("新增", "");
+        var data = {
+          name: this.form.name,
+          defaultValue: this.form.defaultValue,
+          id: this.form.id,
+          sort: this.form.sort,
+          status: this.form.status,
+          value: this.form.value,
+        };
+        if (data.defaultValue == 1) {
+          this.changeDefault(data);
+        }
+        this.detail.push(data);
+      }
+      this.isedit = false;
+      this.form = {
+        name: null,
+        value: 0,
+        sort: this.detail.length,
+        defaultValue: 0,
+        status: 1,
+        updateTime: null,
+        id: null,
+      };
+      this.form.value = this.valueMax() + 1;
     },
     goback() {
       console.log("返回", "");
@@ -253,24 +361,124 @@ export default {
     },
     submit() {
       console.log("提交", "");
+      for (var i = 0; i < this.detail.length; i++) {
+        this.detail[i].sort = i;
+      }
       var addform = {
         dictionaryDetails: this.detail,
         dictionaryType: this.dictType,
       };
-      // this.dictType.dictionaryDetails = this.detail;
-      curdDictAndDetail.add(addform).then((res) => {
-        console.log("res", res);
-        this.goback()
-        this.crud.refresh()
-        this.crud.notify("新增成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
-      });
+      if (this.dictType.id) {
+        curdDictAndDetail.edit(addform).then((res) => {
+          console.log("res", res);
+          this.goback();
+          this.crud.notify("修改成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
+        });
+      } else {
+        curdDictAndDetail.add(addform).then((res) => {
+          console.log("res", res);
+          this.goback();
+          this.crud.notify("新增成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
+        });
+      }
     },
     cancel() {
       console.log("取消", "");
       this.isadd = false;
+      this.isedit = false;
     },
     toadd() {
       this.isadd = true;
+    },
+    isUnique(value) {
+      if (this.isedit == true) {
+        return false;
+      }
+      const data = this.detail;
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].value == value) {
+          return true;
+        }
+      }
+      return false;
+    },
+    changeDefault(data) {
+      for (let i = 0; i < this.detail.length; i++) {
+        if (this.isedit == true) {
+          if (i != this.getIndex(data)) {
+            this.detail[i].defaultValue = 0;
+          }
+        } else {
+          this.detail[i].defaultValue = 0;
+        }
+      }
+      this.mainTableKey = Math.random();
+    },
+    valueMax() {
+      var max = 0;
+      for (let i = 0; i < this.detail.length; i++) {
+        if (max < this.detail[i].value) {
+          max = this.detail[i].value;
+        }
+      }
+      return parseInt(max);
+    },
+    sortChange(column, prop, order) {
+      console.log(column.prop); //prop标签 => nickname
+      console.log(column.order); //descending降序、ascending升序
+    },
+    //
+    doCancel(value) {
+      this.pop = -1;
+    },
+    toDelete(data) {
+      this.pop = data.value;
+    },
+    doDelete(value) {
+      for (let i = 0; i < this.detail.length; i++) {
+        if (value.value == this.detail[i].value) {
+          this.detail.splice(i, 1);
+        }
+      }
+      this.pop = -1;
+    },
+    onPopoverShow() {
+      setTimeout(() => {
+        document.addEventListener("click", this.handleDocumentClick);
+      }, 0);
+    },
+    onPopoverHide() {
+      document.removeEventListener("click", this.handleDocumentClick);
+    },
+    handleDocumentClick(event) {
+      this.pop = -1;
+    },
+    toEdit(data) {
+      this.form = data;
+      this.isadd = true;
+      this.isedit = true;
+    },
+    toUp(data) {
+      console.log("上移", "");
+      console.log("data", data);
+      var i = this.getIndex(data);
+      console.log("i", i);
+      var t = this.detail[i];
+      this.detail[i] = this.detail[i - 1];
+      this.detail[i - 1] = t;
+      console.log("detail", this.detail);
+      this.mainTableKey = Math.random();
+    },
+    toDown(data) {
+      console.log("下移", "");
+    },
+    getIndex(data) {
+      for (let i = 0; i < this.detail.length; i++) {
+        if (data.value == this.detail[i].value) {
+          return i;
+        }
+      }
+      return -1;
     },
   },
 };

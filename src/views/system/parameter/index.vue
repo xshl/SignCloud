@@ -71,7 +71,7 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
-import user from '@/utils/userStore'
+import user from "@/utils/userStore";
 
 const defaultForm = {
   id: null,
@@ -117,7 +117,7 @@ export default {
             message: "请输入参数关键字",
             trigger: "blur",
           },
-         { validator: valueIsUnique, trigger: "blur" },
+          { validator: valueIsUnique, trigger: "blur" },
         ],
         value: [{ required: true, message: "请输入参数值", trigger: "blur" }],
       },
@@ -130,17 +130,17 @@ export default {
   },
   methods: {
     isUnique(value) {
-      const data = this.crud.data
-      for(let i=0; i<data.length;i++) {
-          console.log('data', data[i])
-          console.log('code', data[i].name)
-          console.log('value', value)
-          if(data[i].name == value) {
-            return true
-          }
+      const data = this.crud.data;
+      for (let i = 0; i < data.length; i++) {
+        console.log("data", data[i]);
+        console.log("code", data[i].name);
+        console.log("value", value);
+        if (data[i].name == value) {
+          return true;
         }
-        return false
-    }
+      }
+      return false;
+    },
   },
 };
 </script>
