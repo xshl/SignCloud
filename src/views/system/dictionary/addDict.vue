@@ -170,7 +170,6 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
-import {same} from '@/utils/validate'
 
 const defaultForm = {
   name: null,
@@ -222,8 +221,7 @@ export default {
       },
       detailrules: {
         name: [{ required: true, message: "请输入字典标签", trigger: "blur" }],
-        value: [{ required: true, message: "请输入字典值", trigger: "blur" },
-        { validator: same, trigger: "blur" },],
+        value: [{ required: true, message: "请输入字典值", trigger: "blur" },],
       },
       permission: {
         add: ["admin", "dict:add"],

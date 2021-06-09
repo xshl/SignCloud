@@ -104,28 +104,4 @@ export function validateUsername(rule,value,callback){
   }
 }
 
-export function same(rule,value,callback){
-  if(value==''||value==undefined||value==null){
-    callback();
-  }else{
-    if (value == "distance"){
-      callback(new Error('关键词重复'))
-    } else {
-      callback();
-    }
-  }
-}
-
-export function same1(rule,value,callback){
-  if(value==''||value==undefined||value==null){
-    callback();
-  }else{
-    if (value == " 0"){
-      callback(new Error('字典值重复'))
-    } else {
-      callback();
-    }
-  }
-}
-
 export default {}

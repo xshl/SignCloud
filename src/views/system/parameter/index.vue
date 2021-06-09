@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <div class="head-container">
-      
       <crudOperation :permission="permission" />
     </div>
     <!-- 签到参数设置表单组件 -->
@@ -49,11 +48,7 @@
       :data="crud.data"
       style="width: 100%"
     >
-      <el-table-column
-        prop="nameZh"
-        label="名称"
-        align="center"
-      />
+      <el-table-column prop="nameZh" label="名称" align="center" />
       <el-table-column prop="name" label="关键字" align="center" />
       <el-table-column prop="value" label="值" align="center" />
       <el-table-column label="操作" width="130px" align="center" fixed="right">
@@ -76,7 +71,7 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
-import { same} from '@/utils/validate'
+import user from '@/utils/userStore'
 
 const defaultForm = {
   id: null,
@@ -102,6 +97,15 @@ export default {
   },
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
+    var valueIsUnique = (rule, value, callback) => {
+      if (value == "" || value == undefined || value == null) {
+        callback();
+      } else if (this.isUnique(value)) {
+        callback(new Error("参数关键词重复"));
+      } else {
+        callback();
+      }
+    };
     return {
       rules: {
         nameZh: [
@@ -113,11 +117,9 @@ export default {
             message: "请输入参数关键字",
             trigger: "blur",
           },
-           { validator: same, trigger: "blur" },
+         { validator: valueIsUnique, trigger: "blur" },
         ],
-        value: [
-          { required: true, message: "请输入参数值", trigger: "blur" },
-        ],
+        value: [{ required: true, message: "请输入参数值", trigger: "blur" }],
       },
       permission: {
         add: ["admin", "dict:add"],
@@ -126,7 +128,20 @@ export default {
       },
     };
   },
-  methods: {},
+  methods: {
+    isUnique(value) {
+      const data = this.crud.data
+      for(let i=0; i<data.length;i++) {
+          console.log('data', data[i])
+          console.log('code', data[i].name)
+          console.log('value', value)
+          if(data[i].name == value) {
+            return true
+          }
+        }
+        return false
+    }
+  },
 };
 </script>
 

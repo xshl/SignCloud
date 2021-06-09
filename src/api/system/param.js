@@ -35,6 +35,16 @@ export function del(ids) {
   })
 }
 
+export function get() {
+  return request({
+    url: '/api/params',
+    method: 'get',
+    params: {
+      pageNum: 0,
+      pageSize: 999
+    }
+  })
+}
 
 
-export default { getParams, edit, add, del }
+export default { getParams, edit, add, del, get }
