@@ -318,7 +318,7 @@ export default {
       this.formdata.append("name", this.form.name);
       this.formdata.append("grade", this.form.grade);
       this.formdata.append("semester", this.form.semester);
-      this.formdata.append("school", this.form.school);
+      this.formdata.append("school", this.form.college);
       this.formdata.append("college", this.form.college);
       this.formdata.append("major", this.form.major);
       this.formdata.append("teacher", this.form.teacher);
@@ -329,10 +329,8 @@ export default {
       this.formdata.append("qrcode", this.form.qrcode);
       this.formdata.append("creationDate", this.form.creationDate);
       this.formdata.append("modifier", this.form.modifier);
-      this.formdata.append("creator", this.form.creator);
       this.formdata.append("modifitionDate", this.form.modifitionDate);
       if (this.crud.status.add === CRUD.STATUS.PREPARED) {
-        this.formdata.append("creator", user.getId());
         this.crud.doAdd(this.formdata);
       } else if (this.crud.status.edit === CRUD.STATUS.PREPARED) {
         console.log("编辑课程");

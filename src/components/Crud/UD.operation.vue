@@ -1,7 +1,5 @@
 <template>
   <div>
-    <el-button v-if="move" :disabled="disabledDle" type="success" icon="el-icon-top" size="mini" @click="toUp(data)" />
-    <el-button v-if="move" :disabled="disabledDle" type="danger" icon="el-icon-bottom" size="mini" @click="toDown(data)" />
     <!-- <el-button v-permission="permission.edit" :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" /> -->
     <el-button :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" />
     <!-- <el-popover v-model="pop" v-permission="permission.del" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide"> -->
@@ -25,10 +23,6 @@ export default {
     data: {
       type: Object,
       required: true
-    },
-    move: {
-      type: Boolean,
-      default: false
     },
     permission: {
       type: Object,
@@ -76,22 +70,6 @@ export default {
     handleDocumentClick(event) {
       this.pop = false
     },
-    toUp(data) {
-      console.log('上移', '')
-      console.log('data', data)
-      data.sort --;
-      crudDictDetail.edit(data).then((res) => {
-        console.log('res', res)
-        this.$notify({
-          title: res.message,
-          type: 'success'
-        });
-        this.$emit('refresh')
-      })
-    },
-    toDown() {
-      console.log('下移', '')
-    }
   }
 }
 </script>

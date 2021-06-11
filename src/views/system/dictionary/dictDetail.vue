@@ -112,7 +112,7 @@
         >
           <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
           <template slot-scope="scope">
-            <udOperation :data="scope.row" :permission="permission" :move="true" @refresh="crud.refresh"/>
+            <udOperation :data="scope.row" :permission="permission"/>
           </template>
         </el-table-column>
       </el-table>
