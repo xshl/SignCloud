@@ -280,6 +280,7 @@ export default {
       addSuccess: false,
       grade: data.grade,
       semester: data.semester,
+      changeImage: false,
     };
   },
   watch: {
@@ -294,6 +295,7 @@ export default {
     },
     handleSuccess(response, file, fileList) {
       console.log("上传成功");
+      this.changeImage = flase;
       this.$refs.upload.clearFiles();
       this.crud.resetForm();
       this.crud.toQuery();
@@ -303,6 +305,7 @@ export default {
       this.imageUrl = URL.createObjectURL(file.raw);
       console.log("image", this.imageUrl);
       console.log("form", this.form);
+      this.changeImage = true;
     },
     submit() {
       if (this.form.learnRequire == "") {
@@ -330,6 +333,9 @@ export default {
       this.formdata.append("creationDate", this.form.creationDate);
       this.formdata.append("modifier", this.form.modifier);
       this.formdata.append("modifitionDate", this.form.modifitionDate);
+      if (this.changeImage) {
+        this.formdata.append()
+      }
       if (this.crud.status.add === CRUD.STATUS.PREPARED) {
         this.crud.doAdd(this.formdata);
       } else if (this.crud.status.edit === CRUD.STATUS.PREPARED) {
@@ -340,7 +346,7 @@ export default {
       }
       this.imageUrl = "";
       this.$refs.upload.clearFiles();
-      this.formdata = new window.FormData()
+      this.formdata = new window.FormData();
     },
     cancel() {
       this.crud.addSuccess = false;

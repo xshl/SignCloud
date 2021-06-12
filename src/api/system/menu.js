@@ -71,12 +71,10 @@ export function getMenusByRoles(id) {
 }
 
 export function getMenusById() {
-  const id = user.getId()
   return request({
-    url: '/api/menus/' + id,
+    url: '/api/menus/ids',
     method: 'get',
     params: {
-      userId: id,
       pageNum: 0,
       pageSize: 999
     }

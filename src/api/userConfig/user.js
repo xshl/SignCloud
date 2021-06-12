@@ -6,9 +6,6 @@ export function add(data) {
     url: '/api/admins/users',
     method: 'post',
     data,
-    params: {
-      creatorId: userStore.getId()
-    }
   })
 }
 
@@ -25,9 +22,6 @@ export function edit(data) {
     url: '/api/admins/users',
     method: 'put',
     data,
-    params: {
-      modifierId: userStore.getId()
-    }
   })
 }
 

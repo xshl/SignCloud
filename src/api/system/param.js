@@ -4,7 +4,7 @@ import user from '@/utils/userStore'
 
 export function getParams() {
   return request({
-    url: '/api/params/' + userStore.getId(),
+    url: '/api/params/ids',
     method: 'get',
   })
 }

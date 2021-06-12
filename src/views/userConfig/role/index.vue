@@ -49,6 +49,24 @@
         <el-form-item label="描述信息" prop="description">
           <el-input v-model="form.description" />
         </el-form-item>
+        <el-form-item label="权限分配" prop="roles">
+          <!-- <el-select
+            v-model="permDatas"
+            style="width: 370px"
+            multiple
+            placeholder="请选择"
+            @remove-tag="deleteTag"
+            @change="changeRole"
+          >
+            <el-option
+              v-for="item in roles"
+              :key="item.nameZh"
+              :label="item.nameZh"
+              :value="item.id"
+            />
+          </el-select> -->
+          <!-- <el-input v-model="form.roles" style="width: 370px" /> -->
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
