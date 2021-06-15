@@ -35,7 +35,7 @@
           <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="权限路径" prop="uri">
-          <el-input v-model="form.uri"/>
+          <el-input v-model="form.uri" />
         </el-form-item>
         <el-form-item label="方法" prop="method">
           <el-select v-model="form.method" style="width: 100%" clearable>
@@ -49,7 +49,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="权限描述" prop="code">
-          <el-input v-model="form.description"/>
+          <el-input v-model="form.description" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-switch
@@ -81,7 +81,7 @@
       <el-table-column prop="name" label="权限名称" align="center" />
       <el-table-column prop="uri" label="权限路径" align="center" />
       <el-table-column prop="method" label="方法" align="center" />
-      <el-table-column prop="status" label="状态" align="center" >
+      <el-table-column prop="status" label="状态" align="center">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
@@ -112,7 +112,7 @@ import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
-import data from '@/utils/data'
+import data from "@/utils/data";
 import user from "@/utils/userStore";
 
 const defaultForm = {
@@ -160,7 +160,7 @@ export default {
         edit: ["admin", "perm:edit"],
         del: ["admin", "perm:del"],
       },
-      method: data.method
+      method: data.method,
     };
   },
   methods: {
@@ -171,12 +171,12 @@ export default {
           type: "success",
         });
       });
-    },
+    }
   },
 };
 </script>
 
-<style>
+<style lang="scss">
 .el-checkbox,
 .el-checkbox__input {
   display: flex;

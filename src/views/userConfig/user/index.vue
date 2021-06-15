@@ -31,16 +31,29 @@
         size="small"
         label-width="80px"
       >
-        <el-form-item label="用户姓名" prop="username">
-          <el-input v-model="form.username" style="width: 370px" />
+        <el-form-item label="学号/工号" prop="ino">
+          <el-input v-model="form.ino" style="width: 180px"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名" prop="username">
+          <el-input v-model="form.username" style="width: 180px" />
         </el-form-item>
         <el-form-item label="手机号码" prop="phone">
-          <el-input v-model="form.phone" style="width: 370px" />
+          <el-input v-model="form.phone" style="width: 180px" />
         </el-form-item>
-        <el-form-item label="角色" prop="roles">
+        <el-form-item label="学校-学院" prop="school" style="width: 270px">
+          <el-cascader
+            :options="school"
+            v-model="schoolData"
+            placeholder="单选可搜索"
+            filterable
+            clearable
+            :props="{ expandTrigger: 'hover' }"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="角色" prop="roles" style="width: 270px">
           <el-select
             v-model="roleDatas"
-            style="width: 370px"
+            style="width: 180px"
             multiple
             placeholder="请选择"
             @remove-tag="deleteTag"
@@ -82,11 +95,23 @@
       style="width: 100%"
     >
       <el-table-column type="selection" width="25px" />
-      <el-table-column prop="username" label="用户姓名" align="center" />
+      <el-table-column prop="ino" label="学号/工号" align="center" />
+      <el-table-column prop="username" label="姓名" align="center" />
       <el-table-column prop="phone" label="手机号码" align="center" />
+      <el-table-column label="学校-学院" align="center" prop="school">
+        <template slot-scope="scope">
+          {{scope.row.school}}/{{scope.row.major}}
+        </template>
+      </el-table-column>
       <el-table-column prop="roles" label="角色" align="center">
         <template slot-scope="scope">
-          <el-tag v-for="role in scope.row.roles" :key="role.id" size="mini" style="margin-left:3px">{{role.nameZh}}</el-tag>
+          <el-tag
+            v-for="role in scope.row.roles"
+            :key="role.id"
+            size="mini"
+            style="margin-left: 3px"
+            >{{ role.nameZh }}</el-tag
+          >
         </template>
       </el-table-column>
       <el-table-column prop="enabled" label="状态" align="center">
@@ -122,6 +147,8 @@ import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
 import { validPhone } from "@/utils/validate";
 import user from "@/utils/userStore";
+import curdSchool from "@/api/system/school";
+import school from "@/api/system/school";
 
 let userRoles = [];
 const defaultForm = {
@@ -154,6 +181,34 @@ export default {
   },
   created() {
     this.crud.msg.add = "新增成功，默认密码：123456";
+    curdSchool.getSchools().then((res) => {
+      var data = res.data.content;
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].hasChildren) {
+          var s = {
+            value: data[i].name,
+            label: data[i].name,
+            children: [],
+          };
+
+          for (var j = 0; j < data[i].children.length; j++) {
+            var c = {
+              value: data[i].children[j].name,
+              label: data[i].children[j].name,
+            };
+            s.children.push(c);
+          }
+        } else {
+          var s = {
+            value: data[i].name,
+            label: data[i].name,
+          };
+        }
+        this.school.push(s);
+      }
+      // this.school = res.data.content;
+      console.log("this.school", this.school);
+    });
   },
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
@@ -169,6 +224,7 @@ export default {
           { required: true, message: "请输入电话号码", trigger: "blur" },
           { validator: validPhone, trigger: "blur" },
         ],
+        ino: [{require: true, message: "请输入学号/工号", trigger: "blur"}]
         // roles: [{ required: true, message: "请选择角色", trigger: "blur" }],
       },
       permission: {
@@ -177,11 +233,13 @@ export default {
         del: ["admin", "user:del"],
       },
       roleDatas: [],
+      school: [],
+      schoolData: [],
     };
   },
   methods: {
     changeRole(value) {
-      console.log('roles', this.form.roles[0].nameZh)
+      console.log("roles", this.form.roles[0].nameZh);
       userRoles = [];
       value.forEach(function (data, index) {
         const role = { id: data };
@@ -213,6 +271,13 @@ export default {
     },
     // 初始化编辑时候的角色与岗位
     [CRUD.HOOK.beforeToEdit](crud, form) {
+      if (this.form.school) {
+        this.schoolData = [];
+        this.schoolData.push(this.form.school);
+      }
+      if (this.form.major) {
+        this.schoolData.push(this.form.major);
+      }
       this.roleDatas = [];
       userRoles = [];
       const _this = this;
@@ -221,6 +286,7 @@ export default {
         const rol = { id: role.id };
         userRoles.push(rol);
       });
+      
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
@@ -233,6 +299,14 @@ export default {
       }
       crud.form.roles = userRoles;
       return true;
+    },
+    [CRUD.HOOK.beforeSubmit](curd, form) {
+      if(this.schoolData.length == 1) {
+        this.form.school = this.schoolData[0]
+      } else if(this.schoolData.length == 2) {
+        this.form.school = this.schoolData[0]
+        this.form.major = this.schoolData[1]
+      }
     },
     getRoles() {
       getAll()
