@@ -62,7 +62,7 @@
         删除
       </el-button> -->
       <el-button
-        v-if="crud.optShow.del"
+        v-if="crud.optShow.del && deleteBtn"
         slot="reference"
         class="filter-item"
         type="danger"
@@ -155,7 +155,11 @@ export default {
     ignoreColumns: {
       type: Array,
       default: () => { return [] }
-    }
+    },
+    deleteBtn: {
+      type: Boolean,
+      default: true
+    },
   },
   data() {
     return {

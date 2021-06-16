@@ -50,9 +50,9 @@
           <el-input v-model="form.description" />
         </el-form-item>
         <el-form-item label="权限分配" prop="roles">
-          <!-- <el-select
-            v-model="permDatas"
-            style="width: 370px"
+          <el-select
+            v-model="roleDatas"
+            style="width: 100%"
             multiple
             placeholder="请选择"
             @remove-tag="deleteTag"
@@ -64,7 +64,7 @@
               :label="item.nameZh"
               :value="item.id"
             />
-          </el-select> -->
+          </el-select>
           <!-- <el-input v-model="form.roles" style="width: 370px" /> -->
         </el-form-item>
       </el-form>
@@ -300,6 +300,8 @@ export default {
       perms: [],
       permIds: [], // 多选时使用
       permsData: [],
+      roles: [],
+      roleDatas: [],
       roleForm: [],
       permission: {
         add: ["admin", "roles:add"],
@@ -316,6 +318,21 @@ export default {
     };
   },
   methods: {
+    changeRole(value) {
+      console.log("roles", this.form.roles[0].nameZh);
+      userRoles = [];
+      value.forEach(function (data, index) {
+        const role = { id: data };
+        userRoles.push(role);
+      });
+    },
+    deleteTag(value) {
+      userRoles.forEach(function (data, index) {
+        if (data.id === value) {
+          userRoles.splice(index, value);
+        }
+      });
+    },
     // 触发单选
     handleCurrentChange(val) {
       this.roleForm = val;

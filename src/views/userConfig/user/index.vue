@@ -13,7 +13,7 @@
         ></el-input>
         <rrOperation />
       </div>
-      <crudOperation :permission="permission" />
+      <crudOperation :permission="permission" :deleteBtn="false" />
     </div>
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
     <el-dialog
@@ -29,7 +29,7 @@
         :model="form"
         :rules="rules"
         size="small"
-        label-width="80px"
+        label-width="100px"
       >
         <el-form-item label="学号/工号" prop="ino">
           <el-input v-model="form.ino" style="width: 180px"></el-input>
@@ -40,20 +40,21 @@
         <el-form-item label="手机号码" prop="phone">
           <el-input v-model="form.phone" style="width: 180px" />
         </el-form-item>
-        <el-form-item label="学校-学院" prop="school" style="width: 270px">
+        <el-form-item label="学校-学院" prop="school" style="width: 350px">
           <el-cascader
             :options="school"
             v-model="schoolData"
             placeholder="单选可搜索"
             filterable
             clearable
+            style="width: 100%"
             :props="{ expandTrigger: 'hover' }"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="角色" prop="roles" style="width: 270px">
+        <el-form-item label="角色" prop="roles" style="width: 350px">
           <el-select
             v-model="roleDatas"
-            style="width: 180px"
+            style="width: 100%"
             multiple
             placeholder="请选择"
             @remove-tag="deleteTag"
@@ -100,7 +101,7 @@
       <el-table-column prop="phone" label="手机号码" align="center" />
       <el-table-column label="学校-学院" align="center" prop="school">
         <template slot-scope="scope">
-          {{scope.row.school}}/{{scope.row.major}}
+          {{ scope.row.school }}/{{ scope.row.major }}
         </template>
       </el-table-column>
       <el-table-column prop="roles" label="角色" align="center">
@@ -127,7 +128,7 @@
       <el-table-column label="操作" width="130px" align="center" fixed="right">
         <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
         <template slot-scope="scope">
-          <udOperation :data="scope.row" :permission="permission" />
+          <udOperation :data="scope.row" :permission="permission" :deleteBtn="false" />
         </template>
       </el-table-column>
     </el-table>
@@ -224,7 +225,9 @@ export default {
           { required: true, message: "请输入电话号码", trigger: "blur" },
           { validator: validPhone, trigger: "blur" },
         ],
-        ino: [{require: true, message: "请输入学号/工号", trigger: "blur"}]
+        ino: [
+          { required: true, message: "请输入学号/工号", trigger: "blur" },
+        ],
         // roles: [{ required: true, message: "请选择角色", trigger: "blur" }],
       },
       permission: {
@@ -286,7 +289,6 @@ export default {
         const rol = { id: role.id };
         userRoles.push(rol);
       });
-      
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
@@ -301,11 +303,11 @@ export default {
       return true;
     },
     [CRUD.HOOK.beforeSubmit](curd, form) {
-      if(this.schoolData.length == 1) {
-        this.form.school = this.schoolData[0]
-      } else if(this.schoolData.length == 2) {
-        this.form.school = this.schoolData[0]
-        this.form.major = this.schoolData[1]
+      if (this.schoolData.length == 1) {
+        this.form.school = this.schoolData[0];
+      } else if (this.schoolData.length == 2) {
+        this.form.school = this.schoolData[0];
+        this.form.major = this.schoolData[1];
       }
     },
     getRoles() {
