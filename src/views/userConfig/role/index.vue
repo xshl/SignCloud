@@ -49,17 +49,17 @@
         <el-form-item label="描述信息" prop="description">
           <el-input v-model="form.description" />
         </el-form-item>
-        <el-form-item label="权限分配" prop="roles">
+        <el-form-item label="权限分配" prop="perms">
           <el-select
-            v-model="roleDatas"
+            v-model="permDatas"
             style="width: 100%"
             multiple
             placeholder="请选择"
             @remove-tag="deleteTag"
-            @change="changeRole"
+            @change="changePerm"
           >
             <el-option
-              v-for="item in roles"
+              v-for="item in perms"
               :key="item.name"
               :label="item.name"
               :value="item.id"
@@ -275,7 +275,7 @@ export default {
     });
     getPerm().then((res) => {
       this.permsData = res.data.content;
-      this.roles = res.data.content
+      this.perms = res.data.content
     });
   },
   data() {
@@ -301,8 +301,6 @@ export default {
       perms: [],
       permIds: [], // 多选时使用
       permsData: [],
-      roles: [],
-      roleDatas: [],
       roleForm: [],
       permission: {
         add: ["admin", "roles:add"],
@@ -319,18 +317,18 @@ export default {
     };
   },
   methods: {
-    changeRole(value) {
-      console.log("roles", this.form.roles[0].nameZh);
-      userRoles = [];
+    changePerm(value) {
+      console.log("perms", this.form.perms[0].nameZh);
+      userPerms = [];
       value.forEach(function (data, index) {
-        const role = { id: data };
-        userRoles.push(role);
+        const perm = { id: data };
+        userPerms.push(perm);
       });
     },
     deleteTag(value) {
-      userRoles.forEach(function (data, index) {
+      userPerms.forEach(function (data, index) {
         if (data.id === value) {
-          userRoles.splice(index, value);
+          userPerms.splice(index, value);
         }
       });
     },
