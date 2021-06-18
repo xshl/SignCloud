@@ -60,8 +60,8 @@
           >
             <el-option
               v-for="item in roles"
-              :key="item.nameZh"
-              :label="item.nameZh"
+              :key="item.name"
+              :label="item.name"
               :value="item.id"
             />
           </el-select>
@@ -275,6 +275,7 @@ export default {
     });
     getPerm().then((res) => {
       this.permsData = res.data.content;
+      this.roles = res.data.content
     });
   },
   data() {

@@ -95,7 +95,6 @@
       @selection-change="crud.selectionChangeHandler"
       style="width: 100%"
     >
-      <el-table-column type="selection" width="25px" />
       <el-table-column prop="ino" label="学号/工号" align="center" />
       <el-table-column prop="username" label="姓名" align="center" />
       <el-table-column prop="phone" label="手机号码" align="center" />
