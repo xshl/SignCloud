@@ -37,7 +37,7 @@
         修改
       </el-button> -->
        <el-button
-        v-if="crud.optShow.edit"
+        v-if="crud.optShow.edit && editBtn"
         class="filter-item"
         size="mini"
         type="success"
@@ -160,6 +160,10 @@ export default {
       type: Boolean,
       default: true
     },
+    editBtn: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {

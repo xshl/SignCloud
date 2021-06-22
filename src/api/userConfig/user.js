@@ -1,11 +1,12 @@
 import request from '@/utils/request'
 import userStore from '@/utils/userStore'
 
-export function add(data) {
+export function add(data, params) {
   return request({
     url: '/api/admins/users',
     method: 'post',
     data,
+    params
   })
 }
 

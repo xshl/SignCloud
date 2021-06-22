@@ -345,7 +345,7 @@ function CRUD(options) {
         crud.status.edit = CRUD.STATUS.PREPARED
         callVmHook(crud, CRUD.HOOK.afterEditError)
       })
-      
+
     },
     /**
      * 执行删除

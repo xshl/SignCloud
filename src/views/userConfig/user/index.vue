@@ -13,7 +13,7 @@
         ></el-input>
         <rrOperation />
       </div>
-      <crudOperation :permission="permission" :deleteBtn="false" />
+      <crudOperation :permission="permission" :deleteBtn="false" :editBtn="false" />
     </div>
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
     <el-dialog
@@ -89,7 +89,7 @@
     </el-dialog>
     <el-table
       ref="table"
-      :max-height="windowHeight * 0.69"
+      :max-height="windowHeight"
       v-loading="crud.loading"
       :data="crud.data"
       @selection-change="crud.selectionChangeHandler"
@@ -154,9 +154,9 @@ let userRoles = [];
 const defaultForm = {
   id: 0,
   username: null,
+  ino: null,
   roles: [],
   password: "123456",
-  method: null,
   enabled: 1,
   salt: null,
   phone: null,
@@ -181,6 +181,7 @@ export default {
   },
   created() {
     this.crud.msg.add = "新增成功，默认密码：123456";
+    console.log('屏幕高度', this.windowHeight)
     curdSchool.getSchools().then((res) => {
       var data = res.data.content;
       for (var i = 0; i < data.length; i++) {
@@ -213,7 +214,7 @@ export default {
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
     return {
-      windowHeight: document.documentElement.clientHeight, //实时屏幕高度
+      windowHeight: document.documentElement.clientHeight-310, //实时屏幕高度
       roles: [],
       defaultProps: { children: "children", label: "name", isLeaf: "leaf" },
       rules: {
@@ -241,7 +242,6 @@ export default {
   },
   methods: {
     changeRole(value) {
-      console.log("roles", this.form.roles[0].nameZh);
       userRoles = [];
       value.forEach(function (data, index) {
         const role = { id: data };
@@ -308,6 +308,7 @@ export default {
         this.form.school = this.schoolData[0];
         this.form.major = this.schoolData[1];
       }
+      this.schoolData = []
     },
     getRoles() {
       getAll()

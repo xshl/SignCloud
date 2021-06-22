@@ -49,6 +49,19 @@
         <el-form-item label="描述信息" prop="description">
           <el-input v-model="form.description" />
         </el-form-item>
+        <el-form-item label="菜单分配" prop="menus">
+          <el-tree
+            ref="menuinput"
+            v-loading="loading"
+            :data="menusData"
+            :default-checked-keys="menusIds"
+            :props="defaultProps"
+            accordion
+            show-checkbox
+            node-key="id"
+            @check="menuChange"
+          />
+        </el-form-item>
         <el-form-item label="权限分配" prop="perms">
           <el-select
             v-model="permDatas"
@@ -67,6 +80,7 @@
           </el-select>
           <!-- <el-input v-model="form.roles" style="width: 370px" /> -->
         </el-form-item>
+        
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -93,12 +107,12 @@
             ref="table"
             v-loading="crud.loading"
             highlight-current-row
+            :max-height="windowHeight"
             style="width: 100%"
             :data="crud.data"
             @selection-change="crud.selectionChangeHandler"
             @current-change="handleCurrentChange"
           >
-            <el-table-column type="selection" width="25px" />
             <el-table-column prop="nameZh" label="角色名称" align="center" />
             <el-table-column
               prop="enabled"
@@ -214,7 +228,7 @@
           </div>
           <el-tree
             ref="perm"
-            :data="permsData"
+            :data="perms"
             v-loading="loading"
             :default-checked-keys="permIds"
             :props="defaultPermProps"
@@ -252,6 +266,7 @@ const defaultForm = {
   perms: [],
   enabled: 1,
 };
+let userPerms = [];
 export default {
   name: "Role",
   components: {
@@ -274,12 +289,14 @@ export default {
       this.menusData = res.data.content;
     });
     getPerm().then((res) => {
-      this.permsData = res.data.content;
-      this.perms = res.data.content
+      // this.permData = res.data.content;
+      this.perms = res.data.content;
+      console.log('this.perm', this.perm)
     });
   },
   data() {
     return {
+      windowHeight: document.documentElement.clientHeight - 310,
       defaultProps: {
         children: "children",
         label: "nameZh",
@@ -296,11 +313,12 @@ export default {
       permLoading: false,
       showPermButton: false,
       menus: [],
+      menusIds: [],
       menuIds: [],
       menusData: [],
       perms: [],
       permIds: [], // 多选时使用
-      permsData: [],
+      permDatas: [],
       roleForm: [],
       permission: {
         add: ["admin", "roles:add"],
@@ -313,12 +331,13 @@ export default {
           { required: true, message: "请输入中文名称", trigger: "blur" },
         ],
       },
-      loading: false
+      loading: false,
     };
   },
   methods: {
     changePerm(value) {
-      console.log("perms", this.form.perms[0].nameZh);
+      console.log("perms", this.form.perms);
+      console.log("perms", this.form.perms[0].name);
       userPerms = [];
       value.forEach(function (data, index) {
         const perm = { id: data };
@@ -345,7 +364,7 @@ export default {
         this.menuIds = [];
         this.permIds = [];
         getMenusByRoles(val.id).then((res) => {
-          this.loading = true
+          this.loading = true;
           res.data.content.forEach(function (data) {
             _this.menuIds.push(data.id);
           });
@@ -363,7 +382,7 @@ export default {
             }
           });
           this.$refs.perm.setCheckedKeys(this.permIds);
-          this.loading = false
+          this.loading = false;
         });
         this.showButton = true;
       }
@@ -395,13 +414,12 @@ export default {
         const menu = { id: id };
         _this.roleForm.menus.push(menu);
       });
-      this.roleForm.modifier = user.getId();
       crudRoles
         .edit(this.roleForm)
         .then((res) => {
           this.crud.notify("保存成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
           this.menuLoading = false;
-          user.setMenu()
+          user.setMenu();
         })
         .catch((err) => {
           this.menuLoading = false;
@@ -451,6 +469,54 @@ export default {
           type: "success",
         });
       });
+    },
+    // 新增前将多选的值设置为空
+    [CRUD.HOOK.beforeToAdd]() {
+      this.permDatas = [];
+      this.menusIds = []
+    },
+    // 初始化编辑时候的角色与岗位
+    [CRUD.HOOK.beforeToEdit](crud, form) {
+      this.permDatas = [];
+      this.menusIds = []
+      userPerms = [];
+      const _this = this;
+      form.menus.forEach(function (menu, index) {
+        _this.menusIds.push(menu.id);
+      })
+      console.log('this.menusIds', this.menusIds)
+      // _this.$refs.menuinput.setCheckedKeys(this.menusIds);
+      form.perms.forEach(function (perm, index) {
+        if (perm.status != 9) {
+          _this.permDatas.push(perm.id);
+          const rol = { id: perm.id };
+          userPerms.push(rol);
+        }
+      });
+    },
+    [CRUD.HOOK.afterToCU](crud) {
+      console.log('tag', this.menusIds)
+      console.log('dialogmenu', this.$refs.menuinput.getCheckedKeys())
+      this.$refs.menuinput.setCheckedKeys(this.menusIds);
+    },
+    // 提交前做的操作
+    [CRUD.HOOK.afterValidateCU](crud) {
+      if (this.permDatas.length === 0) {
+        this.$message({
+          message: "角色不能为空",
+          type: "warning",
+        });
+        return false;
+      }
+      crud.form.perms = userPerms;
+      this.menuIds = this.$refs.menu.getCheckedKeys();
+      this.form.menus = []
+      let _this = this
+      this.menuIds.forEach(function (id) {
+        const menu = { id: id };
+        _this.form.menus.push(menu);
+      });
+      return true;
     },
   },
 };
