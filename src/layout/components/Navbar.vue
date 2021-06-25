@@ -57,7 +57,6 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
-      console.log('退出登录')
       this.$router.push('/login')
     }
   }

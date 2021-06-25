@@ -181,7 +181,6 @@ export default {
   },
   created() {
     this.crud.msg.add = "新增成功，默认密码：123456";
-    console.log('屏幕高度', this.windowHeight)
     curdSchool.getSchools().then((res) => {
       var data = res.data.content;
       for (var i = 0; i < data.length; i++) {
@@ -208,7 +207,6 @@ export default {
         this.school.push(s);
       }
       // this.school = res.data.content;
-      console.log("this.school", this.school);
     });
   },
   mixins: [presenter(), header(), form(defaultForm)],

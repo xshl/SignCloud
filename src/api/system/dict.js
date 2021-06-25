@@ -24,7 +24,6 @@ export function add(params) {
 }
 
 export function del(ids) {
-  console.log('ids', ids)
   return request({
     url: '/api/dictionaries/dictionary-types/batch?dicTypeIds=' + ids ,
     method: 'delete',

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function edit(data) {
   return request({
-    url: '/api/classes/course-contain-covers',
+    url: '/api/subjects',
     method: 'put',
     data
   })
@@ -10,7 +10,7 @@ export function edit(data) {
 
 export function add(data) {
   return request({
-    url: '/api/classes/courses',
+    url: '/api/subjects',
     method: 'post',
     data
   })
@@ -18,15 +18,17 @@ export function add(data) {
 
 export function del(ids) {
   return request({
-    url: '/api/classes/courses-batch',
+    url: '/api/subjects',
     method: 'delete',
-    data: ids
+    params: {
+        subjectId: ids[0]
+    }
   })
 }
 
 export function search(params) {
   return request({
-    url: 'api/classes/courses/search',
+    url: 'api/subjects',
     method: 'get',
     params
   })

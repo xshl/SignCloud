@@ -251,7 +251,6 @@ export default {
     setTimeout(() => {
       var _this = this;
       curdDictDetail.get(this.dictType.id).then((res) => {
-        console.log("detail", res.data.content);
         _this.detail = res.data.content;
         _this.defaultForm = _this.detail.length;
       });
@@ -261,7 +260,6 @@ export default {
     setTimeout(() => {
       var _this = this;
       curdDictDetail.get(this.dictType.id).then((res) => {
-        console.log("detail", res.data.content);
         _this.detail = res.data.content;
         _this.defaultForm = _this.detail.length;
       });
@@ -314,10 +312,7 @@ export default {
   methods: {
     add() {
       this.isadd = false;
-      console.log("this.isedit", this.isedit);
       if (this.isedit == true) {
-        console.log("修改", "");
-        console.log("tag", this.detail.length);
         for (var i = 0; i < this.detail.length; i++) {
           if (this.detail[i].value == this.form.value) {
             this.detail[i] = this.form;
@@ -328,7 +323,6 @@ export default {
           this.changeDefault(this.form);
         }
       } else {
-        console.log("新增", "");
         var data = {
           name: this.form.name,
           defaultValue: this.form.defaultValue,
@@ -355,12 +349,9 @@ export default {
       this.form.value = this.valueMax() + 1;
     },
     goback() {
-      console.log("返回", "");
-      console.log("tag", this.crud.status.cu);
       this.$emit("cancel");
     },
     submit() {
-      console.log("提交", "");
       for (var i = 0; i < this.detail.length; i++) {
         this.detail[i].sort = i;
       }
@@ -370,20 +361,17 @@ export default {
       };
       if (this.dictType.id) {
         curdDictAndDetail.edit(addform).then((res) => {
-          console.log("res", res);
           this.goback();
           this.crud.notify("修改成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
         });
       } else {
         curdDictAndDetail.add(addform).then((res) => {
-          console.log("res", res);
           this.goback();
           this.crud.notify("新增成功", CRUD.NOTIFICATION_TYPE.SUCCESS);
         });
       }
     },
     cancel() {
-      console.log("取消", "");
       this.isadd = false;
       this.isedit = false;
     },
@@ -424,8 +412,8 @@ export default {
       return parseInt(max);
     },
     sortChange(column, prop, order) {
-      console.log(column.prop); //prop标签 => nickname
-      console.log(column.order); //descending降序、ascending升序
+      // console.log(column.prop); //prop标签 => nickname
+      // console.log(column.order); //descending降序、ascending升序
     },
     //
     doCancel(value) {
@@ -459,18 +447,13 @@ export default {
       this.isedit = true;
     },
     toUp(data) {
-      console.log("上移", "");
-      console.log("data", data);
       var i = this.getIndex(data);
-      console.log("i", i);
       var t = this.detail[i];
       this.detail[i] = this.detail[i - 1];
       this.detail[i - 1] = t;
-      console.log("detail", this.detail);
       this.mainTableKey = Math.random();
     },
     toDown(data) {
-      console.log("下移", "");
     },
     getIndex(data) {
       for (let i = 0; i < this.detail.length; i++) {

@@ -27,7 +27,6 @@ export function getDictMap(dictName) {
 }
 
 export function add(data) {
-  console.log('data', data)
   return request({
     url: '/api/dictionaries/dictionary-details',
     method: 'post',

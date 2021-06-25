@@ -42,10 +42,7 @@ export default {
       if (validPhoneNumber(this.phone)) {
         getCode(this.phone)
           .then((res) => {
-            console.log(res);
             if (res.code == 200) {
-              console.log("验证码");
-              console.log(res.data);
               this.$message.success("发送成功");
               this.time = 60;
               this.disabled = true;
@@ -53,12 +50,10 @@ export default {
             }
           })
           .catch((err) => {
-            console.log(err);
             this.$message.error(res.message);
           });
       } else {
         this.$message.error("手机号码格式错误");
-        console.log("手机号码格式错误");
       }
     },
   },

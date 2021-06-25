@@ -58,6 +58,7 @@
             v-model="form.parentId"
             :load-options="loadSchools"
             :options="schools"
+            :normalizer="normalizer"
             placeholder="选择上级学校/学院"
           />
         </el-form-item>
@@ -171,12 +172,17 @@ export default {
     [CRUD.HOOK.afterToCU](crud, form) {
       this.schools = [];
       // crudSchool.search()
-      this.schools.push({ id: 0, label: '顶级类目', children: null })
+      // this.schools.push({ id: 0, label: '顶级类目', children: null })
       // if (form.id != 0) {
       //   this.getSupSchools(form.id);
       // } else {
       //   this.getSchools();
       // }
+      const _this = this
+      this.schools.push({ id: 0, name: '顶级类目', children: null })
+      crudSchool.getSchools().then((res) => {
+        _this.schools[0].children = res.data.content
+      })
     },
     getSupSchools(id) {
       crudSchool.getSupSchool(id).then((res) => {
@@ -209,16 +215,13 @@ export default {
     // },
     // 获取弹窗内学校数据
     loadSchools({ action, parentNode, callback }) {
-      console.log("action", action);
       if (action === LOAD_CHILDREN_OPTIONS) {
-        console.log("加载弹窗数据");
         crudSchool.getSupSchool(parentNode.id).then((res) => {
           parentNode.children = res.data.map(function (obj) {
             if (obj.children.length == 0) {
-              console.log('无儿子节点')
-              return { id: obj.id, label: obj.name }
+              return { id: obj.id, name: obj.name }
             }
-            return { id: obj.id, label: obj.name, children: null };
+            return { id: obj.id, name: obj.name, children: null };
           });
           // parentNode.children = res.data.content.map(function (obj) {
           //   console.log('children', obj)
@@ -249,6 +252,23 @@ export default {
     },
     checkboxT(row, rowIndex) {
       return row.id !== 1;
+    },
+    normalizer(node) {
+      if (node.id == 0) {
+        node.nameZh = "顶级类目";
+      }
+      if (node.hasChildren) {
+        return {
+          id: node.id,
+          label: node.name,
+          children: node.children,
+        }
+      } else {
+        return {
+          id: node.id,
+          label: node.name,
+        }
+      }
     },
   },
 };

@@ -10,9 +10,7 @@ const permission = {
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      console.log('tag', state.init)
       if (state.init == false) {
-        console.log('获取菜单')
         state.init = true
         state.addRouters = routers
         state.routers = constantRouterMap.concat(routers)
@@ -42,7 +40,6 @@ export const filterAsyncRouter = (routers, isRewrite = false) => { // 遍历后�
       router.hidden = true
     }
     if (router.children) {
-      // console.log('有子节点', router.children)
       router.children = filterChildren(router.children)
     }
     if (router.component) {
@@ -54,7 +51,6 @@ export const filterAsyncRouter = (routers, isRewrite = false) => { // 遍历后�
       }
     }
     if (router.children && router.children.length) {
-      // console.log('有子节点1', router.children)
       router.children = filterAsyncRouter(router.children, router, isRewrite)
     }
     return true
@@ -64,7 +60,6 @@ export const filterAsyncRouter = (routers, isRewrite = false) => { // 遍历后�
 function filterChildren(childrenMap) {
   var children = []
   childrenMap.forEach((el, index) => {
-    // console.log('菜单', el)
     if (el.children && el.children.length) {
       const flag = false
       el.children.forEach(c => {
@@ -72,7 +67,6 @@ function filterChildren(childrenMap) {
           flag = true
           c.path = el.path + '/' + c.path
           if (c.children && c.children.length) {
-            // console.log('有子节点2', router.children)
             children = children.concat(filterChildren(c.children, c))
             return
           }
@@ -84,10 +78,8 @@ function filterChildren(childrenMap) {
       }
     }
     if (el.type != 2) {
-      // console.log('拼接', el)
       children = children.concat(el)
     }
-    // console.log('tag', children)
   })
   return children
 }

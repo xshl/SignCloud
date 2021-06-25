@@ -291,7 +291,6 @@ export default {
     getPerm().then((res) => {
       // this.permData = res.data.content;
       this.perms = res.data.content;
-      console.log('this.perm', this.perm)
     });
   },
   data() {
@@ -336,8 +335,6 @@ export default {
   },
   methods: {
     changePerm(value) {
-      console.log("perms", this.form.perms);
-      console.log("perms", this.form.perms[0].name);
       userPerms = [];
       value.forEach(function (data, index) {
         const perm = { id: data };
@@ -369,7 +366,6 @@ export default {
             _this.menuIds.push(data.id);
           });
           this.$refs.menu.setCheckedKeys(this.menuIds);
-          console.log("menu", this.$refs.menu.getCheckedKeys());
         });
         crudRoles.getAll().then((res) => {
           const data = res.data.content;
@@ -423,7 +419,6 @@ export default {
         })
         .catch((err) => {
           this.menuLoading = false;
-          console.log(err.response.data.message);
         });
     },
     savePerm() {
@@ -445,7 +440,6 @@ export default {
         })
         .catch((err) => {
           this.permLoading = false;
-          console.log(err.response.data.message);
         });
     },
     // 改变数据
@@ -484,7 +478,6 @@ export default {
       form.menus.forEach(function (menu, index) {
         _this.menusIds.push(menu.id);
       })
-      console.log('this.menusIds', this.menusIds)
       // _this.$refs.menuinput.setCheckedKeys(this.menusIds);
       form.perms.forEach(function (perm, index) {
         if (perm.status != 9) {
@@ -495,8 +488,6 @@ export default {
       });
     },
     [CRUD.HOOK.afterToCU](crud) {
-      console.log('tag', this.menusIds)
-      console.log('dialogmenu', this.$refs.menuinput.getCheckedKeys())
       this.$refs.menuinput.setCheckedKeys(this.menusIds);
     },
     // 提交前做的操作
@@ -509,10 +500,10 @@ export default {
         return false;
       }
       crud.form.perms = userPerms;
-      this.menuIds = this.$refs.menu.getCheckedKeys();
+      this.menusIds = this.$refs.menuinput.getCheckedKeys();
       this.form.menus = []
       let _this = this
-      this.menuIds.forEach(function (id) {
+      this.menusIds.forEach(function (id) {
         const menu = { id: id };
         _this.form.menus.push(menu);
       });

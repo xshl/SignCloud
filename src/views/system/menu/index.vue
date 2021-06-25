@@ -94,6 +94,7 @@
             :options="menus"
             :load-options="loadMenus"
             placeholder="选择上级类目"
+            :normalizer="normalizer"
           />
         </el-form-item>
       </el-form>
@@ -189,6 +190,7 @@ import rrOperation from "@/components/Crud//RR.operation";
 import crudOperation from "@/components/Crud/CRUD.operation";
 import udOperation from "@/components/Crud/UD.operation";
 import user from "@/utils/userStore";
+import data from "@/utils/data";
 
 // crud交由presenter持有
 const defaultForm = {
@@ -230,6 +232,11 @@ export default {
         edit: ["admin", "menu:edit"],
         del: ["admin", "menu:del"],
       },
+      defaultProps: {
+        children: "children",
+        label: "name",
+        isLeaf: "hasChildren",
+      },
       rules: {
         nameZh: [
           { required: true, message: "请输入中文名称", trigger: "blur" },
@@ -248,18 +255,28 @@ export default {
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
       this.menus = [];
-      if (this.crud.status.edit == CRUD.STATUS.PREPARED) {
-        console.log(0, form.parentId);
-        if (form.parentId == 0) {
-          this.menus.push({ id: 0, label: "顶级类目", children: null });
-        } else {
-          console.log("tag", "找父节点");
-          this.getSupMenus(form.id);
-        }
-      } else {
-        console.log("tag");
-        this.menus.push({ id: 0, label: "顶级类目", children: null });
-      }
+      const _this = this
+      this.menus.push({ id: 0, nameZh: "顶级类目", children: null });
+      crudMenu.getMenus().then((res) => {
+          _this.menus[0].children = res.data.content;
+        });
+      // if (this.crud.status.edit == CRUD.STATUS.PREPARED) {
+      //   // console.log(0, form.parentId);
+      //   // if (form.parentId == 0) {
+      //   //   this.menus.push({ id: 0, label: "顶级类目", children: null });
+      //   // } else {
+      //   //   console.log("tag", "找父节点");
+      //   //   this.getSupMenus(form.id);
+      //   // }
+      //   const _this = this;
+      //   crudMenu.getMenus().then((res) => {
+      //     console.log("menustag", res.data.content);
+      //     _this.menus = res.data.content;
+      //   });
+      // } else {
+      //   console.log("tag");
+      //   this.menus.push({ id: 0, label: "顶级类目", children: null });
+      // }
     },
     [CRUD.HOOK.afterValidateCU]() {
       if (this.form.parentId === this.form.id) {
@@ -284,27 +301,24 @@ export default {
         });
       }, 100);
     },
-    getSupMenus(id) {
-      console.log("id", id);
-      crudMenu.getFather(id).then((res) => {
-        const children = [
-          { id: this.form.parentId, label: res.data, children: null },
-        ];
-        console.log("children", children);
-        this.menus = [{ id: 0, label: "顶级类目", children: children }];
-      });
-    },
+    // getSupMenus(id) {
+    //   console.log("id", id);
+    //   crudMenu.getFather(id).then((res) => {
+    //     // const children = [
+    //     //   { id: this.form.parentId, nameZh: res.data, children: null },
+    //     // ];
+    //     console.log("children", children);
+    //     this.menus = [{ id: 0, label: "顶级类目", children: children }];
+    //   });
+    // },
     loadMenus({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
         crudMenu.getChild(parentNode.id).then((res) => {
-          console.log("res", res);
           parentNode.children = res.data.map(function (obj) {
-            console.log("obj", obj);
             if (obj.children.length == 0) {
-              console.log("无儿子节点");
-              return { id: obj.id, label: obj.nameZh };
+              return { id: obj.id, nameZh: obj.nameZh };
             }
-            return { id: obj.id, label: obj.nameZh, children: null };
+            return { id: obj.id, nameZh: obj.nameZh, children: null };
           });
           setTimeout(() => {
             callback();
@@ -315,20 +329,37 @@ export default {
     enabledChange(data) {
       crudMenu.edit(data).then((res) => {
         console.log("res", res);
-        user.setMenu()
+        user.setMenu();
         this.$notify({
           title: res.message,
           type: "success",
         });
-         setTimeout(() => {
-            location.reload()
-          }, 1000)
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
         // location.reload()
       });
     },
     // 选中图标
     selected(name) {
       this.form.icon = name;
+    },
+    normalizer(node) {
+      if (node.id == 0) {
+        node.nameZh = "顶级类目";
+      }
+      if (node.hasChildren) {
+        return {
+          id: node.id,
+          label: node.nameZh,
+          children: node.children,
+        }
+      } else {
+        return {
+          id: node.id,
+          label: node.nameZh,
+        }
+      }
     },
   },
 };

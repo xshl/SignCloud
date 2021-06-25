@@ -193,7 +193,6 @@ export default {
       }
     },
     dicStatusChange(data, val) {
-      console.log("tag", this.crud.status.cu);
       crudDict.edit(data).then((res) => {
         this.$notify({
           title: res.message,

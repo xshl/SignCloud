@@ -36,10 +36,8 @@ export function getMenu() {
 }
 export function setMenu() {
     getMenusById().then((res) => {
-        console.log('存储菜单', '')
         const rdata = JSON.parse(JSON.stringify(res.data.content))
         const rewriteRoutes = filterAsyncRouter(rdata, true)
-        console.log('rewriteRoutes', rewriteRoutes)
         rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
         localStorage.setItem('menu', JSON.stringify(rewriteRoutes))
     })

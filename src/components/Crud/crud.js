@@ -135,11 +135,8 @@ function CRUD(options) {
       }
       return new Promise((resolve, reject) => {
         crud.loading = true
-        console.log('搜索')
         // 请求数据
-        console.log('params', crud.getQueryParams())
         crud.crudMethod.search(crud.getQueryParams()).then(res => {
-          console.log('data', res.data)
           const data = res.data
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
@@ -148,7 +145,6 @@ function CRUD(options) {
           }
           crud.page.total = data.totalElements
           crud.data = data.content
-          console.log('content', crud.data)
           crud.resetDataStatus()
           // time 毫秒后显示表格
           setTimeout(() => {
@@ -164,16 +160,13 @@ function CRUD(options) {
     },
     // 刷新
     refresh() {
-      console.log('刷新', '')
       if (!callVmHook(crud, CRUD.HOOK.beforeRefresh)) {
         return
       }
       return new Promise((resolve, reject) => {
         crud.loading = true
         // 请求数据
-        console.log('params', crud.getQueryParams())
         initData(crud.url, crud.getQueryParams()).then(res => {
-          console.log('data', res.data)
           const data = res.data
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
@@ -182,7 +175,6 @@ function CRUD(options) {
           }
           crud.page.total = data.totalElements
           crud.data = data.content
-          console.log('content', crud.data)
           crud.resetDataStatus()
           // time 毫秒后显示表格
           setTimeout(() => {
@@ -303,7 +295,6 @@ function CRUD(options) {
         return
       }
       crud.status.add = CRUD.STATUS.PROCESSING
-      console.log('addform', form)
       crud.crudMethod.add(form).then((res) => {
         crud.status.add = CRUD.STATUS.NORMAL
         crud.resetForm()
@@ -328,7 +319,6 @@ function CRUD(options) {
         return
       }
       if (crud.url == '/api/dictionaries/dictionary-types-details') {
-        console.log('form', form)
         curdDict.edit(form).then(() => {
           // curdDetail.edit(form.detail)
         })
@@ -464,7 +454,6 @@ function CRUD(options) {
     resetDataStatus() {
       const dataStatus = {}
       function resetStatus(datas) {
-        // console.log(datas)
         datas.forEach(e => {
           dataStatus[crud.getDataId(e)] = {
             delete: 0,
@@ -638,7 +627,7 @@ function CRUD(options) {
 // hook VM
 function callVmHook(crud, hook) {
   if (crud.debug) {
-    console.log('callVmHook: ' + hook)
+    // console.log('callVmHook: ' + hook)
   }
   const tagHook = crud.tag ? hook + '$' + crud.tag : null
   let ret = true

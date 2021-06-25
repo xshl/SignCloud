@@ -42,10 +42,8 @@ const actions = {
    * @returns 
    */
   loginByPwd({ commit }, userInfo) {
-    console.log(userInfo)
     return new Promise((resolve, reject) => {
       login({phone: userInfo.phone, password: userInfo.password}).then(response => {
-        console.log(response)
         const data = response.data
         commit('SET_TOKEN', data.token)
         user.setId(data.userInfo.id)
@@ -54,7 +52,6 @@ const actions = {
         user.setName(data.userInfo.username)
         user.setUser(data.userInfo)
         user.setMenu()
-        console.log(data.token)
         if (userInfo.rememberMe == true) {
           setToken(data.token)
         } else {
@@ -74,10 +71,8 @@ const actions = {
    * @returns 
    */
   loginByPhone({ commit }, userInfo) {
-    console.log(userInfo)
     return new Promise((resolve, reject) => {
       loginByPhone(userInfo).then(response => {
-        console.log(response)
         const data = response.data
         commit('SET_TOKEN', data.token)
         user.setId(data.userInfo.id)
@@ -86,7 +81,6 @@ const actions = {
         user.setName(data.userInfo.username)
         user.setUser(data.userInfo)
         user.setMenu()
-        console.log(data.token)
         setSessionToken(data.token)
         resolve()
       }).catch(error => {
@@ -136,7 +130,6 @@ const actions = {
       user.setName(data.userInfo.username)
       user.setUser(data.userInfo)
       user.setMenu()
-      console.log(data.token)
       setSessionToken(data.token)                                                                                                                 
       resolve()
     })

@@ -55,7 +55,6 @@ service.interceptors.response.use(
         })
       }
     } else {
-      console.log('2', '')
       let code = 0
       try {
         code = error.response.data.status

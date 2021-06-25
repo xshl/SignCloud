@@ -1,9 +1,8 @@
 <template>
   <div class="app-container">
     <div class="head-container">
-      <crudOperation :permission="permission" />
+      <crudOperation :permission="permission" :deleteBtn="false" :editBtn="false"/>
     </div>
-    <!-- 签到参数设置表单组件 -->
     <!-- <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="true" :title="crud.status.title" width="500px"> -->
     <el-dialog
       append-to-body
@@ -18,16 +17,10 @@
         :model="form"
         :rules="rules"
         size="small"
-        label-width="156px"
+        label-width="80px"
       >
-        <el-form-item label="名称" prop="nameZh">
-          <el-input v-model="form.nameZh" />
-        </el-form-item>
-        <el-form-item label="关键字" prop="name">
+        <el-form-item label="课程名称" prop="name">
           <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="值" prop="value">
-          <el-input v-model="form.value" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -40,17 +33,16 @@
         >
       </div>
     </el-dialog>
-
-    <!-- 参数列表 -->
     <el-table
       ref="table"
+      :max-height="windowHeight * 0.69"
       v-loading="crud.loading"
       :data="crud.data"
+      @selection-change="crud.selectionChangeHandler"
       style="width: 100%"
     >
-      <el-table-column prop="nameZh" label="名称" align="center" />
-      <el-table-column prop="name" label="关键字" align="center" />
-      <el-table-column prop="value" label="值" align="center" />
+      <el-table-column prop="id" label="课程id" align="center" width="200px"/>
+      <el-table-column prop="name" label="课程名称" align="center" />
       <el-table-column label="操作" width="130px" align="center" fixed="right">
         <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
         <template slot-scope="scope">
@@ -65,23 +57,22 @@
 
 <script>
 import { mapGetters } from "vuex";
-import crudParams from "@/api/system/param";
+import crudSubject from "@/api/content/subject";
 import CRUD, { presenter, header, form } from "@/components/Crud/crud";
 import crudOperation from "@/components/Crud/CRUD.operation";
 import pagination from "@/components/Crud/Pagination";
 import rrOperation from "@/components/Crud/RR.operation";
 import udOperation from "@/components/Crud/UD.operation";
+import data from "@/utils/data";
 import user from "@/utils/userStore";
 
 const defaultForm = {
-  id: null,
+  id: 0,
   name: null,
-  nameZh: null,
-  value: null,
 };
 
 export default {
-  name: "Dict",
+  name: "Subject",
   components: {
     crudOperation,
     pagination,
@@ -89,58 +80,46 @@ export default {
     udOperation,
   },
   cruds() {
-    return CRUD({
-      title: "参数系统",
-      url: "/api/params",
-      crudMethod: { ...crudParams },
-    });
+    return [
+      CRUD({
+        title: "课程",
+        url: "/api/subjects",
+        crudMethod: { ...crudSubject },
+      }),
+    ];
   },
   mixins: [presenter(), header(), form(defaultForm)],
   data() {
-    var valueIsUnique = (rule, value, callback) => {
-      if (value == "" || value == undefined || value == null) {
-        callback();
-      } else if (this.isUnique(value)) {
-        callback(new Error("参数关键词重复"));
-      } else {
-        callback();
-      }
-    };
     return {
+      windowHeight: document.documentElement.clientHeight, //实时屏幕高度
+      imageUrl: "",
       rules: {
-        nameZh: [
-          { required: true, message: "请输入参数名称", trigger: "blur" },
-        ],
-        name: [
-          {
-            required: true,
-            message: "请输入参数关键字",
-            trigger: "blur",
-          },
-          { validator: valueIsUnique, trigger: "blur" },
-        ],
-        value: [{ required: true, message: "请输入参数值", trigger: "blur" }],
+        name: [{ required: true, message: "请输入课程名称", trigger: "blur" }],
       },
       permission: {
-        add: ["admin", "dict:add"],
-        edit: ["admin", "dict:edit"],
-        del: ["admin", "dict:del"],
+        add: ["admin", "subject:add"],
+        edit: ["admin", "subject:edit"],
+        del: ["admin", "subject:del"],
       },
+      method: data.method,
     };
   },
   methods: {
-    isUnique(value) {
-      const data = this.crud.data;
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].name == value) {
-          return true;
-        }
-      }
-      return false;
-    },
+    statusChange(data, val) {
+      crudPerm.edit(data).then((res) => {
+        this.$notify({
+          title: res.message,
+          type: "success",
+        });
+      });
+    }
   },
 };
 </script>
 
-<style>
+<style lang="scss">
+.el-checkbox,
+.el-checkbox__input {
+  display: flex;
+}
 </style>
