@@ -57,7 +57,10 @@ const actions = {
         } else {
           setSessionToken(data.token)
         }
-        resolve()
+        setTimeout(() => {
+          resolve()
+        }, 1000)
+        // resolve()
       }).catch(error => {
         reject(error)
       })

@@ -30,7 +30,7 @@ module.exports = {
   lintOnSave: false, // process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
-    port: port,
+    port: 8080,
     open: true,
     overlay: {
       warnings: false,
