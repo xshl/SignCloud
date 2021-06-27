@@ -123,12 +123,12 @@
         </el-form>
       </el-tab-pane>
     </el-tabs>
-    <el-divider content-position="center">第三方登录</el-divider>
+    <!-- <el-divider content-position="center">第三方登录</el-divider>
     <div class="third" @click="loginByGithub">
       <div class="third-icon">
         <img src="../../assets/image/github.png" width="50px" />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
