@@ -3,7 +3,7 @@
     <el-card class="cardContent">
       <img v-if="userInfo.avatar" :src="userInfo.avatar" width="100px" class="avatar" />
       <img v-else :src="avatar" width="100px"/>
-      <h2>{{userInfo.name}}</h2>
+      <h2>{{userInfo.username}}</h2>
       <div></div>
     </el-card>
   </div>

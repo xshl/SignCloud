@@ -2,6 +2,7 @@
   <div>
     <!-- <el-button v-permission="permission.edit" :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" /> -->
     <el-button :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" />
+    <el-button v-if="resetBtn" type="warning"  size="mini" icon="el-icon-key" @click="crud.resetPassword(data)">重置密码</el-button>
     <!-- <el-popover v-model="pop" v-permission="permission.del" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide"> -->
     <el-popover v-model="pop" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide" v-if="deleteBtn">
       <p>{{ msg }}</p>
@@ -39,6 +40,10 @@ export default {
     deleteBtn: {
       type: Boolean,
       default: true
+    },
+    resetBtn: {
+      type: Boolean,
+      default: false
     },
     msg: {
       type: String,

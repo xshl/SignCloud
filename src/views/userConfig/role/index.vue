@@ -15,7 +15,7 @@
         />
         <rrOperation />
       </div>
-      <crudOperation :permission="permission" />
+      <crudOperation :permission="permission" :deleteBtn="false" :editBtn="false"/>
     </div>
     <!-- 表单渲染 -->
     <el-dialog

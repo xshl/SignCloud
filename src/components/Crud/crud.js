@@ -375,6 +375,15 @@ function CRUD(options) {
       })
     },
     /**
+     *  重置用户密码
+     */
+    resetPassword(data) {
+      data['password'] = "123456"
+      crud.crudMethod.updatePass(data).then(() => {
+        crud.notify("密码重置为123456", CRUD.NOTIFICATION_TYPE.SUCCESS)
+      })
+    },
+    /**
      * 获取查询参数
      */
     getQueryParams: function () {

@@ -124,10 +124,10 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="130px" align="center" fixed="right">
+      <el-table-column label="操作"  align="center" fixed="right">
         <!-- <el-table-column v-if="checkPer(['admin','dict:edit','dict:del'])" label="操作" width="130px" align="center" fixed="right"> -->
         <template slot-scope="scope">
-          <udOperation :data="scope.row" :permission="permission" :deleteBtn="false" />
+          <udOperation :data="scope.row" :permission="permission" :deleteBtn="false" :resetBtn="true"/>
         </template>
       </el-table-column>
     </el-table>
