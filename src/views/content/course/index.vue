@@ -285,7 +285,9 @@ export default {
   },
   watch: {
     "crud.addSuccess"() {
-      this.courseQrcode = this.crud.res.data;
+      this.courseQrcode = this.crud.res.data.imgUrl;
+      this.courseNum = this.crud.res.data.code
+      console.log('qrcode', this.courseQrcode)
     },
   },
   methods: {
@@ -333,9 +335,6 @@ export default {
       this.formdata.append("creationDate", this.form.creationDate);
       this.formdata.append("modifier", this.form.modifier);
       this.formdata.append("modifitionDate", this.form.modifitionDate);
-      if (this.changeImage) {
-        this.formdata.append()
-      }
       if (this.crud.status.add === CRUD.STATUS.PREPARED) {
         this.crud.doAdd(this.formdata);
       } else if (this.crud.status.edit === CRUD.STATUS.PREPARED) {

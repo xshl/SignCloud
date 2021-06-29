@@ -46,7 +46,9 @@ export function updatePass(data) {
   return request({
     url: '/api/admins/users/passwords',
     method: 'put',
-    data
+    params: {
+      uid: data
+    }
   })
 }
 

@@ -382,9 +382,8 @@ function CRUD(options) {
      *  重置用户密码
      */
     resetPassword(data) {
-      data['password'] = "123456"
-      crud.crudMethod.updatePass(data).then(() => {
-        crud.notify("密码重置为123456", CRUD.NOTIFICATION_TYPE.SUCCESS)
+      crud.crudMethod.updatePass(data.id).then((res) => {
+        crud.notify("密码重置为:"+res.data, CRUD.NOTIFICATION_TYPE.SUCCESS)
       })
     },
     /**

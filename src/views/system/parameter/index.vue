@@ -91,7 +91,7 @@ export default {
   cruds() {
     return CRUD({
       title: "参数系统",
-      url: "/api/params",
+      url: "/api/params/ids",
       crudMethod: { ...crudParams },
     });
   },
@@ -117,7 +117,7 @@ export default {
             message: "请输入参数关键字",
             trigger: "blur",
           },
-          { validator: valueIsUnique, trigger: "blur" },
+          // { validator: valueIsUnique, trigger: "blur" },
         ],
         value: [{ required: true, message: "请输入参数值", trigger: "blur" }],
       },

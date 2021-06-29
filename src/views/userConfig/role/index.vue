@@ -63,7 +63,6 @@
             accordion
             show-checkbox
             node-key="id"
-            @check="menuChange"
           />
         </el-form-item>
         <el-form-item label="权限分配" prop="perms">
@@ -73,7 +72,6 @@
             multiple
             placeholder="请选择"
             @remove-tag="deleteTag"
-            @change="changePerm"
           >
             <el-option
               v-for="item in perms"
@@ -532,21 +530,21 @@ export default {
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
-      if (this.permDatas.length === 0) {
-        this.$message({
-          message: "角色不能为空",
-          type: "warning",
-        });
-        return false;
-      }
+      userPerms = []
+      this.permDatas.forEach(function (perm, index) {
+        if (perm.status != 9) {
+          const rol = { id: perm.id };
+          userPerms.push(rol);
+        }
+      });
       crud.form.perms = userPerms;
       this.menusIds = this.$refs.menuinput.getCheckedKeys();
-      this.form.menus = [];
+      crud.form.menus = [];
       let _this = this;
       let menusNode = this.$refs.menuinput.getCheckedNodes(false, true);
       menusNode.forEach(function (data) {
         const menu = { id: data.id };
-        _this.form.menus.push(menu);
+        crud.form.menus.push(menu);
       });
       return true;
     },
