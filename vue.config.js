@@ -24,7 +24,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: './',
+  publicPath: '/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: false, // process.env.NODE_ENV === 'development',
@@ -38,7 +38,8 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: "http://81.68.237.122:8080",
+        // target: "http://81.68.237.122:8080/api",
+        target: "http://59.77.134.88:8080/api",
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''/*  */

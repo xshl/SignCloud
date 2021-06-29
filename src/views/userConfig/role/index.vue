@@ -15,7 +15,11 @@
         />
         <rrOperation />
       </div>
-      <crudOperation :permission="permission" :deleteBtn="false" :editBtn="false"/>
+      <crudOperation
+        :permission="permission"
+        :deleteBtn="false"
+        :editBtn="false"
+      />
     </div>
     <!-- 表单渲染 -->
     <el-dialog
@@ -80,7 +84,6 @@
           </el-select>
           <!-- <el-input v-model="form.roles" style="width: 370px" /> -->
         </el-form-item>
-        
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -363,8 +366,10 @@ export default {
         getMenusByRoles(val.id).then((res) => {
           this.loading = true;
           res.data.content.forEach(function (data) {
-            _this.menuIds.push(data.id);
+            // _this.menuIds.push(data.id);
+            _this.checkChildren(data);
           });
+          console.log("menuIds", this.menuIds);
           this.$refs.menu.setCheckedKeys(this.menuIds);
         });
         crudRoles.getAll().then((res) => {
@@ -386,10 +391,11 @@ export default {
     menuChange(menu) {
       if (!this.showButton) {
         this.$message({
-          message: "请选择修改角色",
+          message: "请选择修改角色 ",
           type: "warning",
         });
       }
+      console.log("tag", menu);
     },
     permChange(perm) {
       if (!this.showButton) {
@@ -406,8 +412,10 @@ export default {
       this.roleForm.menus = [];
       this.roleForm.perms = [];
       this.menuIds = this.$refs.menu.getCheckedKeys();
-      this.menuIds.forEach(function (id) {
-        const menu = { id: id };
+      let menusNode = this.$refs.menu.getCheckedNodes(false, true);
+      console.log("menusNode", menusNode);
+      menusNode.forEach(function (data) {
+        const menu = { id: data.id };
         _this.roleForm.menus.push(menu);
       });
       crudRoles
@@ -420,6 +428,13 @@ export default {
         .catch((err) => {
           this.menuLoading = false;
         });
+      const userRoles = user.getUser();
+      console.log("tag", userRoles["roles"]);
+      console.log("tag", userRoles["roles"].indexOf(this.roleForm.name));
+      if (userRoles["roles"].indexOf(this.roleForm.name) != -1) {
+        location.reload();
+      }
+      // if(user.getUser().roles.indexOf(this.roleForm.name))
     },
     savePerm() {
       this.permLoading = true;
@@ -464,20 +479,44 @@ export default {
         });
       });
     },
+    checkChildren(data) {
+      console.log("tag", data);
+      if (!data.hasChildren) {
+        this.menuIds.push(data.id);
+      } else {
+        const _this = this;
+        data.children.forEach(function (menu) {
+          _this.checkChildren(menu);
+        });
+      }
+    },
+    checkChildrens(data) {
+      console.log("tag", data);
+      console.log(data.nameZh, data.children);
+      if (data.children == null) {
+        this.menusIds.push(data.id);
+      } else {
+        const _this = this;
+        data.children.forEach(function (menu) {
+          _this.checkChildrens(menu);
+        });
+      }
+    },
     // 新增前将多选的值设置为空
     [CRUD.HOOK.beforeToAdd]() {
       this.permDatas = [];
-      this.menusIds = []
+      this.menusIds = [];
     },
     // 初始化编辑时候的角色与岗位
     [CRUD.HOOK.beforeToEdit](crud, form) {
       this.permDatas = [];
-      this.menusIds = []
+      this.menusIds = [];
       userPerms = [];
       const _this = this;
+      console.log("tag", form.menus);
       form.menus.forEach(function (menu, index) {
-        _this.menusIds.push(menu.id);
-      })
+        _this.checkChildrens(menu);
+      });
       // _this.$refs.menuinput.setCheckedKeys(this.menusIds);
       form.perms.forEach(function (perm, index) {
         if (perm.status != 9) {
@@ -488,6 +527,7 @@ export default {
       });
     },
     [CRUD.HOOK.afterToCU](crud) {
+      console.log("menusIds", this.menusIds);
       this.$refs.menuinput.setCheckedKeys(this.menusIds);
     },
     // 提交前做的操作
@@ -501,13 +541,22 @@ export default {
       }
       crud.form.perms = userPerms;
       this.menusIds = this.$refs.menuinput.getCheckedKeys();
-      this.form.menus = []
-      let _this = this
-      this.menusIds.forEach(function (id) {
-        const menu = { id: id };
+      this.form.menus = [];
+      let _this = this;
+      let menusNode = this.$refs.menuinput.getCheckedNodes(false, true);
+      menusNode.forEach(function (data) {
+        const menu = { id: data.id };
         _this.form.menus.push(menu);
       });
       return true;
+    },
+    [CRUD.HOOK.afterSubmit](crud) {
+      const userRoles = user.getUser();
+      setTimeout(() => {
+        if (userRoles["roles"].indexOf(this.form.name) != -1) {
+          location.reload();
+        }
+      }, 300);
     },
   },
 };

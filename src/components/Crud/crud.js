@@ -3,6 +3,7 @@ import { parseTime } from '@/utils/index'
 import { curdDict } from '@/api/system/dict'
 import { curdDetail } from '@/api/system/dictDetail'
 import Vue from 'vue'
+import user from '@/utils/userStore'
 
 let Base64 = require("js-base64").Base64
 
@@ -331,6 +332,9 @@ function CRUD(options) {
         crud.resetForm()
         callVmHook(crud, CRUD.HOOK.afterSubmit)
         crud.refresh()
+        if(crud.url == '/api/roles/roles'||crud.url == '/api/menus') {
+            location.reload();
+        }
       }).catch(() => {
         crud.status.edit = CRUD.STATUS.PREPARED
         callVmHook(crud, CRUD.HOOK.afterEditError)

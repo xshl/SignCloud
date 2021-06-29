@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       defaultAvatar: defaultAvatar,
-      avatar: JSON.parse(user.getUser()).avatar
+      avatar: user.getUser().avatar
     }
   },
   computed: {
